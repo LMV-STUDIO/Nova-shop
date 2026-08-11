@@ -1,0 +1,2300 @@
+```html
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta
+        name="description"
+        content="Barbería profesional. Cortes, barba y servicios personalizados. Reservá tu turno por WhatsApp."
+    >
+
+    <meta
+        name="theme-color"
+        content="#111111"
+    >
+
+    <title>BARBERÍA | Cortes y Estilo</title>
+
+    <link
+        rel="icon"
+        href="https://images.unsplash.com/photo-1622286342621-4bd786c2447c?auto=format&fit=crop&w=100&q=80"
+    >
+
+
+    <style>
+
+        :root {
+
+            --principal: #d4af37;
+
+            --principal-oscuro: #a88418;
+
+            --fondo: #090909;
+
+            --fondo2: #111111;
+
+            --card: #171717;
+
+            --blanco: #ffffff;
+
+            --gris: #a5a5a5;
+
+            --borde: #292929;
+
+        }
+
+
+        * {
+
+            box-sizing: border-box;
+
+            margin: 0;
+
+            padding: 0;
+
+        }
+
+
+        html {
+
+            scroll-behavior: smooth;
+
+        }
+
+
+        body {
+
+            font-family:
+                Arial,
+                Helvetica,
+                sans-serif;
+
+            background:
+                var(--fondo);
+
+            color:
+                var(--blanco);
+
+            line-height:
+                1.5;
+
+        }
+
+
+        a {
+
+            color: inherit;
+
+        }
+
+
+        /* =========================
+           HEADER
+        ========================= */
+
+        header {
+
+            position:
+                sticky;
+
+            top:
+                0;
+
+            z-index:
+                1000;
+
+            background:
+                rgba(9,9,9,.95);
+
+            border-bottom:
+                1px solid var(--borde);
+
+            backdrop-filter:
+                blur(12px);
+
+        }
+
+
+        .header-inner {
+
+            max-width:
+                1200px;
+
+            margin:
+                auto;
+
+            padding:
+                15px 25px;
+
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            justify-content:
+                space-between;
+
+            gap:
+                20px;
+
+        }
+
+
+        .logo {
+
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            gap:
+                12px;
+
+            color:
+                var(--principal);
+
+            font-size:
+                21px;
+
+            font-weight:
+                800;
+
+        }
+
+
+        .logo img {
+
+            width:
+                45px;
+
+            height:
+                45px;
+
+            object-fit:
+                cover;
+
+            border-radius:
+                50%;
+
+            border:
+                2px solid var(--principal);
+
+        }
+
+
+        nav {
+
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            gap:
+                20px;
+
+        }
+
+
+        nav a {
+
+            text-decoration:
+                none;
+
+            font-size:
+                14px;
+
+            font-weight:
+                700;
+
+            transition:
+                .2s;
+
+        }
+
+
+        nav a:hover {
+
+            color:
+                var(--principal);
+
+        }
+
+
+        .nav-turno {
+
+            background:
+                var(--principal);
+
+            color:
+                #111;
+
+            padding:
+                10px 15px;
+
+            border-radius:
+                8px;
+
+        }
+
+
+        .nav-turno:hover {
+
+            color:
+                #111;
+
+            background:
+                var(--principal-oscuro);
+
+        }
+
+
+        /* =========================
+           BOTONES
+        ========================= */
+
+        .boton {
+
+            display:
+                inline-block;
+
+            padding:
+                14px 24px;
+
+            border-radius:
+                9px;
+
+            background:
+                var(--principal);
+
+            color:
+                #111;
+
+            text-decoration:
+                none;
+
+            font-weight:
+                800;
+
+            border:
+                none;
+
+            cursor:
+                pointer;
+
+            transition:
+                .25s;
+
+        }
+
+
+        .boton:hover {
+
+            transform:
+                translateY(-3px);
+
+            background:
+                var(--principal-oscuro);
+
+            color:
+                white;
+
+        }
+
+
+        .boton-secundario {
+
+            background:
+                transparent;
+
+            border:
+                1px solid var(--principal);
+
+            color:
+                var(--principal);
+
+        }
+
+
+        /* =========================
+           HERO
+        ========================= */
+
+        .hero {
+
+            min-height:
+                680px;
+
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            justify-content:
+                center;
+
+            text-align:
+                center;
+
+            padding:
+                80px 20px;
+
+            background:
+
+                linear-gradient(
+                    rgba(0,0,0,.50),
+                    rgba(0,0,0,.85)
+                ),
+
+                url("https://images.unsplash.com/photo-1599351431202-1e0f0d5f7f1b?auto=format&fit=crop&w=2000&q=90");
+
+            background-size:
+                cover;
+
+            background-position:
+                center;
+
+        }
+
+
+        .hero-content {
+
+            max-width:
+                850px;
+
+        }
+
+
+        .etiqueta {
+
+            display:
+                inline-block;
+
+            color:
+                var(--principal);
+
+            border:
+                1px solid rgba(212,175,55,.5);
+
+            padding:
+                8px 15px;
+
+            border-radius:
+                50px;
+
+            margin-bottom:
+                20px;
+
+            font-size:
+                13px;
+
+            font-weight:
+                800;
+
+            text-transform:
+                uppercase;
+
+            letter-spacing:
+                1px;
+
+        }
+
+
+        .hero h1 {
+
+            font-size:
+                clamp(48px, 8vw, 90px);
+
+            line-height:
+                .95;
+
+            text-transform:
+                uppercase;
+
+            letter-spacing:
+                3px;
+
+            margin-bottom:
+                25px;
+
+        }
+
+
+        .hero p {
+
+            max-width:
+                680px;
+
+            margin:
+                0 auto 30px;
+
+            color:
+                #ddd;
+
+            font-size:
+                19px;
+
+        }
+
+
+        .hero-buttons {
+
+            display:
+                flex;
+
+            justify-content:
+                center;
+
+            flex-wrap:
+                wrap;
+
+            gap:
+                12px;
+
+        }
+
+
+        /* =========================
+           GENERAL
+        ========================= */
+
+        .seccion {
+
+            padding:
+                90px 25px;
+
+        }
+
+
+        .seccion-inner {
+
+            max-width:
+                1200px;
+
+            margin:
+                auto;
+
+        }
+
+
+        .oscura {
+
+            background:
+                var(--fondo2);
+
+        }
+
+
+        .centrado {
+
+            text-align:
+                center;
+
+        }
+
+
+        .titulo {
+
+            font-size:
+                clamp(32px, 5vw, 45px);
+
+            margin-bottom:
+                12px;
+
+        }
+
+
+        .subtitulo {
+
+            color:
+                var(--gris);
+
+            max-width:
+                700px;
+
+            margin:
+                0 auto 45px;
+
+        }
+
+
+        /* =========================
+           SOBRE NOSOTROS
+        ========================= */
+
+        .sobre-grid {
+
+            display:
+                grid;
+
+            grid-template-columns:
+                1fr 1fr;
+
+            gap:
+                50px;
+
+            align-items:
+                center;
+
+        }
+
+
+        .sobre-img {
+
+            width:
+                100%;
+
+            height:
+                430px;
+
+            object-fit:
+                cover;
+
+            border-radius:
+                15px;
+
+        }
+
+
+        .sobre-texto h2 {
+
+            font-size:
+                40px;
+
+            margin-bottom:
+                20px;
+
+        }
+
+
+        .sobre-texto p {
+
+            color:
+                var(--gris);
+
+            margin-bottom:
+                20px;
+
+        }
+
+
+        .puntos {
+
+            display:
+                grid;
+
+            gap:
+                10px;
+
+            margin-top:
+                20px;
+
+        }
+
+
+        .punto {
+
+            color:
+                #ddd;
+
+        }
+
+
+        .punto span {
+
+            color:
+                var(--principal);
+
+        }
+
+
+        /* =========================
+           SERVICIOS
+        ========================= */
+
+        .servicios-grid {
+
+            display:
+                grid;
+
+            grid-template-columns:
+                repeat(
+                    auto-fit,
+                    minmax(230px,1fr)
+                );
+
+            gap:
+                25px;
+
+        }
+
+
+        .servicio {
+
+            background:
+                var(--card);
+
+            border:
+                1px solid var(--borde);
+
+            border-radius:
+                15px;
+
+            overflow:
+                hidden;
+
+            transition:
+                .25s;
+
+        }
+
+
+        .servicio:hover {
+
+            transform:
+                translateY(-7px);
+
+            border-color:
+                var(--principal);
+
+        }
+
+
+        .servicio img {
+
+            width:
+                100%;
+
+            height:
+                190px;
+
+            object-fit:
+                cover;
+
+        }
+
+
+        .servicio-info {
+
+            padding:
+                23px;
+
+        }
+
+
+        .servicio h3 {
+
+            margin-bottom:
+                8px;
+
+        }
+
+
+        .servicio p {
+
+            color:
+                var(--gris);
+
+            font-size:
+                14px;
+
+            margin-bottom:
+                15px;
+
+        }
+
+
+        .precio {
+
+            color:
+                var(--principal);
+
+            font-size:
+                23px;
+
+            font-weight:
+                800;
+
+        }
+
+
+        /* =========================
+           GALERÍA
+        ========================= */
+
+        .galeria {
+
+            display:
+                grid;
+
+            grid-template-columns:
+                repeat(4,1fr);
+
+            gap:
+                15px;
+
+        }
+
+
+        .galeria img {
+
+            width:
+                100%;
+
+            height:
+                280px;
+
+            object-fit:
+                cover;
+
+            border-radius:
+                12px;
+
+            transition:
+                .3s;
+
+        }
+
+
+        .galeria img:hover {
+
+            transform:
+                scale(1.03);
+
+        }
+
+
+        /* =========================
+           RESERVAS
+        ========================= */
+
+        .reserva {
+
+            background:
+
+                linear-gradient(
+                    rgba(0,0,0,.65),
+                    rgba(0,0,0,.85)
+                ),
+
+                url("https://images.unsplash.com/photo-1621605815971-fbc98d665033?auto=format&fit=crop&w=2000&q=90");
+
+            background-size:
+                cover;
+
+            background-position:
+                center;
+
+        }
+
+
+        .reserva-box {
+
+            max-width:
+                800px;
+
+            margin:
+                auto;
+
+            text-align:
+                center;
+
+        }
+
+
+        /* =========================
+           SELECTOR DE SERVICIO
+        ========================= */
+
+        .reserva-form {
+
+            max-width:
+                550px;
+
+            margin:
+                30px auto 0;
+
+            background:
+                rgba(20,20,20,.9);
+
+            border:
+                1px solid var(--borde);
+
+            padding:
+                25px;
+
+            border-radius:
+                15px;
+
+        }
+
+
+        .reserva-form label {
+
+            display:
+                block;
+
+            text-align:
+                left;
+
+            margin-bottom:
+                8px;
+
+            font-weight:
+                700;
+
+        }
+
+
+        .reserva-form select,
+        .reserva-form input {
+
+            width:
+                100%;
+
+            padding:
+                14px;
+
+            margin-bottom:
+                18px;
+
+            border-radius:
+                8px;
+
+            border:
+                1px solid #333;
+
+            background:
+                #0d0d0d;
+
+            color:
+                white;
+
+            outline:
+                none;
+
+        }
+
+
+        .reserva-form select:focus,
+        .reserva-form input:focus {
+
+            border-color:
+                var(--principal);
+
+        }
+
+
+        .reserva-form .boton {
+
+            width:
+                100%;
+
+        }
+
+
+        /* =========================
+           INFORMACIÓN
+        ========================= */
+
+        .info-grid {
+
+            display:
+                grid;
+
+            grid-template-columns:
+                repeat(
+                    auto-fit,
+                    minmax(220px,1fr)
+                );
+
+            gap:
+                20px;
+
+        }
+
+
+        .info-card {
+
+            background:
+                var(--card);
+
+            border:
+                1px solid var(--borde);
+
+            border-radius:
+                14px;
+
+            padding:
+                30px 20px;
+
+            text-align:
+                center;
+
+        }
+
+
+        .icono {
+
+            font-size:
+                35px;
+
+            margin-bottom:
+                12px;
+
+        }
+
+
+        .info-card h3 {
+
+            color:
+                var(--principal);
+
+            margin-bottom:
+                8px;
+
+        }
+
+
+        .info-card p {
+
+            color:
+                var(--gris);
+
+        }
+
+
+        /* =========================
+           OPINIONES
+        ========================= */
+
+        .opiniones {
+
+            display:
+                grid;
+
+            grid-template-columns:
+                repeat(
+                    auto-fit,
+                    minmax(240px,1fr)
+                );
+
+            gap:
+                20px;
+
+        }
+
+
+        .opinion {
+
+            background:
+                var(--card);
+
+            border:
+                1px solid var(--borde);
+
+            border-radius:
+                14px;
+
+            padding:
+                25px;
+
+        }
+
+
+        .estrellas {
+
+            color:
+                var(--principal);
+
+            letter-spacing:
+                3px;
+
+            margin-bottom:
+                12px;
+
+        }
+
+
+        .opinion p {
+
+            color:
+                #ddd;
+
+            margin-bottom:
+                15px;
+
+        }
+
+
+        .opinion strong {
+
+            color:
+                var(--principal);
+
+        }
+
+
+        /* =========================
+           CTA FINAL
+        ========================= */
+
+        .cta {
+
+            text-align:
+                center;
+
+        }
+
+
+        .cta p {
+
+            color:
+                var(--gris);
+
+            margin:
+                0 auto 25px;
+
+            max-width:
+                650px;
+
+        }
+
+
+        /* =========================
+           FOOTER
+        ========================= */
+
+        footer {
+
+            background:
+                #050505;
+
+            border-top:
+                1px solid var(--borde);
+
+            padding:
+                35px 20px;
+
+            text-align:
+                center;
+
+            color:
+                var(--gris);
+
+        }
+
+
+        footer strong {
+
+            color:
+                var(--principal);
+
+        }
+
+
+        /* =========================
+           RESPONSIVE
+        ========================= */
+
+        @media(max-width:850px) {
+
+            .sobre-grid {
+
+                grid-template-columns:
+                    1fr;
+
+            }
+
+            .galeria {
+
+                grid-template-columns:
+                    repeat(2,1fr);
+
+            }
+
+        }
+
+
+        @media(max-width:650px) {
+
+            .header-inner {
+
+                flex-direction:
+                    column;
+
+            }
+
+            nav {
+
+                flex-wrap:
+                    wrap;
+
+                justify-content:
+                    center;
+
+            }
+
+            .hero {
+
+                min-height:
+                    590px;
+
+            }
+
+            .hero h1 {
+
+                font-size:
+                    50px;
+
+            }
+
+            .galeria {
+
+                grid-template-columns:
+                    1fr;
+
+            }
+
+            .galeria img {
+
+                height:
+                    300px;
+
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- =====================================================
+     HEADER
+===================================================== -->
+
+<header>
+
+    <div class="header-inner">
+
+
+        <a
+            href="#"
+            class="logo"
+        >
+
+            <img
+                id="logo"
+                src=""
+                alt="Logo de la barbería"
+            >
+
+            <span id="nombreHeader">
+                BARBERÍA
+            </span>
+
+        </a>
+
+
+        <nav>
+
+            <a href="#">
+                Inicio
+            </a>
+
+            <a href="#sobre">
+                Nosotros
+            </a>
+
+            <a href="#servicios">
+                Servicios
+            </a>
+
+            <a href="#galeria">
+                Galería
+            </a>
+
+            <a
+                href="#turnos"
+                class="nav-turno"
+            >
+                Reservar turno
+            </a>
+
+        </nav>
+
+
+    </div>
+
+</header>
+
+
+<!-- =====================================================
+     HERO
+===================================================== -->
+
+<section class="hero">
+
+    <div class="hero-content">
+
+
+        <div class="etiqueta">
+            Barbería profesional
+        </div>
+
+
+        <h1 id="nombreHero">
+            BARBERÍA
+        </h1>
+
+
+        <p id="descripcionHero">
+            Cortes modernos, barba y estilo personalizado.
+        </p>
+
+
+        <div class="hero-buttons">
+
+
+            <a
+                href="#turnos"
+                class="boton"
+            >
+                📅 Reservar turno
+            </a>
+
+
+            <a
+                href="#servicios"
+                class="boton boton-secundario"
+            >
+                Ver servicios
+            </a>
+
+
+        </div>
+
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     SOBRE NOSOTROS
+===================================================== -->
+
+<section
+    class="seccion"
+    id="sobre"
+>
+
+    <div class="seccion-inner">
+
+
+        <div class="sobre-grid">
+
+
+            <img
+                id="sobreImagen"
+                class="sobre-img"
+                src=""
+                alt="Interior de la barbería"
+            >
+
+
+            <div class="sobre-texto">
+
+
+                <h2>
+                    Más que un corte.
+                </h2>
+
+
+                <p id="sobreTexto">
+                    Creamos una experiencia pensada para que
+                    cada cliente encuentre su propio estilo.
+                </p>
+
+
+                <div class="puntos">
+
+
+                    <div class="punto">
+                        <span>✓</span>
+                        Atención personalizada
+                    </div>
+
+
+                    <div class="punto">
+                        <span>✓</span>
+                        Profesionales con experiencia
+                    </div>
+
+
+                    <div class="punto">
+                        <span>✓</span>
+                        Productos de calidad
+                    </div>
+
+
+                    <div class="punto">
+                        <span>✓</span>
+                        Ambiente cómodo
+                    </div>
+
+
+                </div>
+
+
+            </div>
+
+
+        </div>
+
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     SERVICIOS
+===================================================== -->
+
+<section
+    class="seccion oscura"
+    id="servicios"
+>
+
+    <div class="seccion-inner">
+
+
+        <div class="centrado">
+
+            <h2 class="titulo">
+                Nuestros servicios
+            </h2>
+
+            <p class="subtitulo">
+                Elegí el servicio que necesitás y reservá
+                tu turno directamente por WhatsApp.
+            </p>
+
+        </div>
+
+
+        <div
+            class="servicios-grid"
+            id="serviciosContainer"
+        >
+
+        </div>
+
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     GALERÍA
+===================================================== -->
+
+<section
+    class="seccion"
+    id="galeria"
+>
+
+    <div class="seccion-inner">
+
+
+        <div class="centrado">
+
+            <h2 class="titulo">
+                Nuestro trabajo
+            </h2>
+
+            <p class="subtitulo">
+                Algunos de nuestros trabajos.
+            </p>
+
+        </div>
+
+
+        <div
+            class="galeria"
+            id="galeriaContainer"
+        >
+
+        </div>
+
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     TURNOS
+===================================================== -->
+
+<section
+    class="seccion reserva"
+    id="turnos"
+>
+
+    <div class="reserva-box">
+
+
+        <h2 class="titulo">
+            Reservá tu turno
+        </h2>
+
+
+        <p class="subtitulo">
+            Elegí el servicio y te enviaremos directamente
+            a WhatsApp para coordinar tu turno.
+        </p>
+
+
+        <div class="reserva-form">
+
+
+            <label for="servicioSelect">
+                Servicio
+            </label>
+
+
+            <select id="servicioSelect">
+
+                <option value="">
+                    Seleccioná un servicio
+                </option>
+
+            </select>
+
+
+            <label for="nombreCliente">
+                Tu nombre
+            </label>
+
+
+            <input
+                type="text"
+                id="nombreCliente"
+                placeholder="Ej: Matías"
+            >
+
+
+            <button
+                class="boton"
+                onclick="reservarTurno()"
+            >
+                📲 Reservar por WhatsApp
+            </button>
+
+
+        </div>
+
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     INFORMACIÓN
+===================================================== -->
+
+<section class="seccion">
+
+    <div class="seccion-inner">
+
+
+        <div class="centrado">
+
+            <h2 class="titulo">
+                Información
+            </h2>
+
+            <p class="subtitulo">
+                Todo lo que necesitás saber antes de visitarnos.
+            </p>
+
+        </div>
+
+
+        <div class="info-grid">
+
+
+            <div class="info-card">
+
+                <div class="icono">
+                    📍
+                </div>
+
+                <h3>
+                    Ubicación
+                </h3>
+
+                <p id="direccion">
+                    Dirección del local
+                </p>
+
+                <br>
+
+                <a
+                    id="mapa"
+                    href="#"
+                    target="_blank"
+                    class="boton"
+                >
+                    Ver en Maps
+                </a>
+
+            </div>
+
+
+            <div class="info-card">
+
+                <div class="icono">
+                    🕐
+                </div>
+
+                <h3>
+                    Horarios
+                </h3>
+
+                <p id="horarios">
+                    Lunes a sábado<br>
+                    09:00 - 20:00
+                </p>
+
+            </div>
+
+
+            <div class="info-card">
+
+                <div class="icono">
+                    📱
+                </div>
+
+                <h3>
+                    WhatsApp
+                </h3>
+
+                <p>
+                    Reservas y consultas.
+                </p>
+
+                <br>
+
+                <a
+                    id="whatsappInfo"
+                    href="#"
+                    target="_blank"
+                    class="boton"
+                >
+                    Escribir
+                </a>
+
+            </div>
+
+
+            <div class="info-card">
+
+                <div class="icono">
+                    📸
+                </div>
+
+                <h3>
+                    Instagram
+                </h3>
+
+                <p>
+                    Mirá nuestros últimos trabajos.
+                </p>
+
+                <br>
+
+                <a
+                    id="instagram"
+                    href="#"
+                    target="_blank"
+                    class="boton"
+                >
+                    Instagram
+                </a>
+
+            </div>
+
+
+        </div>
+
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     OPINIONES
+===================================================== -->
+
+<section class="seccion oscura">
+
+    <div class="seccion-inner">
+
+
+        <div class="centrado">
+
+            <h2 class="titulo">
+                Lo que dicen nuestros clientes
+            </h2>
+
+            <p class="subtitulo">
+                Opiniones que podés reemplazar por las reales
+                del negocio.
+            </p>
+
+        </div>
+
+
+        <div class="opiniones">
+
+
+            <div class="opinion">
+
+                <div class="estrellas">
+                    ★★★★★
+                </div>
+
+                <p>
+                    "Excelente atención, muy buen ambiente
+                    y el corte quedó perfecto."
+                </p>
+
+                <strong>
+                    Cliente
+                </strong>
+
+            </div>
+
+
+            <div class="opinion">
+
+                <div class="estrellas">
+                    ★★★★★
+                </div>
+
+                <p>
+                    "Muy buena barbería. Siempre salgo
+                    conforme con el resultado."
+                </p>
+
+                <strong>
+                    Cliente
+                </strong>
+
+            </div>
+
+
+            <div class="opinion">
+
+                <div class="estrellas">
+                    ★★★★★
+                </div>
+
+                <p>
+                    "Excelente servicio y muy buena atención."
+                </p>
+
+                <strong>
+                    Cliente
+                </strong>
+
+            </div>
+
+
+        </div>
+
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     CTA FINAL
+===================================================== -->
+
+<section class="seccion">
+
+    <div class="seccion-inner cta">
+
+
+        <h2 class="titulo">
+            ¿Listo para tu próximo corte?
+        </h2>
+
+
+        <p>
+            Reservá tu turno de manera rápida y sencilla.
+        </p>
+
+
+        <a
+            id="botonFinal"
+            href="#"
+            target="_blank"
+            class="boton"
+        >
+            💈 Reservar ahora
+        </a>
+
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     FOOTER
+===================================================== -->
+
+<footer>
+
+    © 2026
+
+    <strong id="nombreFooter">
+        BARBERÍA
+    </strong>
+
+    — Todos los derechos reservados.
+
+</footer>
+
+
+<script>
+
+
+/* =====================================================
+   ⚙️ CONFIGURACIÓN DEL CLIENTE
+   ================================================
+
+   PARA PERSONALIZAR UNA BARBERÍA:
+
+   1. Cambiá nombre
+   2. Cambiá WhatsApp
+   3. Cambiá dirección
+   4. Cambiá horarios
+   5. Cambiá Instagram
+   6. Cambiá las fotos
+   7. Cambiá servicios y precios
+
+===================================================== */
+
+
+const CONFIG = {
+
+
+    /* NOMBRE DEL NEGOCIO */
+
+    nombre:
+        "BARBERÍA",
+
+
+    /* DESCRIPCIÓN */
+
+    descripcion:
+        "Cortes modernos, barba y estilo personalizado.",
+
+
+    /* TEXTO SOBRE EL NEGOCIO */
+
+    sobre:
+        "Creamos una experiencia pensada para que cada cliente encuentre su propio estilo, con atención personalizada y profesionales capacitados.",
+
+
+    /* WHATSAPP */
+
+    whatsapp:
+        "5491100000000",
+
+
+    /* DIRECCIÓN */
+
+    direccion:
+        "Av. Ejemplo 1234, La Tablada",
+
+
+    /* LINK DE GOOGLE MAPS */
+
+    mapa:
+        "https://maps.google.com/",
+
+
+    /* HORARIOS */
+
+    horarios:
+        "Lunes a sábado<br>09:00 - 20:00",
+
+
+    /* INSTAGRAM */
+
+    instagram:
+        "https://instagram.com/",
+
+
+    /* LOGO */
+
+    logo:
+        "https://images.unsplash.com/photo-1622286342621-4bd786c2447c?auto=format&fit=crop&w=200&q=85",
+
+
+    /* FOTO SOBRE NOSOTROS */
+
+    sobreImagen:
+        "https://images.unsplash.com/photo-1622286342621-4bd786c2447c?auto=format&fit=crop&w=1200&q=90",
+
+
+    /* GALERÍA */
+
+    galeria: [
+
+        "https://images.unsplash.com/photo-1599351431202-1e0f0d5f7f1b?auto=format&fit=crop&w=1000&q=90",
+
+        "https://images.unsplash.com/photo-1621605815971-fbc98d665033?auto=format&fit=crop&w=1000&q=90",
+
+        "https://images.unsplash.com/photo-1593702288056-792c4d7c3b9e?auto=format&fit=crop&w=1000&q=90",
+
+        "https://images.unsplash.com/photo-1622286342621-4bd786c2447c?auto=format&fit=crop&w=1000&q=90"
+
+    ],
+
+
+    /* SERVICIOS */
+
+    servicios: [
+
+
+        {
+
+            nombre:
+                "Corte clásico",
+
+            descripcion:
+                "Corte tradicional adaptado a tu estilo.",
+
+            precio:
+                8000,
+
+            imagen:
+                "https://images.unsplash.com/photo-1621605815971-fbc98d665033?auto=format&fit=crop&w=900&q=90"
+
+        },
+
+
+        {
+
+            nombre:
+                "Corte + barba",
+
+            descripcion:
+                "Corte completo acompañado de arreglo de barba.",
+
+            precio:
+                12000,
+
+            imagen:
+                "https://images.unsplash.com/photo-1599351431202-1e0f0d5f7f1b?auto=format&fit=crop&w=900&q=90"
+
+        },
+
+
+        {
+
+            nombre:
+                "Barba",
+
+            descripcion:
+                "Perfilado y arreglo profesional de barba.",
+
+            precio:
+                6000,
+
+            imagen:
+                "https://images.unsplash.com/photo-1622286342621-4bd786c2447c?auto=format&fit=crop&w=900&q=90"
+
+        },
+
+
+        {
+
+            nombre:
+                "Corte premium",
+
+            descripcion:
+                "Corte personalizado con acabado profesional.",
+
+            precio:
+                10000,
+
+            imagen:
+                "https://images.unsplash.com/photo-1593702288056-792c4d7c3b9e?auto=format&fit=crop&w=900&q=90"
+
+        }
+
+    ]
+
+};
+
+
+/* =====================================================
+   CARGAR INFORMACIÓN
+===================================================== */
+
+
+document.title =
+    CONFIG.nombre +
+    " | Barbería";
+
+
+document.getElementById(
+    "nombreHeader"
+).textContent =
+    CONFIG.nombre;
+
+
+document.getElementById(
+    "nombreHero"
+).textContent =
+    CONFIG.nombre;
+
+
+document.getElementById(
+    "descripcionHero"
+).textContent =
+    CONFIG.descripcion;
+
+
+document.getElementById(
+    "sobreTexto"
+).textContent =
+    CONFIG.sobre;
+
+
+document.getElementById(
+    "nombreFooter"
+).textContent =
+    CONFIG.nombre;
+
+
+document.getElementById(
+    "direccion"
+).textContent =
+    CONFIG.direccion;
+
+
+document.getElementById(
+    "horarios"
+).innerHTML =
+    CONFIG.horarios;
+
+
+document.getElementById(
+    "logo"
+).src =
+    CONFIG.logo;
+
+
+document.getElementById(
+    "sobreImagen"
+).src =
+    CONFIG.sobreImagen;
+
+
+/* =====================================================
+   WHATSAPP
+===================================================== */
+
+
+const whatsappURL =
+    "https://wa.me/" +
+    CONFIG.whatsapp;
+
+
+document.getElementById(
+    "whatsappInfo"
+).href =
+    whatsappURL;
+
+
+document.getElementById(
+    "botonFinal"
+).href =
+    whatsappURL;
+
+
+document.getElementById(
+    "mapa"
+).href =
+    CONFIG.mapa;
+
+
+document.getElementById(
+    "instagram"
+).href =
+    CONFIG.instagram;
+
+
+/* =====================================================
+   SERVICIOS
+===================================================== */
+
+
+const serviciosContainer =
+    document.getElementById(
+        "serviciosContainer"
+    );
+
+
+const servicioSelect =
+    document.getElementById(
+        "servicioSelect"
+    );
+
+
+CONFIG.servicios.forEach(
+    (servicio, index) => {
+
+
+        serviciosContainer.innerHTML += `
+
+            <article class="servicio">
+
+                <img
+                    src="${servicio.imagen}"
+                    alt="${servicio.nombre}"
+                    loading="lazy"
+                >
+
+                <div class="servicio-info">
+
+                    <h3>
+                        ${servicio.nombre}
+                    </h3>
+
+                    <p>
+                        ${servicio.descripcion}
+                    </p>
+
+                    <div class="precio">
+                        $${servicio.precio.toLocaleString("es-AR")}
+                    </div>
+
+                </div>
+
+            </article>
+
+        `;
+
+
+        servicioSelect.innerHTML += `
+
+            <option value="${index}">
+                ${servicio.nombre} — $${servicio.precio.toLocaleString("es-AR")}
+            </option>
+
+        `;
+
+    }
+);
+
+
+/* =====================================================
+   GALERÍA
+===================================================== */
+
+
+const galeriaContainer =
+    document.getElementById(
+        "galeriaContainer"
+    );
+
+
+CONFIG.galeria.forEach(
+    (imagen, index) => {
+
+
+        galeriaContainer.innerHTML += `
+
+            <img
+                src="${imagen}"
+                alt="Trabajo de barbería ${index + 1}"
+                loading="lazy"
+            >
+
+        `;
+
+    }
+);
+
+
+/* =====================================================
+   RESERVAR TURNO
+===================================================== */
+
+
+function reservarTurno() {
+
+
+    const seleccion =
+        servicioSelect.value;
+
+
+    const nombre =
+        document
+            .getElementById(
+                "nombreCliente"
+            )
+            .value
+            .trim();
+
+
+    if (seleccion === "") {
+
+        alert(
+            "Seleccioná un servicio."
+        );
+
+        return;
+
+    }
+
+
+    const servicio =
+        CONFIG.servicios[
+            seleccion
+        ];
+
+
+    let mensaje =
+        "Hola! Quiero reservar un turno.";
+
+
+    mensaje +=
+        "%0A%0A" +
+        "Servicio: " +
+        encodeURIComponent(
+            servicio.nombre
+        );
+
+
+    if (nombre !== "") {
+
+        mensaje +=
+            "%0ANombre: " +
+            encodeURIComponent(
+                nombre
+            );
+
+    }
+
+
+    mensaje +=
+        "%0A%0A" +
+        "¿Qué días y horarios tienen disponibles?";
+
+
+    window.open(
+        whatsappURL +
+        "?text=" +
+        mensaje,
+        "_blank"
+    );
+
+}
+
+
+/* =====================================================
+   ANIMACIÓN SUAVE AL APARECER
+===================================================== */
+
+
+const elementos =
+    document.querySelectorAll(
+        ".servicio, .info-card, .opinion"
+    );
+
+
+const observer =
+    new IntersectionObserver(
+        entries => {
+
+            entries.forEach(
+                entry => {
+
+                    if (
+                        entry.isIntersecting
+                    ) {
+
+                        entry.target.style.opacity =
+                            "1";
+
+                        entry.target.style.transform =
+                            "translateY(0)";
+
+                    }
+
+                }
+            );
+
+        },
+        {
+            threshold:
+                0.1
+        }
+    );
+
+
+elementos.forEach(
+    elemento => {
+
+        elemento.style.opacity =
+            "0";
+
+        elemento.style.transform =
+            "translateY(20px)";
+
+        elemento.style.transition =
+            "opacity .6s ease, transform .6s ease";
+
+        observer.observe(
+            elemento
+        );
+
+    }
+);
+
+
+</script>
+
+
+</body>
+
+</html>
+```
