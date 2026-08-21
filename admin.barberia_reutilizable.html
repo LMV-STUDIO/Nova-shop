@@ -1,0 +1,4785 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Panel de administración</title>
+
+<style>
+:root{
+    --principal:#d4af37;
+    --principal-oscuro:#a88418;
+    --fondo:#090909;
+    --fondo2:#111;
+    --card:#171717;
+    --blanco:#fff;
+    --gris:#a5a5a5;
+    --borde:#292929;
+    --verde:#72d572;
+    --rojo:#ff7777;
+}
+
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+body{
+    font-family:Arial,Helvetica,sans-serif;
+    background:var(--fondo);
+    color:var(--blanco);
+}
+
+button,input,select,textarea{
+    font-family:inherit;
+}
+
+button{
+    cursor:pointer;
+}
+
+.app{
+    min-height:100vh;
+    display:flex;
+}
+
+.sidebar{
+    width:250px;
+    min-height:100vh;
+    background:#050505;
+    border-right:1px solid var(--borde);
+    position:fixed;
+    left:0;
+    top:0;
+    bottom:0;
+    z-index:100;
+}
+
+.sidebar-logo{
+    padding:25px 20px;
+    border-bottom:1px solid var(--borde);
+}
+
+.sidebar-logo h1{
+    color:var(--principal);
+    font-size:21px;
+}
+
+.sidebar-logo p{
+    color:var(--gris);
+    font-size:12px;
+    margin-top:5px;
+}
+
+.menu{
+    padding:15px 10px;
+}
+
+.menu button{
+    width:100%;
+    background:transparent;
+    border:none;
+    color:#ddd;
+    text-align:left;
+    padding:13px 15px;
+    border-radius:8px;
+    margin-bottom:5px;
+    font-size:14px;
+    font-weight:700;
+}
+
+.menu button:hover,
+.menu button.activo{
+    background:var(--card);
+    color:var(--principal);
+}
+
+.sidebar-bottom{
+    position:absolute;
+    left:15px;
+    right:15px;
+    bottom:20px;
+}
+
+.usuario-panel{
+    padding:12px;
+    border:1px solid var(--borde);
+    border-radius:9px;
+    color:var(--gris);
+    font-size:12px;
+    margin-bottom:10px;
+    word-break:break-word;
+}
+
+.btn-salir{
+    width:100%;
+    border:1px solid #633;
+    background:#160d0d;
+    color:#ff9999;
+    padding:10px;
+    border-radius:8px;
+}
+
+.main{
+    margin-left:250px;
+    width:calc(100% - 250px);
+    min-height:100vh;
+}
+
+.topbar{
+    height:70px;
+    border-bottom:1px solid var(--borde);
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 30px;
+    background:rgba(9,9,9,.95);
+    position:sticky;
+    top:0;
+    z-index:50;
+}
+
+.topbar h2{
+    font-size:20px;
+}
+
+.negocio-top{
+    color:var(--gris);
+    font-size:13px;
+}
+
+.contenido{
+    padding:30px;
+    max-width:1400px;
+    margin:auto;
+}
+
+.seccion-admin{
+    display:none;
+}
+
+.seccion-admin.activa{
+    display:block;
+}
+
+.titulo-seccion{
+    margin-bottom:25px;
+}
+
+.titulo-seccion h1{
+    font-size:30px;
+    margin-bottom:6px;
+}
+
+.titulo-seccion p{
+    color:var(--gris);
+}
+
+.stats{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:18px;
+    margin-bottom:30px;
+}
+
+.stat{
+    background:var(--card);
+    border:1px solid var(--borde);
+    border-radius:12px;
+    padding:22px;
+}
+
+.stat .numero{
+    font-size:32px;
+    font-weight:800;
+    color:var(--principal);
+    margin-bottom:5px;
+}
+
+.stat .texto{
+    color:var(--gris);
+    font-size:13px;
+}
+
+.card{
+    background:var(--card);
+    border:1px solid var(--borde);
+    border-radius:12px;
+    padding:22px;
+    margin-bottom:20px;
+}
+
+.card h3{
+    margin-bottom:18px;
+}
+
+.btn{
+    border:none;
+    border-radius:7px;
+    padding:9px 13px;
+    font-weight:700;
+    font-size:12px;
+    background:var(--principal);
+    color:#111;
+}
+
+.btn:hover{
+    background:var(--principal-oscuro);
+    color:#fff;
+}
+
+.btn-secundario{
+    background:#222;
+    color:#ddd;
+    border:1px solid #333;
+}
+
+.btn-danger{
+    background:#351717;
+    color:#ff8888;
+    border:1px solid #633;
+}
+
+.btn-success{
+    background:#173317;
+    color:#8be58b;
+    border:1px solid #365d36;
+}
+
+.btn-small{
+    padding:7px 10px;
+    font-size:11px;
+}
+
+.filtros{
+    display:grid;
+    grid-template-columns:1fr auto;
+    gap:15px;
+    align-items:end;
+}
+
+.campo{
+    margin-bottom:16px;
+}
+
+.campo label{
+    display:block;
+    color:#ddd;
+    font-size:13px;
+    font-weight:700;
+    margin-bottom:7px;
+}
+
+.campo input,
+.campo select,
+.campo textarea{
+    width:100%;
+    padding:12px;
+    border-radius:7px;
+    border:1px solid #333;
+    background:#0d0d0d;
+    color:#fff;
+    outline:none;
+}
+
+.campo textarea{
+    min-height:100px;
+    resize:vertical;
+}
+
+.campo input:focus,
+.campo select:focus,
+.campo textarea:focus{
+    border-color:var(--principal);
+}
+
+.form-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:15px;
+}
+
+.form-grid .campo-completo{
+    grid-column:1 / -1;
+}
+
+.tabla-wrapper{
+    overflow-x:auto;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+th,td{
+    padding:13px 10px;
+    border-bottom:1px solid var(--borde);
+    text-align:left;
+    font-size:13px;
+}
+
+th{
+    color:var(--principal);
+    font-size:12px;
+    text-transform:uppercase;
+}
+
+td{
+    color:#ddd;
+}
+
+.estado{
+    display:inline-block;
+    padding:5px 9px;
+    border-radius:20px;
+    font-size:11px;
+    font-weight:700;
+}
+
+.estado-pendiente{
+    background:#332b13;
+    color:#e8c95d;
+}
+
+.estado-confirmado{
+    background:#173317;
+    color:#8be58b;
+}
+
+.estado-cancelado{
+    background:#351717;
+    color:#ff8888;
+}
+
+.estado-completado{
+    background:#182b35;
+    color:#8bcbe5;
+}
+
+.acciones{
+    display:flex;
+    flex-wrap:wrap;
+    gap:7px;
+}
+
+.form-botones{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+}
+
+.agenda-cabecera{
+    display:flex;
+    justify-content:space-between;
+    align-items:end;
+    gap:20px;
+    margin-bottom:20px;
+    flex-wrap:wrap;
+}
+
+.agenda-fecha{
+    min-width:330px;
+    flex:1;
+}
+
+.agenda-leyenda{
+    display:flex;
+    gap:15px;
+    flex-wrap:wrap;
+    color:#aaa;
+    font-size:12px;
+}
+
+.leyenda-item{
+    display:flex;
+    align-items:center;
+    gap:6px;
+}
+
+.leyenda-punto{
+    width:11px;
+    height:11px;
+    border-radius:50%;
+    display:inline-block;
+}
+
+.punto-libre{
+    background:#1b3a1b;
+    border:1px solid #4e9b4e;
+}
+
+.punto-ocupado{
+    background:#3b1717;
+    border:1px solid #a34a4a;
+}
+
+.punto-bloqueado{
+    background:#252525;
+    border:1px solid #555;
+}
+
+.agenda{
+    display:flex;
+    flex-direction:column;
+    gap:18px;
+}
+
+.agenda-barbero{
+    background:#101010;
+    border:1px solid var(--borde);
+    border-radius:12px;
+    overflow:hidden;
+}
+
+.agenda-barbero-header{
+    padding:16px 18px;
+    border-bottom:1px solid var(--borde);
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:10px;
+}
+
+.agenda-barbero-header h3{
+    margin:0;
+    color:var(--principal);
+}
+
+.agenda-barbero-header span{
+    color:#888;
+    font-size:12px;
+}
+
+.horarios-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(155px,1fr));
+    gap:10px;
+    padding:18px;
+}
+
+.horario{
+    min-height:82px;
+    border-radius:9px;
+    border:1px solid #333;
+    padding:12px;
+    text-align:left;
+    transition:.15s;
+}
+
+.horario.libre{
+    background:#101d10;
+    border-color:#365d36;
+    color:#8be58b;
+}
+
+.horario.libre:hover{
+    border-color:#72d572;
+    transform:translateY(-1px);
+}
+
+.horario.ocupado{
+    background:#241212;
+    border-color:#633;
+    color:#ff9999;
+}
+
+.horario.bloqueado{
+    background:#181818;
+    border-color:#292929;
+    color:#666;
+    cursor:not-allowed;
+}
+
+.horario-hora{
+    font-size:18px;
+    font-weight:800;
+    margin-bottom:7px;
+}
+
+.horario-cliente{
+    font-size:13px;
+    color:#fff;
+    font-weight:700;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+}
+
+.horario-servicio{
+    font-size:11px;
+    color:#aaa;
+    margin-top:3px;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+}
+
+.horario-estado{
+    font-size:10px;
+    text-transform:uppercase;
+    margin-top:5px;
+    color:#aaa;
+}
+
+.agenda-vacia{
+    padding:30px;
+    text-align:center;
+    color:#888;
+}
+
+.dia-cancelado{
+    padding:45px 25px;
+    text-align:center;
+    background:#241212;
+    border:1px solid #633;
+    border-radius:12px;
+}
+
+.dia-cancelado-icono{
+    font-size:34px;
+    margin-bottom:12px;
+}
+
+.dia-cancelado h2{
+    color:#ff9999;
+    margin-bottom:8px;
+}
+
+.dia-cancelado-fecha{
+    color:#aaa;
+    margin-bottom:5px;
+}
+
+.dia-cancelado-descripcion{
+    color:#888;
+    font-size:13px;
+}
+
+.turno-detalle{
+    display:grid;
+    gap:10px;
+    margin-bottom:20px;
+}
+
+.detalle-linea{
+    background:#0d0d0d;
+    border:1px solid #292929;
+    border-radius:8px;
+    padding:12px;
+}
+
+.detalle-linea small{
+    display:block;
+    color:#888;
+    font-size:11px;
+    margin-bottom:4px;
+}
+
+.detalle-linea strong{
+    color:#fff;
+}
+
+.mensaje{
+    padding:12px;
+    border-radius:8px;
+    margin-bottom:18px;
+    display:none;
+}
+
+.mensaje.visible{
+    display:block;
+}
+
+.mensaje.exito{
+    background:#142514;
+    border:1px solid #365d36;
+    color:#8be58b;
+}
+
+.mensaje.error{
+    background:#241212;
+    border:1px solid #633;
+    color:#ff9999;
+}
+
+.pantalla{
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:25px;
+}
+
+.login-box{
+    width:100%;
+    max-width:450px;
+    background:var(--card);
+    border:1px solid var(--borde);
+    border-radius:15px;
+    padding:35px;
+    text-align:center;
+}
+
+.login-box h1{
+    color:var(--principal);
+    margin-bottom:10px;
+}
+
+.login-box p{
+    color:var(--gris);
+    margin-bottom:25px;
+}
+
+.login-box .btn{
+    width:100%;
+    padding:14px;
+}
+
+.acceso-error{
+    max-width:600px;
+    background:#160d0d;
+    border:1px solid #633;
+    border-radius:12px;
+    padding:30px;
+    text-align:center;
+}
+
+.acceso-error h2{
+    color:#ff9999;
+    margin-bottom:12px;
+}
+
+.acceso-error p{
+    color:#ccc;
+    margin-bottom:10px;
+}
+
+.modal{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.75);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+    z-index:500;
+}
+
+.modal.visible{
+    display:flex;
+}
+
+.modal-box{
+    width:100%;
+    max-width:600px;
+    max-height:90vh;
+    overflow:auto;
+    background:var(--card);
+    border:1px solid var(--borde);
+    border-radius:14px;
+    padding:25px;
+}
+
+.modal-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:20px;
+}
+
+.modal-header button{
+    background:transparent;
+    border:none;
+    color:#aaa;
+    font-size:25px;
+}
+
+@media(max-width:1000px){
+
+    .stats{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .horarios-grid{
+        grid-template-columns:repeat(2,1fr);
+    }
+}
+
+@media(max-width:750px){
+
+    .sidebar{
+        width:100%;
+        min-height:auto;
+        height:auto;
+        position:relative;
+    }
+
+    .sidebar-bottom{
+        position:static;
+        padding:10px 15px 15px;
+    }
+
+    .app{
+        display:block;
+    }
+
+    .main{
+        margin-left:0;
+        width:100%;
+    }
+
+    .menu{
+        display:grid;
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .topbar{
+        position:static;
+    }
+
+    .contenido{
+        padding:20px 15px;
+    }
+
+    .stats{
+        grid-template-columns:1fr 1fr;
+    }
+
+    .filtros,
+    .form-grid{
+        grid-template-columns:1fr;
+    }
+
+    .form-grid .campo-completo{
+        grid-column:auto;
+    }
+
+    .horarios-grid{
+        grid-template-columns:1fr 1fr;
+    }
+
+    .agenda-fecha{
+        min-width:100%;
+    }
+}
+
+@media(max-width:450px){
+
+    .stats{
+        grid-template-columns:1fr;
+    }
+
+    .menu{
+        grid-template-columns:1fr;
+    }
+
+    .topbar{
+        padding:0 15px;
+    }
+
+    .horarios-grid{
+        grid-template-columns:1fr;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div id="pantallaCarga" class="pantalla">
+
+    <div class="login-box">
+
+        <h1>BARBERÍA</h1>
+
+        <p>
+            Comprobando acceso...
+        </p>
+
+    </div>
+
+</div>
+
+<div id="pantallaLogin" class="pantalla" style="display:none;">
+
+    <div class="login-box">
+
+        <h1>Panel de administración</h1>
+
+        <p>
+            Iniciá sesión con Google para administrar tu barbería.
+        </p>
+
+        <button
+            type="button"
+            class="btn"
+            onclick="iniciarSesionGoogle()">
+            🔐 Iniciar sesión con Google
+        </button>
+
+        <div
+            id="mensajeLogin"
+            class="mensaje"
+            style="margin-top:20px;">
+        </div>
+
+    </div>
+
+</div>
+
+<div
+    id="pantallaAccesoDenegado"
+    class="pantalla"
+    style="display:none;">
+
+    <div class="acceso-error">
+
+        <h2>Acceso no autorizado</h2>
+
+        <p>
+            Esta cuenta no es la propietaria del negocio
+            configurado en esta página.
+        </p>
+
+        <p id="detalleAcceso"></p>
+
+        <br>
+
+        <button
+            type="button"
+            class="btn btn-danger"
+            onclick="cerrarSesion()">
+            Cerrar sesión
+        </button>
+
+    </div>
+
+</div>
+
+<div id="app" class="app" style="display:none;">
+
+    <aside class="sidebar">
+
+        <div class="sidebar-logo">
+
+            <h1 id="sidebarNombre">
+                BARBERÍA
+            </h1>
+
+            <p>
+                Panel de administración
+            </p>
+
+        </div>
+
+        <div class="menu">
+
+            <button
+                class="activo"
+                data-seccion="inicio"
+                onclick="mostrarSeccion('inicio',this)">
+                🏠 Inicio
+            </button>
+
+            <button
+                data-seccion="turnos"
+                onclick="mostrarSeccion('turnos',this)">
+                📅 Agenda
+            </button>
+
+            <button
+                data-seccion="servicios"
+                onclick="mostrarSeccion('servicios',this)">
+                ✂️ Servicios
+            </button>
+
+            <button
+                data-seccion="barberos"
+                onclick="mostrarSeccion('barberos',this)">
+                👤 Barberos
+            </button>
+
+            <button
+                data-seccion="negocio"
+                onclick="mostrarSeccion('negocio',this)">
+                ⚙️ Negocio
+            </button>
+
+        </div>
+
+        <div class="sidebar-bottom">
+
+            <div class="usuario-panel">
+
+                <div>
+                    Administrador
+                </div>
+
+                <strong id="emailAdministrador">
+                    -
+                </strong>
+
+            </div>
+
+            <button
+                class="btn-salir"
+                onclick="cerrarSesion()">
+                Cerrar sesión
+            </button>
+
+        </div>
+
+    </aside>
+
+    <main class="main">
+
+        <div class="topbar">
+
+            <h2 id="tituloTopbar">
+                Inicio
+            </h2>
+
+            <div class="negocio-top">
+
+                <span id="nombreNegocioTop">
+                    -
+                </span>
+
+            </div>
+
+        </div>
+
+        <div class="contenido">
+
+            <div
+                id="mensajeGlobal"
+                class="mensaje">
+            </div>
+
+            <section
+                id="seccion-inicio"
+                class="seccion-admin activa">
+
+                <div class="titulo-seccion">
+
+                    <h1>
+                        Inicio
+                    </h1>
+
+                    <p>
+                        Resumen de tu barbería.
+                    </p>
+
+                </div>
+
+                <div class="stats">
+
+                    <div class="stat">
+
+                        <div
+                            id="statTurnos"
+                            class="numero">
+                            0
+                        </div>
+
+                        <div class="texto">
+                            Turnos totales
+                        </div>
+
+                    </div>
+
+                    <div class="stat">
+
+                        <div
+                            id="statPendientes"
+                            class="numero">
+                            0
+                        </div>
+
+                        <div class="texto">
+                            Turnos pendientes
+                        </div>
+
+                    </div>
+
+                    <div class="stat">
+
+                        <div
+                            id="statServicios"
+                            class="numero">
+                            0
+                        </div>
+
+                        <div class="texto">
+                            Servicios activos
+                        </div>
+
+                    </div>
+
+                    <div class="stat">
+
+                        <div
+                            id="statBarberos"
+                            class="numero">
+                            0
+                        </div>
+
+                        <div class="texto">
+                            Barberos activos
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="card">
+
+                    <h3>
+                        Próximos turnos
+                    </h3>
+
+                    <div class="tabla-wrapper">
+
+                        <table>
+
+                            <thead>
+
+                                <tr>
+                                    <th>Fecha</th>
+                                    <th>Cliente</th>
+                                    <th>Barbero</th>
+                                    <th>Estado</th>
+                                </tr>
+
+                            </thead>
+
+                            <tbody id="tablaProximos">
+
+                                <tr>
+                                    <td colspan="4">
+                                        Cargando...
+                                    </td>
+                                </tr>
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+            <section
+                id="seccion-turnos"
+                class="seccion-admin">
+
+                <div class="titulo-seccion">
+
+                    <h1>
+                        Agenda
+                    </h1>
+
+                    <p>
+                        Mirá los horarios disponibles y los turnos reservados.
+                    </p>
+
+                </div>
+
+                <div class="card">
+
+                    <div class="agenda-cabecera">
+
+                        <div class="agenda-fecha">
+
+                            <div
+                                class="campo"
+                                style="margin:0;">
+
+                                <label>
+                                    Seleccioná una fecha
+                                </label>
+
+                                <div
+                                    style="
+                                        display:flex;
+                                        gap:10px;
+                                        align-items:end;
+                                        flex-wrap:wrap;
+                                    ">
+
+                                    <input
+                                        type="date"
+                                        id="agendaFecha"
+                                        onchange="cargarAgenda()"
+                                        style="
+                                            flex:1;
+                                            min-width:180px;
+                                            padding:12px;
+                                            border-radius:7px;
+                                            border:1px solid #333;
+                                            background:#0d0d0d;
+                                            color:#fff;
+                                            outline:none;
+                                        ">
+
+                                    <button
+                                        type="button"
+                                        id="btnCancelarDia"
+                                        class="btn btn-danger"
+                                        onclick="alternarCancelacionDia()">
+                                        🚫 Cancelar día
+                                    </button>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <div class="agenda-leyenda">
+
+                            <div class="leyenda-item">
+
+                                <span
+                                    class="leyenda-punto punto-libre">
+                                </span>
+
+                                Libre
+
+                            </div>
+
+                            <div class="leyenda-item">
+
+                                <span
+                                    class="leyenda-punto punto-ocupado">
+                                </span>
+
+                                Ocupado
+
+                            </div>
+
+                            <div class="leyenda-item">
+
+                                <span
+                                    class="leyenda-punto punto-bloqueado">
+                                </span>
+
+                                No atiende
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div
+                        id="agenda"
+                        class="agenda">
+
+                        <div class="agenda-vacia">
+                            Cargando agenda...
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+            <section
+                id="seccion-servicios"
+                class="seccion-admin">
+
+                <div class="titulo-seccion">
+
+                    <h1>
+                        Servicios
+                    </h1>
+
+                    <p>
+                        Administrá los servicios que ofrece tu barbería.
+                    </p>
+
+                </div>
+
+                <div class="card">
+
+                    <h3>
+                        Nuevo servicio
+                    </h3>
+
+                    <div class="form-grid">
+
+                        <div class="campo">
+
+                            <label>
+                                Nombre
+                            </label>
+
+                            <input
+                                type="text"
+                                id="nuevoServicioNombre"
+                                placeholder="Ej: Corte clásico">
+
+                        </div>
+
+                        <div class="campo">
+
+                            <label>
+                                Precio
+                            </label>
+
+                            <input
+                                type="number"
+                                id="nuevoServicioPrecio"
+                                min="0"
+                                step="0.01"
+                                placeholder="10000">
+
+                        </div>
+
+                        <div class="campo">
+
+                            <label>
+                                Duración en minutos
+                            </label>
+
+                            <input
+                                type="number"
+                                id="nuevoServicioDuracion"
+                                min="1"
+                                value="30">
+
+                        </div>
+
+                        <div class="campo">
+
+                            <label>
+                                Estado
+                            </label>
+
+                            <select id="nuevoServicioActivo">
+
+                                <option value="true">
+                                    Activo
+                                </option>
+
+                                <option value="false">
+                                    Inactivo
+                                </option>
+
+                            </select>
+
+                        </div>
+
+                        <div class="campo campo-completo">
+
+                            <label>
+                                Descripción
+                            </label>
+
+                            <textarea
+                                id="nuevoServicioDescripcion"
+                                placeholder="Descripción del servicio">
+                            </textarea>
+
+                        </div>
+
+                    </div>
+
+                    <button
+                        class="btn"
+                        onclick="crearServicio()">
+                        + Crear servicio
+                    </button>
+
+                </div>
+
+                <div class="card">
+
+                    <h3>
+                        Servicios existentes
+                    </h3>
+
+                    <div class="tabla-wrapper">
+
+                        <table>
+
+                            <thead>
+
+                                <tr>
+                                    <th>Nombre</th>
+                                    <th>Precio</th>
+                                    <th>Duración</th>
+                                    <th>Estado</th>
+                                    <th>Acciones</th>
+                                </tr>
+
+                            </thead>
+
+                            <tbody id="tablaServicios">
+
+                                <tr>
+                                    <td colspan="5">
+                                        Cargando...
+                                    </td>
+                                </tr>
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+            <section
+                id="seccion-barberos"
+                class="seccion-admin">
+
+                <div class="titulo-seccion">
+
+                    <h1>
+                        Barberos
+                    </h1>
+
+                    <p>
+                        Administrá los barberos de tu negocio.
+                    </p>
+
+                </div>
+
+                <div class="card">
+
+                    <h3>
+                        Barberos
+                    </h3>
+
+                    <div class="tabla-wrapper">
+
+                        <table>
+
+                            <thead>
+
+                                <tr>
+                                    <th>Nombre</th>
+                                    <th>Estado</th>
+                                    <th>Acciones</th>
+                                </tr>
+
+                            </thead>
+
+                            <tbody id="tablaBarberos">
+
+                                <tr>
+                                    <td colspan="3">
+                                        Cargando...
+                                    </td>
+                                </tr>
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+                <div class="card">
+
+                    <h3>
+                        Horarios por barbero
+                    </h3>
+
+                    <p
+                        style="
+                            color:var(--gris);
+                            font-size:13px;
+                            margin-bottom:20px;
+                        ">
+                        Estos horarios son los que utiliza la agenda para mostrar
+                        los turnos disponibles.
+                    </p>
+
+                    <div id="horariosBarberos">
+                        Cargando horarios...
+                    </div>
+
+                </div>
+
+            </section>
+
+            <section
+                id="seccion-negocio"
+                class="seccion-admin">
+
+                <div class="titulo-seccion">
+
+                    <h1>
+                        Negocio
+                    </h1>
+
+                    <p>
+                        Configurá la información pública de tu barbería.
+                    </p>
+
+                </div>
+
+                <div class="card">
+
+                    <div class="form-grid">
+
+                        <div class="campo">
+
+                            <label>
+                                Nombre
+                            </label>
+
+                            <input
+                                type="text"
+                                id="negocioNombre">
+
+                        </div>
+
+                        <div class="campo">
+
+                            <label>
+                                Teléfono / WhatsApp
+                            </label>
+
+                            <input
+                                type="text"
+                                id="negocioTelefono">
+
+                        </div>
+
+                        <div class="campo">
+
+                            <label>
+                                Dirección
+                            </label>
+
+                            <input
+                                type="text"
+                                id="negocioDireccion">
+
+                        </div>
+
+                        <div class="campo">
+
+                            <label>
+                                Instagram
+                            </label>
+
+                            <input
+                                type="text"
+                                id="negocioInstagram">
+
+                        </div>
+
+                        <div class="campo campo-completo">
+
+                            <label>
+                                Logo URL
+                            </label>
+
+                            <input
+                                type="url"
+                                id="negocioLogo"
+                                placeholder="https://...">
+
+                        </div>
+
+                        <div class="campo campo-completo">
+
+                            <label>
+                                Descripción
+                            </label>
+
+                            <textarea
+                                id="negocioDescripcion">
+                            </textarea>
+
+                        </div>
+
+                    </div>
+
+                    <button
+                        class="btn"
+                        onclick="guardarNegocio()">
+                        💾 Guardar cambios
+                    </button>
+
+                </div>
+
+            </section>
+
+        </div>
+
+    </main>
+
+</div>
+
+<div id="modalServicio" class="modal">
+
+    <div class="modal-box">
+
+        <div class="modal-header">
+
+            <h2>
+                Editar servicio
+            </h2>
+
+            <button onclick="cerrarModalServicio()">
+                ×
+            </button>
+
+        </div>
+
+        <input
+            type="hidden"
+            id="editarServicioId">
+
+        <div class="campo">
+
+            <label>
+                Nombre
+            </label>
+
+            <input
+                type="text"
+                id="editarServicioNombre">
+
+        </div>
+
+        <div class="campo">
+
+            <label>
+                Precio
+            </label>
+
+            <input
+                type="number"
+                id="editarServicioPrecio"
+                min="0"
+                step="0.01">
+
+        </div>
+
+        <div class="campo">
+
+            <label>
+                Duración en minutos
+            </label>
+
+            <input
+                type="number"
+                id="editarServicioDuracion"
+                min="1">
+
+        </div>
+
+        <div class="campo">
+
+            <label>
+                Estado
+            </label>
+
+            <select id="editarServicioActivo">
+
+                <option value="true">
+                    Activo
+                </option>
+
+                <option value="false">
+                    Inactivo
+                </option>
+
+            </select>
+
+        </div>
+
+        <div class="campo">
+
+            <label>
+                Descripción
+            </label>
+
+            <textarea
+                id="editarServicioDescripcion">
+            </textarea>
+
+        </div>
+
+        <div class="form-botones">
+
+            <button
+                class="btn"
+                onclick="guardarServicioEditado()">
+                Guardar
+            </button>
+
+            <button
+                class="btn btn-secundario"
+                onclick="cerrarModalServicio()">
+                Cancelar
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+<div id="modalTurno" class="modal">
+
+    <div class="modal-box">
+
+        <div class="modal-header">
+
+            <h2>
+                Detalle del turno
+            </h2>
+
+            <button onclick="cerrarModalTurno()">
+                ×
+            </button>
+
+        </div>
+
+        <div
+            id="detalleTurno"
+            class="turno-detalle">
+        </div>
+
+        <div class="form-botones">
+
+            <button
+                class="btn"
+                onclick="accionModalTurno('confirmado')">
+                Confirmar
+            </button>
+
+            <button
+                class="btn btn-success"
+                onclick="accionModalTurno('completado')">
+                Completar
+            </button>
+
+            <button
+                class="btn btn-danger"
+                onclick="accionModalTurno('cancelado')">
+                Cancelar
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+
+const SUPABASE_URL =
+"https://cqelidpshitntewsktwx.supabase.co";
+
+const SUPABASE_KEY =
+"sb_publishable_o1q2pLVF1zIlZCzPHMaheg_KSawjVvD";
+
+const supabaseClient =
+window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+);
+
+const parametros =
+new URLSearchParams(
+    window.location.search
+);
+
+const NEGOCIO_ID =
+parametros.get("negocio");
+
+let usuarioActual = null;
+let negocioActual = null;
+let serviciosActuales = [];
+let barberosActuales = [];
+let turnosActuales = [];
+let horariosActuales = [];
+let turnoSeleccionado = null;
+
+/*
+ * NUEVO:
+ * Indica si la fecha seleccionada actualmente
+ * está cancelada para este negocio.
+ */
+let diaCanceladoActual = false;
+
+
+function escapeHtml(valor){
+
+    return String(valor ?? "")
+        .replace(/&/g,"&amp;")
+        .replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;")
+        .replace(/"/g,"&quot;")
+        .replace(/'/g,"&#039;");
+}
+
+
+function mostrarGlobal(
+    texto,
+    tipo="exito"
+){
+
+    const elemento =
+        document.getElementById(
+            "mensajeGlobal"
+        );
+
+    elemento.textContent =
+        texto;
+
+    elemento.className =
+        "mensaje " +
+        tipo +
+        " visible";
+
+    setTimeout(
+        () => {
+
+            elemento.classList.remove(
+                "visible"
+            );
+
+        },
+        4000
+    );
+}
+
+
+async function iniciarSesionGoogle(){
+
+    const {error} =
+        await supabaseClient.auth.signInWithOAuth({
+
+            provider:"google",
+
+            options:{
+                redirectTo:
+                    window.location.origin +
+                    window.location.pathname +
+                    window.location.search
+            }
+
+        });
+
+    if(error){
+
+        console.error(error);
+
+        const mensaje =
+            document.getElementById(
+                "mensajeLogin"
+            );
+
+        mensaje.textContent =
+            "No se pudo iniciar sesión: " +
+            error.message;
+
+        mensaje.className =
+            "mensaje error visible";
+    }
+}
+
+
+async function cerrarSesion(){
+
+    await supabaseClient.auth.signOut();
+
+    location.reload();
+}
+
+
+function mostrarSeccion(
+    nombre,
+    boton
+){
+
+    document
+        .querySelectorAll(".seccion-admin")
+        .forEach(seccion => {
+
+            seccion.classList.remove(
+                "activa"
+            );
+
+        });
+
+    const seccion =
+        document.getElementById(
+            "seccion-" + nombre
+        );
+
+    if(seccion){
+
+        seccion.classList.add(
+            "activa"
+        );
+
+    }
+
+    document
+        .querySelectorAll(".menu button")
+        .forEach(btn => {
+
+            btn.classList.remove(
+                "activo"
+            );
+
+        });
+
+    if(boton){
+
+        boton.classList.add(
+            "activo"
+        );
+
+    }else{
+
+        const encontrado =
+            document.querySelector(
+                `.menu button[data-seccion="${nombre}"]`
+            );
+
+        if(encontrado){
+
+            encontrado.classList.add(
+                "activo"
+            );
+
+        }
+    }
+
+    const titulos = {
+
+        inicio:"Inicio",
+        turnos:"Agenda",
+        servicios:"Servicios",
+        barberos:"Barberos",
+        negocio:"Negocio"
+
+    };
+
+    document.getElementById(
+        "tituloTopbar"
+    ).textContent =
+        titulos[nombre] || nombre;
+
+    if(nombre === "turnos"){
+
+        cargarAgenda();
+
+    }
+
+    if(nombre === "servicios"){
+
+        cargarServicios();
+
+    }
+
+    if(nombre === "barberos"){
+
+        cargarBarberos();
+        cargarHorariosBarberos();
+
+    }
+
+    if(nombre === "negocio"){
+
+        cargarDatosNegocio();
+
+    }
+}
+
+
+async function comprobarAcceso(){
+
+    if(!NEGOCIO_ID){
+
+        mostrarAccesoDenegado(
+            "Falta el ID del negocio en la URL."
+        );
+
+        return false;
+    }
+
+    const {
+        data,
+        error
+    } =
+        await supabaseClient.auth.getUser();
+
+    if(
+        error ||
+        !data ||
+        !data.user
+    ){
+
+        document.getElementById(
+            "pantallaCarga"
+        ).style.display = "none";
+
+        document.getElementById(
+            "pantallaLogin"
+        ).style.display = "flex";
+
+        return false;
+    }
+
+    usuarioActual =
+        data.user;
+
+    document.getElementById(
+        "emailAdministrador"
+    ).textContent =
+        usuarioActual.email || "-";
+
+    const {
+        data:negocio,
+        error:errorNegocio
+    } =
+        await supabaseClient
+        .from("negocios")
+        .select(`
+            id,
+            nombre,
+            "dirección",
+            telefono,
+            instagram,
+            logo,
+            descripcion,
+            dueño_id
+        `)
+        .eq(
+            "id",
+            NEGOCIO_ID
+        )
+        .maybeSingle();
+
+    if(errorNegocio){
+
+        console.error(errorNegocio);
+
+        mostrarAccesoDenegado(
+            "No se pudo comprobar el negocio."
+        );
+
+        return false;
+    }
+
+    if(!negocio){
+
+        mostrarAccesoDenegado(
+            "No existe el negocio indicado."
+        );
+
+        return false;
+    }
+
+    negocioActual =
+        negocio;
+
+    if(
+        String(negocio.dueño_id) !==
+        String(usuarioActual.id)
+    ){
+
+        mostrarAccesoDenegado(
+            "Tu cuenta no es la propietaria de este negocio."
+        );
+
+        return false;
+    }
+
+    document.getElementById(
+        "pantallaCarga"
+    ).style.display = "none";
+
+    document.getElementById(
+        "pantallaLogin"
+    ).style.display = "none";
+
+    document.getElementById(
+        "pantallaAccesoDenegado"
+    ).style.display = "none";
+
+    document.getElementById(
+        "app"
+    ).style.display = "flex";
+
+    document.getElementById(
+        "sidebarNombre"
+    ).textContent =
+        negocio.nombre || "BARBERÍA";
+
+    document.getElementById(
+        "nombreNegocioTop"
+    ).textContent =
+        negocio.nombre || "";
+
+    document.title =
+        "Admin | " +
+        (negocio.nombre || "Barbería");
+
+    return true;
+}
+
+
+function mostrarAccesoDenegado(
+    detalle
+){
+
+    document.getElementById(
+        "pantallaCarga"
+    ).style.display = "none";
+
+    document.getElementById(
+        "pantallaLogin"
+    ).style.display = "none";
+
+    document.getElementById(
+        "app"
+    ).style.display = "none";
+
+    document.getElementById(
+        "pantallaAccesoDenegado"
+    ).style.display = "flex";
+
+    document.getElementById(
+        "detalleAcceso"
+    ).textContent =
+        detalle;
+}
+
+
+async function cargarDatosNegocio(){
+
+    if(!negocioActual){
+
+        return;
+    }
+
+    document.getElementById(
+        "negocioNombre"
+    ).value =
+        negocioActual.nombre || "";
+
+    document.getElementById(
+        "negocioTelefono"
+    ).value =
+        negocioActual.telefono || "";
+
+    document.getElementById(
+        "negocioDireccion"
+    ).value =
+        negocioActual["dirección"] || "";
+
+    document.getElementById(
+        "negocioInstagram"
+    ).value =
+        negocioActual.instagram || "";
+
+    document.getElementById(
+        "negocioLogo"
+    ).value =
+        negocioActual.logo || "";
+
+    document.getElementById(
+        "negocioDescripcion"
+    ).value =
+        negocioActual.descripcion || "";
+}
+
+
+async function guardarNegocio(){
+
+    const nombre =
+        document.getElementById(
+            "negocioNombre"
+        ).value.trim();
+
+    const telefono =
+        document.getElementById(
+            "negocioTelefono"
+        ).value.trim();
+
+    const direccion =
+        document.getElementById(
+            "negocioDireccion"
+        ).value.trim();
+
+    const instagram =
+        document.getElementById(
+            "negocioInstagram"
+        ).value.trim();
+
+    const logo =
+        document.getElementById(
+            "negocioLogo"
+        ).value.trim();
+
+    const descripcion =
+        document.getElementById(
+            "negocioDescripcion"
+        ).value.trim();
+
+    if(!nombre){
+
+        mostrarGlobal(
+            "El nombre del negocio es obligatorio.",
+            "error"
+        );
+
+        return;
+    }
+
+    const {
+        data,
+        error
+    } =
+        await supabaseClient
+        .from("negocios")
+        .update({
+            nombre,
+            telefono,
+            "dirección":direccion,
+            instagram,
+            logo,
+            descripcion
+        })
+        .eq(
+            "id",
+            NEGOCIO_ID
+        )
+        .select()
+        .single();
+
+    if(error){
+
+        console.error(error);
+
+        mostrarGlobal(
+            "No se pudo guardar el negocio: " +
+            error.message,
+            "error"
+        );
+
+        return;
+    }
+
+    negocioActual =
+        data;
+
+    document.getElementById(
+        "sidebarNombre"
+    ).textContent =
+        data.nombre;
+
+    document.getElementById(
+        "nombreNegocioTop"
+    ).textContent =
+        data.nombre;
+
+    document.title =
+        "Admin | " +
+        data.nombre;
+
+    mostrarGlobal(
+        "Datos del negocio guardados correctamente."
+    );
+}
+
+
+async function cargarServicios(){
+
+    const tabla =
+        document.getElementById(
+            "tablaServicios"
+        );
+
+    const {
+        data,
+        error
+    } =
+        await supabaseClient
+        .from("servicios")
+        .select(`
+            id,
+            negocio_id,
+            nombre,
+            descripcion,
+            precio,
+            duracion_minutos,
+            activo
+        `)
+        .eq(
+            "negocio_id",
+            NEGOCIO_ID
+        )
+        .order(
+            "nombre"
+        );
+
+    if(error){
+
+        console.error(error);
+
+        tabla.innerHTML = `
+            <tr>
+                <td colspan="5">
+                    Error cargando servicios:
+                    ${escapeHtml(error.message)}
+                </td>
+            </tr>
+        `;
+
+        return;
+    }
+
+    serviciosActuales =
+        data || [];
+
+    document.getElementById(
+        "statServicios"
+    ).textContent =
+        serviciosActuales.filter(
+            s => s.activo
+        ).length;
+
+    if(!serviciosActuales.length){
+
+        tabla.innerHTML = `
+            <tr>
+                <td colspan="5">
+                    No hay servicios creados.
+                </td>
+            </tr>
+        `;
+
+        return;
+    }
+
+    tabla.innerHTML = "";
+
+    serviciosActuales.forEach(
+        servicio => {
+
+            const tr =
+                document.createElement("tr");
+
+            tr.innerHTML = `
+
+                <td>
+
+                    <strong>
+                        ${escapeHtml(
+                            servicio.nombre
+                        )}
+                    </strong>
+
+                    ${
+                        servicio.descripcion
+                        ? `<br>
+                           <small style="color:#888;">
+                               ${escapeHtml(
+                                   servicio.descripcion
+                               )}
+                           </small>`
+                        : ""
+                    }
+
+                </td>
+
+                <td>
+                    $${Number(
+                        servicio.precio || 0
+                    ).toLocaleString("es-AR")}
+                </td>
+
+                <td>
+                    ${
+                        servicio.duracion_minutos
+                        ? servicio.duracion_minutos + " min"
+                        : "-"
+                    }
+                </td>
+
+                <td>
+
+                    ${
+                        servicio.activo
+                        ? `<span class="estado estado-confirmado">
+                               Activo
+                           </span>`
+                        : `<span class="estado estado-cancelado">
+                               Inactivo
+                           </span>`
+                    }
+
+                </td>
+
+                <td>
+
+                    <div class="acciones">
+
+                        <button
+                            class="btn btn-small"
+                            onclick="abrirEditarServicio('${servicio.id}')">
+                            Editar
+                        </button>
+
+                        <button
+                            class="btn btn-small ${
+                                servicio.activo
+                                ? "btn-danger"
+                                : "btn-success"
+                            }"
+                            onclick="cambiarEstadoServicio(
+                                '${servicio.id}',
+                                ${!servicio.activo}
+                            )">
+
+                            ${
+                                servicio.activo
+                                ? "Desactivar"
+                                : "Activar"
+                            }
+
+                        </button>
+
+                    </div>
+
+                </td>
+
+            `;
+
+            tabla.appendChild(
+                tr
+            );
+        }
+    );
+}
+
+
+async function crearServicio(){
+
+    const nombre =
+        document.getElementById(
+            "nuevoServicioNombre"
+        ).value.trim();
+
+    const precio =
+        Number(
+            document.getElementById(
+                "nuevoServicioPrecio"
+            ).value
+        );
+
+    const duracion =
+        Number(
+            document.getElementById(
+                "nuevoServicioDuracion"
+            ).value
+        );
+
+    const activo =
+        document.getElementById(
+            "nuevoServicioActivo"
+        ).value === "true";
+
+    const descripcion =
+        document.getElementById(
+            "nuevoServicioDescripcion"
+        ).value.trim();
+
+    if(!nombre){
+
+        mostrarGlobal(
+            "Ingresá el nombre del servicio.",
+            "error"
+        );
+
+        return;
+    }
+
+    if(
+        !Number.isFinite(precio) ||
+        precio < 0
+    ){
+
+        mostrarGlobal(
+            "Ingresá un precio válido.",
+            "error"
+        );
+
+        return;
+    }
+
+    if(
+        !Number.isFinite(duracion) ||
+        duracion <= 0
+    ){
+
+        mostrarGlobal(
+            "Ingresá una duración válida.",
+            "error"
+        );
+
+        return;
+    }
+
+    const {error} =
+        await supabaseClient
+        .from("servicios")
+        .insert({
+            negocio_id:NEGOCIO_ID,
+            nombre,
+            precio,
+            duracion_minutos:duracion,
+            activo,
+            descripcion
+        });
+
+    if(error){
+
+        mostrarGlobal(
+            "No se pudo crear el servicio: " +
+            error.message,
+            "error"
+        );
+
+        return;
+    }
+
+    document.getElementById(
+        "nuevoServicioNombre"
+    ).value = "";
+
+    document.getElementById(
+        "nuevoServicioPrecio"
+    ).value = "";
+
+    document.getElementById(
+        "nuevoServicioDuracion"
+    ).value = "30";
+
+    document.getElementById(
+        "nuevoServicioDescripcion"
+    ).value = "";
+
+    mostrarGlobal(
+        "Servicio creado correctamente."
+    );
+
+    await cargarServicios();
+}
+
+
+function abrirEditarServicio(id){
+
+    const servicio =
+        serviciosActuales.find(
+            s =>
+                String(s.id) ===
+                String(id)
+        );
+
+    if(!servicio){
+
+        return;
+    }
+
+    document.getElementById(
+        "editarServicioId"
+    ).value =
+        servicio.id;
+
+    document.getElementById(
+        "editarServicioNombre"
+    ).value =
+        servicio.nombre || "";
+
+    document.getElementById(
+        "editarServicioPrecio"
+    ).value =
+        servicio.precio || 0;
+
+    document.getElementById(
+        "editarServicioDuracion"
+    ).value =
+        servicio.duracion_minutos || 30;
+
+    document.getElementById(
+        "editarServicioActivo"
+    ).value =
+        servicio.activo
+        ? "true"
+        : "false";
+
+    document.getElementById(
+        "editarServicioDescripcion"
+    ).value =
+        servicio.descripcion || "";
+
+    document.getElementById(
+        "modalServicio"
+    ).classList.add(
+        "visible"
+    );
+}
+
+
+function cerrarModalServicio(){
+
+    document.getElementById(
+        "modalServicio"
+    ).classList.remove(
+        "visible"
+    );
+}
+
+
+async function guardarServicioEditado(){
+
+    const id =
+        document.getElementById(
+            "editarServicioId"
+        ).value;
+
+    const nombre =
+        document.getElementById(
+            "editarServicioNombre"
+        ).value.trim();
+
+    const precio =
+        Number(
+            document.getElementById(
+                "editarServicioPrecio"
+            ).value
+        );
+
+    const duracion =
+        Number(
+            document.getElementById(
+                "editarServicioDuracion"
+            ).value
+        );
+
+    const activo =
+        document.getElementById(
+            "editarServicioActivo"
+        ).value === "true";
+
+    const descripcion =
+        document.getElementById(
+            "editarServicioDescripcion"
+        ).value.trim();
+
+    if(!nombre){
+
+        mostrarGlobal(
+            "El nombre es obligatorio.",
+            "error"
+        );
+
+        return;
+    }
+
+    const {error} =
+        await supabaseClient
+        .from("servicios")
+        .update({
+            nombre,
+            precio,
+            duracion_minutos:duracion,
+            activo,
+            descripcion
+        })
+        .eq(
+            "id",
+            id
+        )
+        .eq(
+            "negocio_id",
+            NEGOCIO_ID
+        );
+
+    if(error){
+
+        mostrarGlobal(
+            "No se pudo actualizar el servicio: " +
+            error.message,
+            "error"
+        );
+
+        return;
+    }
+
+    cerrarModalServicio();
+
+    mostrarGlobal(
+        "Servicio actualizado correctamente."
+    );
+
+    await cargarServicios();
+}
+
+
+async function cambiarEstadoServicio(
+    id,
+    nuevoEstado
+){
+
+    const {error} =
+        await supabaseClient
+        .from("servicios")
+        .update({
+            activo:nuevoEstado
+        })
+        .eq(
+            "id",
+            id
+        )
+        .eq(
+            "negocio_id",
+            NEGOCIO_ID
+        );
+
+    if(error){
+
+        mostrarGlobal(
+            "No se pudo cambiar el estado: " +
+            error.message,
+            "error"
+        );
+
+        return;
+    }
+
+    mostrarGlobal(
+        nuevoEstado
+        ? "Servicio activado."
+        : "Servicio desactivado."
+    );
+
+    await cargarServicios();
+}
+
+
+async function cargarBarberos(){
+
+    const tabla =
+        document.getElementById(
+            "tablaBarberos"
+        );
+
+    const {
+        data,
+        error
+    } =
+        await supabaseClient
+        .from("barberos")
+        .select(`
+            id,
+            negocio_id,
+            nombre,
+            activo,
+            created_at,
+            usuario_id
+        `)
+        .eq(
+            "negocio_id",
+            NEGOCIO_ID
+        )
+        .order(
+            "nombre"
+        );
+
+    if(error){
+
+        tabla.innerHTML = `
+            <tr>
+                <td colspan="3">
+                    Error cargando barberos:
+                    ${escapeHtml(error.message)}
+                </td>
+            </tr>
+        `;
+
+        return;
+    }
+
+    barberosActuales =
+        data || [];
+
+    document.getElementById(
+        "statBarberos"
+    ).textContent =
+        barberosActuales.filter(
+            b => b.activo
+        ).length;
+
+    if(!barberosActuales.length){
+
+        tabla.innerHTML = `
+            <tr>
+                <td colspan="3">
+                    No hay barberos cargados.
+                </td>
+            </tr>
+        `;
+
+        return;
+    }
+
+    tabla.innerHTML = "";
+
+    barberosActuales.forEach(
+        barbero => {
+
+            const tr =
+                document.createElement("tr");
+
+            tr.innerHTML = `
+
+                <td>
+
+                    <strong>
+                        ${escapeHtml(
+                            barbero.nombre
+                        )}
+                    </strong>
+
+                </td>
+
+                <td>
+
+                    ${
+                        barbero.activo
+                        ? `<span class="estado estado-confirmado">
+                               Activo
+                           </span>`
+                        : `<span class="estado estado-cancelado">
+                               Inactivo
+                           </span>`
+                    }
+
+                </td>
+
+                <td>
+
+                    <button
+                        class="btn btn-small ${
+                            barbero.activo
+                            ? "btn-danger"
+                            : "btn-success"
+                        }"
+                        onclick="cambiarEstadoBarbero(
+                            '${barbero.id}',
+                            ${!barbero.activo}
+                        )">
+
+                        ${
+                            barbero.activo
+                            ? "Desactivar"
+                            : "Activar"
+                        }
+
+                    </button>
+
+                </td>
+
+            `;
+
+            tabla.appendChild(
+                tr
+            );
+        }
+    );
+}
+
+
+async function cambiarEstadoBarbero(
+    id,
+    nuevoEstado
+){
+
+    const {error} =
+        await supabaseClient
+        .from("barberos")
+        .update({
+            activo:nuevoEstado
+        })
+        .eq(
+            "id",
+            id
+        )
+        .eq(
+            "negocio_id",
+            NEGOCIO_ID
+        );
+
+    if(error){
+
+        mostrarGlobal(
+            "No se pudo cambiar el estado del barbero: " +
+            error.message,
+            "error"
+        );
+
+        return;
+    }
+
+    mostrarGlobal(
+        nuevoEstado
+        ? "Barbero activado."
+        : "Barbero desactivado."
+    );
+
+    await cargarBarberos();
+    await cargarHorariosBarberos();
+}
+
+
+const DIAS_SEMANA = [
+
+    "Domingo",
+    "Lunes",
+    "Martes",
+    "Miércoles",
+    "Jueves",
+    "Viernes",
+    "Sábado"
+
+];
+
+
+async function cargarHorariosBarberos(){
+
+    const contenedor =
+        document.getElementById(
+            "horariosBarberos"
+        );
+
+    if(!barberosActuales.length){
+
+        await cargarBarberos();
+
+    }
+
+    if(!barberosActuales.length){
+
+        contenedor.innerHTML =
+            "No hay barberos.";
+
+        return;
+    }
+
+    const {
+        data,
+        error
+    } =
+        await supabaseClient
+        .from("barbero_horarios")
+        .select(`
+            id,
+            barbero_id,
+            dia_semana,
+            hora_inicio,
+            hora_fin,
+            activo
+        `)
+        .in(
+            "barbero_id",
+            barberosActuales.map(
+                b => b.id
+            )
+        )
+        .order(
+            "dia_semana"
+        );
+
+    if(error){
+
+        contenedor.innerHTML = `
+            <div class="mensaje error visible">
+                No se pudieron cargar los horarios:
+                ${escapeHtml(
+                    error.message
+                )}
+            </div>
+        `;
+
+        return;
+    }
+
+    horariosActuales =
+        data || [];
+
+    contenedor.innerHTML = "";
+
+    barberosActuales.forEach(
+        barbero => {
+
+            const card =
+                document.createElement("div");
+
+            card.className =
+                "card";
+
+            let html = `
+
+                <h3>
+                    ${escapeHtml(
+                        barbero.nombre
+                    )}
+                </h3>
+
+            `;
+
+            for(
+                let dia=0;
+                dia<=6;
+                dia++
+            ){
+
+                const horario =
+                    horariosActuales.find(
+                        h =>
+                            String(h.barbero_id) ===
+                            String(barbero.id) &&
+                            Number(h.dia_semana) ===
+                            dia
+                    );
+
+                html += `
+
+                    <div
+                        style="
+                            display:grid;
+                            grid-template-columns:
+                                130px 1fr 1fr 100px;
+                            gap:10px;
+                            align-items:center;
+                            margin-bottom:10px;
+                        ">
+
+                        <strong
+                            style="
+                                font-size:13px;
+                            ">
+
+                            ${DIAS_SEMANA[dia]}
+
+                        </strong>
+
+                        <input
+                            type="time"
+                            id="inicio-${barbero.id}-${dia}"
+                            value="${
+                                horario &&
+                                horario.hora_inicio
+                                ? horario.hora_inicio.slice(0,5)
+                                : "09:00"
+                            }"
+                            style="
+                                width:100%;
+                                padding:9px;
+                                background:#0d0d0d;
+                                color:#fff;
+                                border:1px solid #333;
+                                border-radius:7px;
+                            ">
+
+                        <input
+                            type="time"
+                            id="fin-${barbero.id}-${dia}"
+                            value="${
+                                horario &&
+                                horario.hora_fin
+                                ? horario.hora_fin.slice(0,5)
+                                : "18:00"
+                            }"
+                            style="
+                                width:100%;
+                                padding:9px;
+                                background:#0d0d0d;
+                                color:#fff;
+                                border:1px solid #333;
+                                border-radius:7px;
+                            ">
+
+                        <label
+                            style="
+                                font-size:12px;
+                                color:#aaa;
+                                display:flex;
+                                gap:5px;
+                                align-items:center;
+                            ">
+
+                            <input
+                                type="checkbox"
+                                id="activo-${barbero.id}-${dia}"
+                                ${
+                                    horario &&
+                                    horario.activo
+                                    ? "checked"
+                                    : ""
+                                }>
+
+                            Atiende
+
+                        </label>
+
+                    </div>
+
+                `;
+            }
+
+            html += `
+
+                <button
+                    class="btn"
+                    onclick="guardarHorariosBarbero(
+                        '${barbero.id}'
+                    )">
+
+                    💾 Guardar horarios
+
+                </button>
+
+            `;
+
+            card.innerHTML =
+                html;
+
+            contenedor.appendChild(
+                card
+            );
+        }
+    );
+}
+
+
+async function guardarHorariosBarbero(
+    barberoId
+){
+
+    for(
+        let dia=0;
+        dia<=6;
+        dia++
+    ){
+
+        const inputInicio =
+            document.getElementById(
+                `inicio-${barberoId}-${dia}`
+            );
+
+        const inputFin =
+            document.getElementById(
+                `fin-${barberoId}-${dia}`
+            );
+
+        const checkbox =
+            document.getElementById(
+                `activo-${barberoId}-${dia}`
+            );
+
+        const horaInicio =
+            inputInicio.value;
+
+        const horaFin =
+            inputFin.value;
+
+        const activo =
+            checkbox.checked;
+
+        if(
+            activo &&
+            (!horaInicio || !horaFin)
+        ){
+
+            mostrarGlobal(
+                `Completá el horario del ${DIAS_SEMANA[dia]}.`,
+                "error"
+            );
+
+            return;
+        }
+
+        if(
+            activo &&
+            horaInicio >= horaFin
+        ){
+
+            mostrarGlobal(
+                `El horario del ${DIAS_SEMANA[dia]} no es válido.`,
+                "error"
+            );
+
+            return;
+        }
+
+        const {
+            data:existente,
+            error:errorExistente
+        } =
+            await supabaseClient
+            .from("barbero_horarios")
+            .select("id")
+            .eq(
+                "barbero_id",
+                barberoId
+            )
+            .eq(
+                "dia_semana",
+                dia
+            )
+            .maybeSingle();
+
+        if(errorExistente){
+
+            mostrarGlobal(
+                "No se pudo comprobar el horario.",
+                "error"
+            );
+
+            return;
+        }
+
+        if(existente){
+
+            const {error} =
+                await supabaseClient
+                .from("barbero_horarios")
+                .update({
+                    hora_inicio:horaInicio,
+                    hora_fin:horaFin,
+                    activo
+                })
+                .eq(
+                    "id",
+                    existente.id
+                );
+
+            if(error){
+
+                mostrarGlobal(
+                    "No se pudo actualizar un horario: " +
+                    error.message,
+                    "error"
+                );
+
+                return;
+            }
+
+        }else{
+
+            const {error} =
+                await supabaseClient
+                .from("barbero_horarios")
+                .insert({
+                    barbero_id:barberoId,
+                    dia_semana:dia,
+                    hora_inicio:horaInicio,
+                    hora_fin:horaFin,
+                    activo
+                });
+
+            if(error){
+
+                mostrarGlobal(
+                    "No se pudo crear un horario: " +
+                    error.message,
+                    "error"
+                );
+
+                return;
+            }
+        }
+    }
+
+    mostrarGlobal(
+        "Horarios guardados correctamente."
+    );
+
+    await cargarHorariosBarberos();
+
+    await cargarAgenda();
+}
+
+
+function fechaLocalISO(){
+
+    const ahora =
+        new Date();
+
+    const año =
+        ahora.getFullYear();
+
+    const mes =
+        String(
+            ahora.getMonth()+1
+        ).padStart(
+            2,
+            "0"
+        );
+
+    const dia =
+        String(
+            ahora.getDate()
+        ).padStart(
+            2,
+            "0"
+        );
+
+    return `${año}-${mes}-${dia}`;
+}
+
+
+function horaAMinutos(hora){
+
+    const partes =
+        hora
+        .slice(0,5)
+        .split(":")
+        .map(Number);
+
+    return (
+        partes[0] * 60 +
+        partes[1]
+    );
+}
+
+
+function minutosAHora(minutos){
+
+    const horas =
+        Math.floor(
+            minutos / 60
+        );
+
+    const mins =
+        minutos % 60;
+
+    return (
+        String(horas).padStart(
+            2,
+            "0"
+        ) +
+        ":" +
+        String(mins).padStart(
+            2,
+            "0"
+        )
+    );
+}
+
+
+function crearSlots(
+    inicio,
+    fin,
+    intervalo=30
+){
+
+    const slots = [];
+
+    let actual =
+        horaAMinutos(
+            inicio
+        );
+
+    const final =
+        horaAMinutos(
+            fin
+        );
+
+    while(
+        actual + intervalo <= final
+    ){
+
+        slots.push({
+            inicio:actual,
+            fin:actual + intervalo
+        });
+
+        actual += intervalo;
+    }
+
+    return slots;
+}
+
+
+function turnoCoincide(
+    turno,
+    fecha,
+    barberoId,
+    slot
+){
+
+    if(
+        String(turno.barbero_id) !==
+        String(barberoId)
+    ){
+
+        return false;
+
+    }
+
+    const inicio =
+        new Date(
+            turno.fecha_hora_inicio
+        );
+
+    const fin =
+        new Date(
+            turno.fecha_hora_fin ||
+            turno.fecha_hora_inicio
+        );
+
+    const año =
+        inicio.getFullYear();
+
+    const mes =
+        String(
+            inicio.getMonth()+1
+        ).padStart(
+            2,
+            "0"
+        );
+
+    const dia =
+        String(
+            inicio.getDate()
+        ).padStart(
+            2,
+            "0"
+        );
+
+    if(
+        `${año}-${mes}-${dia}` !==
+        fecha
+    ){
+
+        return false;
+
+    }
+
+    const minutosInicio =
+        inicio.getHours()*60 +
+        inicio.getMinutes();
+
+    const minutosFin =
+        fin.getHours()*60 +
+        fin.getMinutes();
+
+    return (
+        minutosInicio < slot.fin &&
+        minutosFin > slot.inicio
+    );
+}
+
+
+/*
+ * ==========================================================
+ * NUEVO SISTEMA DE DÍAS CANCELADOS
+ * ==========================================================
+ */
+
+
+async function comprobarDiaCancelado(
+    fecha
+){
+
+    const {
+        data,
+        error
+    } =
+        await supabaseClient
+        .from("dias_cancelados")
+        .select(`
+            id,
+            fecha
+        `)
+        .eq(
+            "negocio_id",
+            NEGOCIO_ID
+        )
+        .eq(
+            "fecha",
+            fecha
+        )
+        .maybeSingle();
+
+    if(error){
+
+        console.error(
+            "Error comprobando día cancelado:",
+            error
+        );
+
+        diaCanceladoActual =
+            false;
+
+        actualizarBotonCancelacionDia();
+
+        mostrarGlobal(
+            "No se pudo comprobar si el día está cancelado: " +
+            error.message,
+            "error"
+        );
+
+        return false;
+    }
+
+    diaCanceladoActual =
+        !!data;
+
+    actualizarBotonCancelacionDia();
+
+    return diaCanceladoActual;
+}
+
+
+function actualizarBotonCancelacionDia(){
+
+    const boton =
+        document.getElementById(
+            "btnCancelarDia"
+        );
+
+    if(!boton){
+
+        return;
+    }
+
+    if(diaCanceladoActual){
+
+        boton.textContent =
+            "✅ Habilitar día";
+
+        boton.className =
+            "btn btn-success";
+
+        boton.title =
+            "Habilitar nuevamente este día";
+
+    }else{
+
+        boton.textContent =
+            "🚫 Cancelar día";
+
+        boton.className =
+            "btn btn-danger";
+
+        boton.title =
+            "Cancelar este día";
+
+    }
+}
+
+
+async function alternarCancelacionDia(){
+
+    const input =
+        document.getElementById(
+            "agendaFecha"
+        );
+
+    const fecha =
+        input.value;
+
+    if(!fecha){
+
+        mostrarGlobal(
+            "Seleccioná una fecha.",
+            "error"
+        );
+
+        return;
+    }
+
+    /*
+     * SI YA ESTÁ CANCELADO:
+     * preguntamos si quiere habilitarlo.
+     */
+
+    if(diaCanceladoActual){
+
+        const confirmar =
+            confirm(
+                `¿Querés habilitar nuevamente el día ${fecha}?\n\n` +
+                `Los turnos existentes no se modificarán.`
+            );
+
+        if(!confirmar){
+
+            return;
+        }
+
+        const {
+            error
+        } =
+            await supabaseClient
+            .from("dias_cancelados")
+            .delete()
+            .eq(
+                "negocio_id",
+                NEGOCIO_ID
+            )
+            .eq(
+                "fecha",
+                fecha
+            );
+
+        if(error){
+
+            console.error(error);
+
+            mostrarGlobal(
+                "No se pudo habilitar el día: " +
+                error.message,
+                "error"
+            );
+
+            return;
+        }
+
+        diaCanceladoActual =
+            false;
+
+        actualizarBotonCancelacionDia();
+
+        mostrarGlobal(
+            "Día habilitado nuevamente."
+        );
+
+        await cargarAgenda();
+
+        return;
+    }
+
+    /*
+     * SI NO ESTÁ CANCELADO:
+     * preguntamos antes de cancelar.
+     */
+
+    const confirmar =
+        confirm(
+            `¿Querés cancelar el día ${fecha}?\n\n` +
+            `Los turnos que ya existen NO se borrarán ni modificarán.\n\n` +
+            `La cancelación solamente marcará este día como no disponible.`
+        );
+
+    if(!confirmar){
+
+        return;
+    }
+
+    const {
+        error
+    } =
+        await supabaseClient
+        .from("dias_cancelados")
+        .insert({
+            negocio_id:NEGOCIO_ID,
+            fecha:fecha
+        });
+
+    if(error){
+
+        console.error(error);
+
+        /*
+         * Por si dos acciones intentaran crear
+         * exactamente el mismo día.
+         */
+
+        if(error.code === "23505"){
+
+            mostrarGlobal(
+                "Ese día ya estaba cancelado.",
+                "error"
+            );
+
+            await comprobarDiaCancelado(
+                fecha
+            );
+
+            await cargarAgenda();
+
+            return;
+        }
+
+        mostrarGlobal(
+            "No se pudo cancelar el día: " +
+            error.message,
+            "error"
+        );
+
+        return;
+    }
+
+    diaCanceladoActual =
+        true;
+
+    actualizarBotonCancelacionDia();
+
+    mostrarGlobal(
+        "Día cancelado correctamente."
+    );
+
+    await cargarAgenda();
+}
+
+
+async function cargarAgenda(){
+
+    const contenedor =
+        document.getElementById(
+            "agenda"
+        );
+
+    let fecha =
+        document.getElementById(
+            "agendaFecha"
+        ).value;
+
+    if(!fecha){
+
+        fecha =
+            fechaLocalISO();
+
+        document.getElementById(
+            "agendaFecha"
+        ).value =
+            fecha;
+    }
+
+    /*
+     * NUEVO:
+     * Primero comprobamos si el día está cancelado
+     * específicamente para este negocio.
+     */
+
+    await comprobarDiaCancelado(
+        fecha
+    );
+
+    contenedor.innerHTML = `
+        <div class="agenda-vacia">
+            Cargando agenda...
+        </div>
+    `;
+
+    if(!barberosActuales.length){
+
+        await cargarBarberos();
+
+    }
+
+    if(!barberosActuales.length){
+
+        /*
+         * Aunque no haya barberos,
+         * si el día está cancelado debe mostrar
+         * igualmente el estado del día.
+         */
+
+        if(diaCanceladoActual){
+
+            contenedor.innerHTML = `
+
+                <div class="dia-cancelado">
+
+                    <div class="dia-cancelado-icono">
+                        🚫
+                    </div>
+
+                    <h2>
+                        DÍA CANCELADO
+                    </h2>
+
+                    <div class="dia-cancelado-fecha">
+                        ${escapeHtml(fecha)}
+                    </div>
+
+                    <div class="dia-cancelado-descripcion">
+                        Este día está marcado como no disponible.
+                        Los turnos existentes se conservaron.
+                    </div>
+
+                </div>
+
+            `;
+
+            return;
+        }
+
+        contenedor.innerHTML = `
+            <div class="agenda-vacia">
+                No hay barberos cargados.
+            </div>
+        `;
+
+        return;
+    }
+
+    /*
+     * Cargamos los horarios.
+     */
+
+    const {
+        data:horarios,
+        error:errorHorarios
+    } =
+        await supabaseClient
+        .from("barbero_horarios")
+        .select(`
+            id,
+            barbero_id,
+            dia_semana,
+            hora_inicio,
+            hora_fin,
+            activo
+        `)
+        .in(
+            "barbero_id",
+            barberosActuales.map(
+                b => b.id
+            )
+        );
+
+    if(errorHorarios){
+
+        contenedor.innerHTML = `
+            <div class="agenda-vacia">
+                Error cargando horarios:
+                ${escapeHtml(
+                    errorHorarios.message
+                )}
+            </div>
+        `;
+
+        return;
+    }
+
+    horariosActuales =
+        horarios || [];
+
+    const fechaObj =
+        new Date(
+            `${fecha}T12:00:00`
+        );
+
+    const diaSemana =
+        fechaObj.getDay();
+
+    const inicioDia =
+        `${fecha}T00:00:00`;
+
+    const finDia =
+        `${fecha}T23:59:59`;
+
+    /*
+     * La columna correcta es:
+     *
+     * turnos.negocios_id
+     *
+     * El nombre del cliente sale directamente de:
+     *
+     * turnos.nombre_cliente
+     */
+
+    const {
+        data:turnos,
+        error:errorTurnos
+    } =
+        await supabaseClient
+        .from("turnos")
+        .select(`
+            id,
+            negocios_id,
+            cliente_id,
+            nombre_cliente,
+            barbero_id,
+            fecha_hora_inicio,
+            fecha_hora_fin,
+            precio_reservado_total,
+            estado,
+            created_at
+        `)
+        .eq(
+            "negocios_id",
+            NEGOCIO_ID
+        )
+        .gte(
+            "fecha_hora_inicio",
+            inicioDia
+        )
+        .lte(
+            "fecha_hora_inicio",
+            finDia
+        )
+        .order(
+            "fecha_hora_inicio",
+            {
+                ascending:true
+            }
+        );
+
+    if(errorTurnos){
+
+        contenedor.innerHTML = `
+            <div class="agenda-vacia">
+                Error cargando turnos:
+                ${escapeHtml(
+                    errorTurnos.message
+                )}
+            </div>
+        `;
+
+        console.error(
+            errorTurnos
+        );
+
+        return;
+    }
+
+    turnosActuales =
+        turnos || [];
+
+    /*
+     * ======================================================
+     * DÍA CANCELADO
+     * ======================================================
+     *
+     * IMPORTANTE:
+     *
+     * Los turnos ya fueron cargados pero NO hacemos
+     * absolutamente nada con ellos.
+     *
+     * No se borran.
+     * No se cancelan.
+     * No se modifican.
+     *
+     * Simplemente mostramos que el día está cancelado
+     * en la agenda del administrador.
+     */
+
+    if(diaCanceladoActual){
+
+        contenedor.innerHTML = `
+
+            <div class="dia-cancelado">
+
+                <div class="dia-cancelado-icono">
+                    🚫
+                </div>
+
+                <h2>
+                    DÍA CANCELADO
+                </h2>
+
+                <div class="dia-cancelado-fecha">
+                    ${escapeHtml(fecha)}
+                </div>
+
+                <div class="dia-cancelado-descripcion">
+                    Este día está marcado como no disponible.
+                    Los turnos existentes se conservaron.
+                </div>
+
+            </div>
+
+        `;
+
+        return;
+    }
+
+    /*
+     * ======================================================
+     * AGENDA NORMAL
+     * ======================================================
+     */
+
+    const activos =
+        barberosActuales.filter(
+            b => b.activo
+        );
+
+    if(!activos.length){
+
+        contenedor.innerHTML = `
+            <div class="agenda-vacia">
+                No hay barberos activos.
+            </div>
+        `;
+
+        return;
+    }
+
+    contenedor.innerHTML = "";
+
+    let hayAgenda = false;
+
+    activos.forEach(
+        barbero => {
+
+            const horario =
+                horariosActuales.find(
+                    h =>
+                        String(h.barbero_id) ===
+                        String(barbero.id) &&
+                        Number(h.dia_semana) ===
+                        diaSemana
+                );
+
+            const card =
+                document.createElement(
+                    "div"
+                );
+
+            card.className =
+                "agenda-barbero";
+
+            const header =
+                document.createElement(
+                    "div"
+                );
+
+            header.className =
+                "agenda-barbero-header";
+
+            header.innerHTML = `
+
+                <h3>
+                    👤 ${escapeHtml(
+                        barbero.nombre
+                    )}
+                </h3>
+
+                <span>
+
+                    ${
+                        horario &&
+                        horario.activo
+
+                        ? `${horario.hora_inicio.slice(0,5)}
+                           - ${horario.hora_fin.slice(0,5)}`
+
+                        : "No atiende este día"
+                    }
+
+                </span>
+
+            `;
+
+            card.appendChild(
+                header
+            );
+
+            const grid =
+                document.createElement(
+                    "div"
+                );
+
+            grid.className =
+                "horarios-grid";
+
+            if(
+                !horario ||
+                !horario.activo
+            ){
+
+                grid.innerHTML = `
+
+                    <div
+                        class="agenda-vacia"
+                        style="grid-column:1/-1;">
+
+                        Este barbero no atiende este día.
+
+                    </div>
+
+                `;
+
+                card.appendChild(
+                    grid
+                );
+
+                contenedor.appendChild(
+                    card
+                );
+
+                return;
+            }
+
+            hayAgenda = true;
+
+            const slots =
+                crearSlots(
+                    horario.hora_inicio,
+                    horario.hora_fin,
+                    30
+                );
+
+            if(!slots.length){
+
+                grid.innerHTML = `
+
+                    <div
+                        class="agenda-vacia"
+                        style="grid-column:1/-1;">
+
+                        No hay horarios configurados.
+
+                    </div>
+
+                `;
+
+                card.appendChild(
+                    grid
+                );
+
+                contenedor.appendChild(
+                    card
+                );
+
+                return;
+            }
+
+            slots.forEach(
+                slot => {
+
+                    const turno =
+                        turnosActuales.find(
+                            t =>
+                                turnoCoincide(
+                                    t,
+                                    fecha,
+                                    barbero.id,
+                                    slot
+                                )
+                        );
+
+                    const boton =
+                        document.createElement(
+                            "button"
+                        );
+
+                    boton.type =
+                        "button";
+
+                    if(turno){
+
+                        boton.className =
+                            "horario ocupado";
+
+                        const nombreCliente =
+                            turno.nombre_cliente ||
+                            "Cliente";
+
+                        const servicioTexto =
+                            turno.estado ===
+                            "cancelado"
+
+                            ? "Cancelado"
+
+                            : turno.estado;
+
+                        boton.innerHTML = `
+
+                            <div class="horario-hora">
+                                ${minutosAHora(
+                                    slot.inicio
+                                )}
+                            </div>
+
+                            <div class="horario-cliente">
+                                ${escapeHtml(
+                                    nombreCliente
+                                )}
+                            </div>
+
+                            <div class="horario-servicio">
+                                ${escapeHtml(
+                                    servicioTexto
+                                )}
+                            </div>
+
+                            <div class="horario-estado">
+                                Ver turno
+                            </div>
+
+                        `;
+
+                        boton.onclick =
+                            () =>
+                                abrirDetalleTurno(
+                                    turno
+                                );
+
+                    }else{
+
+                        boton.className =
+                            "horario libre";
+
+                        boton.innerHTML = `
+
+                            <div class="horario-hora">
+                                ${minutosAHora(
+                                    slot.inicio
+                                )}
+                            </div>
+
+                            <div class="horario-cliente">
+                                Horario libre
+                            </div>
+
+                            <div class="horario-estado">
+                                Disponible
+                            </div>
+
+                        `;
+                    }
+
+                    grid.appendChild(
+                        boton
+                    );
+
+                }
+            );
+
+            card.appendChild(
+                grid
+            );
+
+            contenedor.appendChild(
+                card
+            );
+
+        }
+    );
+
+    if(!hayAgenda){
+
+        contenedor.innerHTML = `
+
+            <div class="agenda-vacia">
+
+                No hay horarios configurados para este día.
+
+            </div>
+
+        `;
+    }
+}
+
+
+function abrirDetalleTurno(
+    turno
+){
+
+    turnoSeleccionado =
+        turno;
+
+    const barbero =
+        barberosActuales.find(
+            b =>
+                String(b.id) ===
+                String(turno.barbero_id)
+        );
+
+    const inicio =
+        new Date(
+            turno.fecha_hora_inicio
+        );
+
+    const fin =
+        turno.fecha_hora_fin
+        ? new Date(
+            turno.fecha_hora_fin
+        )
+        : null;
+
+    const fecha =
+        inicio.toLocaleDateString(
+            "es-AR",
+            {
+                day:"2-digit",
+                month:"2-digit",
+                year:"numeric"
+            }
+        );
+
+    const horaInicio =
+        inicio.toLocaleTimeString(
+            "es-AR",
+            {
+                hour:"2-digit",
+                minute:"2-digit"
+            }
+        );
+
+    const horaFin =
+        fin
+        ? fin.toLocaleTimeString(
+            "es-AR",
+            {
+                hour:"2-digit",
+                minute:"2-digit"
+            }
+        )
+        : "-";
+
+    const detalle =
+        document.getElementById(
+            "detalleTurno"
+        );
+
+    detalle.innerHTML = `
+
+        <div class="detalle-linea">
+
+            <small>
+                Cliente
+            </small>
+
+            <strong>
+                ${escapeHtml(
+                    turno.nombre_cliente ||
+                    "Cliente"
+                )}
+            </strong>
+
+        </div>
+
+        <div class="detalle-linea">
+
+            <small>
+                ID del cliente
+            </small>
+
+            <strong>
+                ${escapeHtml(
+                    turno.cliente_id ||
+                    "-"
+                )}
+            </strong>
+
+        </div>
+
+        <div class="detalle-linea">
+
+            <small>
+                Fecha
+            </small>
+
+            <strong>
+                ${fecha}
+            </strong>
+
+        </div>
+
+        <div class="detalle-linea">
+
+            <small>
+                Horario
+            </small>
+
+            <strong>
+                ${horaInicio}
+                -
+                ${horaFin}
+            </strong>
+
+        </div>
+
+        <div class="detalle-linea">
+
+            <small>
+                Barbero
+            </small>
+
+            <strong>
+                ${escapeHtml(
+                    barbero
+                    ? barbero.nombre
+                    : "Barbero"
+                )}
+            </strong>
+
+        </div>
+
+        <div class="detalle-linea">
+
+            <small>
+                Estado
+            </small>
+
+            <strong>
+                ${escapeHtml(
+                    turno.estado
+                )}
+            </strong>
+
+        </div>
+
+    `;
+
+    document.getElementById(
+        "modalTurno"
+    ).classList.add(
+        "visible"
+    );
+}
+
+
+function cerrarModalTurno(){
+
+    document.getElementById(
+        "modalTurno"
+    ).classList.remove(
+        "visible"
+    );
+
+    turnoSeleccionado =
+        null;
+}
+
+
+async function accionModalTurno(
+    nuevoEstado
+){
+
+    if(!turnoSeleccionado){
+
+        return;
+    }
+
+    await cambiarEstadoTurno(
+        turnoSeleccionado.id,
+        nuevoEstado
+    );
+
+    cerrarModalTurno();
+}
+
+
+async function cambiarEstadoTurno(
+    turnoId,
+    nuevoEstado
+){
+
+    const {error} =
+        await supabaseClient
+        .from("turnos")
+        .update({
+            estado:nuevoEstado
+        })
+        .eq(
+            "id",
+            turnoId
+        )
+        .eq(
+            "negocios_id",
+            NEGOCIO_ID
+        );
+
+    if(error){
+
+        mostrarGlobal(
+            "No se pudo actualizar el turno: " +
+            error.message,
+            "error"
+        );
+
+        return;
+    }
+
+    mostrarGlobal(
+        "Turno actualizado correctamente."
+    );
+
+    await cargarAgenda();
+
+    await cargarProximosTurnos();
+
+    await actualizarEstadisticas();
+}
+
+
+async function actualizarEstadisticas(){
+
+    const {
+        data,
+        error
+    } =
+        await supabaseClient
+        .from("turnos")
+        .select(
+            "id,estado"
+        )
+        .eq(
+            "negocios_id",
+            NEGOCIO_ID
+        );
+
+    if(error){
+
+        return;
+    }
+
+    const turnos =
+        data || [];
+
+    document.getElementById(
+        "statTurnos"
+    ).textContent =
+        turnos.length;
+
+    document.getElementById(
+        "statPendientes"
+    ).textContent =
+        turnos.filter(
+            t =>
+                t.estado ===
+                "pendiente"
+        ).length;
+}
+
+
+async function cargarProximosTurnos(){
+
+    const tabla =
+        document.getElementById(
+            "tablaProximos"
+        );
+
+    const ahora =
+        new Date().toISOString();
+
+    const {
+        data,
+        error
+    } =
+        await supabaseClient
+        .from("turnos")
+        .select(`
+            id,
+            cliente_id,
+            nombre_cliente,
+            barbero_id,
+            fecha_hora_inicio,
+            estado
+        `)
+        .eq(
+            "negocios_id",
+            NEGOCIO_ID
+        )
+        .gte(
+            "fecha_hora_inicio",
+            ahora
+        )
+        .neq(
+            "estado",
+            "cancelado"
+        )
+        .order(
+            "fecha_hora_inicio",
+            {
+                ascending:true
+            }
+        )
+        .limit(8);
+
+    if(error){
+
+        console.error(error);
+
+        tabla.innerHTML = `
+            <tr>
+                <td colspan="4">
+                    No se pudieron cargar los próximos turnos.
+                </td>
+            </tr>
+        `;
+
+        return;
+    }
+
+    const turnos =
+        data || [];
+
+    if(!turnos.length){
+
+        tabla.innerHTML = `
+            <tr>
+                <td colspan="4">
+                    No hay próximos turnos.
+                </td>
+            </tr>
+        `;
+
+        return;
+    }
+
+    const barberoIds =
+        [
+            ...new Set(
+                turnos
+                    .map(
+                        t =>
+                            t.barbero_id
+                    )
+                    .filter(Boolean)
+            )
+        ];
+
+    let mapaBarberos = {};
+
+    if(barberoIds.length){
+
+        const {
+            data:barberos
+        } =
+            await supabaseClient
+            .from("barberos")
+            .select(
+                "id,nombre"
+            )
+            .in(
+                "id",
+                barberoIds
+            );
+
+        (barberos || []).forEach(
+            b => {
+
+                mapaBarberos[
+                    b.id
+                ] =
+                    b.nombre;
+
+            }
+        );
+    }
+
+    tabla.innerHTML = "";
+
+    turnos.forEach(
+        turno => {
+
+            const inicio =
+                new Date(
+                    turno.fecha_hora_inicio
+                );
+
+            const fecha =
+                inicio.toLocaleDateString(
+                    "es-AR",
+                    {
+                        day:"2-digit",
+                        month:"2-digit"
+                    }
+                );
+
+            const hora =
+                inicio.toLocaleTimeString(
+                    "es-AR",
+                    {
+                        hour:"2-digit",
+                        minute:"2-digit"
+                    }
+                );
+
+            const tr =
+                document.createElement(
+                    "tr"
+                );
+
+            tr.innerHTML = `
+
+                <td>
+                    ${fecha} - ${hora}
+                </td>
+
+                <td>
+
+                    <strong>
+                        ${escapeHtml(
+                            turno.nombre_cliente ||
+                            "Cliente"
+                        )}
+                    </strong>
+
+                </td>
+
+                <td>
+
+                    ${escapeHtml(
+                        mapaBarberos[
+                            turno.barbero_id
+                        ] ||
+                        "Barbero"
+                    )}
+
+                </td>
+
+                <td>
+
+                    <span
+                        class="estado ${
+                            turno.estado ===
+                            "confirmado"
+
+                            ? "estado-confirmado"
+
+                            : turno.estado ===
+                              "cancelado"
+
+                            ? "estado-cancelado"
+
+                            : turno.estado ===
+                              "completado"
+
+                            ? "estado-completado"
+
+                            : "estado-pendiente"
+                        }">
+
+                        ${escapeHtml(
+                            turno.estado
+                        )}
+
+                    </span>
+
+                </td>
+
+            `;
+
+            tabla.appendChild(
+                tr
+            );
+        }
+    );
+}
+
+
+async function iniciarAdmin(){
+
+    console.log(
+        "ADMIN BARBERÍA"
+    );
+
+    console.log(
+        "NEGOCIO_ID:",
+        NEGOCIO_ID
+    );
+
+    const acceso =
+        await comprobarAcceso();
+
+    if(!acceso){
+
+        return;
+    }
+
+    await cargarDatosNegocio();
+
+    await cargarServicios();
+
+    await cargarBarberos();
+
+    await cargarHorariosBarberos();
+
+    await actualizarEstadisticas();
+
+    await cargarAgenda();
+
+    await cargarProximosTurnos();
+
+    console.log(
+        "Panel cargado correctamente."
+    );
+}
+
+
+supabaseClient.auth.onAuthStateChange(
+    (event,session) => {
+
+        console.log(
+            "Cambio de sesión:",
+            event
+        );
+
+        setTimeout(
+            () => {
+
+                if(
+                    event ===
+                    "SIGNED_OUT"
+                ){
+
+                    location.reload();
+
+                }
+
+            },
+            0
+        );
+
+    }
+);
+
+
+document.addEventListener(
+    "DOMContentLoaded",
+    () => {
+
+        const input =
+            document.getElementById(
+                "agendaFecha"
+            );
+
+        if(input){
+
+            input.value =
+                fechaLocalISO();
+
+        }
+
+        actualizarBotonCancelacionDia();
+
+    }
+);
+
+
+iniciarAdmin();
+
+</script>
+
+</body>
+</html>
