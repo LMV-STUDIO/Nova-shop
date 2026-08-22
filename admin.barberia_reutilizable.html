@@ -4197,7 +4197,7 @@ async function cargarAgenda(){
 }
 
 
-function abrirDetalleTurno(
+async function abrirDetalleTurno(
     turno
 ){
 
@@ -4258,6 +4258,34 @@ function abrirDetalleTurno(
             "detalleTurno"
         );
 
+    let servicioSolicitado = "-";
+
+    const {
+        data:turnoServicio,
+        error:errorTurnoServicio
+    } =
+        await supabaseClient
+        .from("turno_servicios")
+        .select("servicio_id")
+        .eq("turno_id", turno.id)
+        .limit(1)
+        .maybeSingle();
+
+    if(!errorTurnoServicio && turnoServicio?.servicio_id){
+
+        const {
+            data:servicio
+        } =
+            await supabaseClient
+            .from("servicios")
+            .select("nombre")
+            .eq("id", turnoServicio.servicio_id)
+            .maybeSingle();
+
+        servicioSolicitado =
+            servicio?.nombre || "-";
+    }
+
     detalle.innerHTML = `
 
         <div class="detalle-linea">
@@ -4278,13 +4306,12 @@ function abrirDetalleTurno(
         <div class="detalle-linea">
 
             <small>
-                ID del cliente
+                Servicio solicitado
             </small>
 
             <strong>
                 ${escapeHtml(
-                    turno.cliente_id ||
-                    "-"
+                    servicioSolicitado
                 )}
             </strong>
 
