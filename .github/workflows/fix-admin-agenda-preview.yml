@@ -1,0 +1,121 @@
+name: Fix Admin agenda client and service preview
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  patch-admin:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Patch agenda preview and turn detail
+        shell: python
+        run: |
+          from pathlib import Path
+          import re
+
+          p = Path("admin.barberia_reutilizable.html")
+          text = p.read_text(encoding="utf-8")
+          original = text
+
+          # 1) Make sure the agenda/detail query includes the customer's entered name.
+          m = re.search(r'(async function cargarAgenda\s*\([^)]*\)\s*\{)(.*?)(?=\nfunction |\nasync function |\n(?:document|supabaseClient)\.)', text, re.S)
+          if not m:
+              raise SystemExit("cargarAgenda function not found; no changes made.")
+          agenda = m.group(0)
+
+          # Add nombre_cliente to the first turnos select in cargarAgenda when absent.
+          select_match = re.search(r'\.from\("turnos"\)\s*\.select\(`(.*?)`\)', agenda, re.S)
+          if not select_match:
+              raise SystemExit("turnos select in cargarAgenda not found; no changes made.")
+          fields = select_match.group(1)
+          if "nombre_cliente" not in fields:
+              fields_new = fields.rstrip() + "\n            nombre_cliente,"
+              # Avoid malformed comma placement if the last field already has a comma.
+              fields_new = re.sub(r',\s*$', ',', fields_new)
+              agenda = agenda[:select_match.start(1)] + fields_new + agenda[select_match.end(1):]
+
+          # 2) Enrich agenda turns with the requested service from turno_servicios.
+          if "servicioSolicitadoPorTurno" not in agenda:
+              anchor = re.search(r'(\n\s*const\s+turnos\s*=\s*data\s*\|\|\s*\[\];)', agenda)
+              if not anchor:
+                  # Try the common fallback used by this file.
+                  anchor = re.search(r'(\n\s*const\s+turnos\s*=\s*data\s*\?\?\s*\[\];)', agenda)
+              if not anchor:
+                  raise SystemExit("Agenda turns assignment not found; no changes made.")
+
+              injection = '''\n\n    const servicioSolicitadoPorTurno = {};\n\n    if(turnos.length){\n\n        const idsTurnos = turnos.map(t => t.id);\n\n        const {\n            data:serviciosTurnos,\n            error:errorServiciosTurnos\n        } =\n            await supabaseClient\n            .from("turno_servicios")\n            .select(`\n                turno_id,\n                servicio_id\n            `)\n            .in("turno_id", idsTurnos);\n\n        if(!errorServiciosTurnos && serviciosTurnos?.length){\n\n            const idsServicios = [\n                ...new Set(\n                    serviciosTurnos\n                    .map(ts => ts.servicio_id)\n                    .filter(Boolean)\n                )\n            ];\n\n            if(idsServicios.length){\n\n                const {\n                    data:serviciosAgenda\n                } =\n                    await supabaseClient\n                    .from("servicios")\n                    .select("id,nombre")\n                    .in("id", idsServicios);\n\n                const nombresServicios = {};\n\n                (serviciosAgenda || []).forEach(s => {\n                    nombresServicios[s.id] = s.nombre;\n                });\n\n                serviciosTurnos.forEach(ts => {\n                    servicioSolicitadoPorTurno[ts.turno_id] =\n                        nombresServicios[ts.servicio_id] || "-";\n                });\n            }\n        }\n    }'''
+              agenda = agenda[:anchor.end()] + injection + agenda[anchor.end():]
+
+          text = text[:m.start()] + agenda + text[m.end():]
+
+          # 3) In the agenda preview, show the entered customer name and service.
+          # Replace the existing client fallback only inside the agenda function.
+          m2 = re.search(r'(async function cargarAgenda\s*\([^)]*\)\s*\{)(.*?)(?=\nfunction |\nasync function |\n(?:document|supabaseClient)\.)', text, re.S)
+          agenda = m2.group(0) if m2 else ""
+          if not agenda:
+              raise SystemExit("cargarAgenda disappeared after patch; no changes made.")
+
+          agenda = agenda.replace(
+              'turno.nombre_cliente || "Cliente"',
+              'turno.nombre_cliente || "Cliente"',
+              1
+          )
+
+          # If the agenda template already contains horario-cliente, ensure it uses the turn's name.
+          agenda = re.sub(
+              r'(class="horario-cliente">\s*\$\{)(.*?)(\}\s*</div>)',
+              r'\1escapeHtml(turno.nombre_cliente || "Cliente")\3',
+              agenda,
+              count=1,
+              flags=re.S
+          )
+
+          # Add service line immediately after the client line if it isn't already there.
+          if 'servicioSolicitadoPorTurno[turno.id]' not in agenda:
+              client_line = re.search(r'(<div class="horario-cliente">.*?</div>)', agenda, re.S)
+              if client_line:
+                  service_line = '''\n\n                        <div class="horario-servicio">\n                            ${escapeHtml(\n                                servicioSolicitadoPorTurno[turno.id] || "-"\n                            )}\n                        </div>'''
+                  agenda = agenda[:client_line.end()] + service_line + agenda[client_line.end():]
+              else:
+                  raise SystemExit("Agenda client preview element not found; no changes made.")
+
+          text = text[:m2.start()] + agenda + text[m2.end():]
+
+          # 4) Keep the modal detail showing the entered customer name, never the auth UUID.
+          text = text.replace(
+              '<small>\n                ID del cliente\n            </small>',
+              '<small>\n                Servicio solicitado\n            </small>',
+              1
+          )
+
+          # The previous patch already replaces the ID value with servicioSolicitado. If not,
+          # replace the exact old value block safely.
+          text = text.replace(
+              '${escapeHtml(\n                    turno.cliente_id ||\n                    "-"\n                )}',
+              '${escapeHtml(\n                    servicioSolicitado\n                )}',
+              1
+          )
+
+          if text == original:
+              raise SystemExit("No changes were necessary.")
+
+          p.write_text(text, encoding="utf-8")
+
+      - name: Commit patch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add admin.barberia_reutilizable.html
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+            exit 0
+          fi
+          git commit -m "Show customer name and service in agenda preview"
+          git push
