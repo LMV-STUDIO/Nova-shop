@@ -1,0 +1,73 @@
+name: Compactar horarios de barberos en móvil
+
+on:
+  push:
+    paths:
+      - '.github/workflows/compactar-barberos-mobile.yml'
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  aplicar:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Ajustar CSS móvil de barberos
+        shell: python
+        run: |
+          from pathlib import Path
+          p = Path('admin.barberia_reutilizable.html')
+          text = p.read_text(encoding='utf-8')
+          marker = '/* LMV COMPACT BARBEROS MOBILE V2 */'
+          if marker in text:
+              print('El ajuste ya estaba aplicado.')
+              raise SystemExit(0)
+          css = '''
+<style id="lmv-compact-barberos-mobile">
+/* LMV COMPACT BARBEROS MOBILE V2 */
+@media(max-width:750px){
+  #seccion-barberos .card{padding:14px!important;border-radius:12px!important;margin-bottom:14px!important}
+  #seccion-barberos .card h3{font-size:16px!important;margin-bottom:10px!important}
+  #seccion-barberos .card>p{font-size:11px!important;margin-bottom:12px!important;line-height:1.35!important}
+  #seccion-barberos .tabla-wrapper{margin:0 -2px!important}
+  #seccion-barberos table th,#seccion-barberos table td{padding:9px 7px!important;font-size:11px!important}
+  #seccion-barberos table th{font-size:10px!important}
+  #seccion-barberos table .btn{min-height:34px!important;padding:7px 9px!important;font-size:10px!important}
+  #horariosBarberos{display:grid!important;grid-template-columns:1fr!important;gap:10px!important}
+  #horariosBarberos>.card{margin:0!important;padding:12px!important}
+  #horariosBarberos>.card h3{display:flex!important;align-items:center!important;justify-content:space-between!important;margin-bottom:9px!important;font-size:15px!important}
+  #horariosBarberos>.card>div[style*="grid-template-columns"]{grid-template-columns:64px minmax(0,1fr) minmax(0,1fr) 64px!important;gap:6px!important;margin-bottom:6px!important;padding:0!important}
+  #horariosBarberos>.card>div[style*="grid-template-columns"] strong{font-size:10px!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
+  #horariosBarberos>.card>div[style*="grid-template-columns"] input[type="time"]{padding:7px 5px!important;font-size:12px!important;min-width:0!important;height:34px!important}
+  #horariosBarberos>.card>div[style*="grid-template-columns"] label{font-size:9px!important;gap:3px!important;justify-content:center!important;white-space:nowrap!important}
+  #horariosBarberos>.card>div[style*="grid-template-columns"] label input{margin:0!important;width:14px!important;height:14px!important}
+  #horariosBarberos>.card>.btn{width:100%!important;margin-top:5px!important;min-height:36px!important;padding:8px 10px!important}
+}
+@media(max-width:390px){
+  #horariosBarberos>.card{padding:10px!important}
+  #horariosBarberos>.card>div[style*="grid-template-columns"]{grid-template-columns:58px minmax(0,1fr) minmax(0,1fr) 58px!important;gap:4px!important}
+  #horariosBarberos>.card>div[style*="grid-template-columns"] strong{font-size:9px!important}
+  #horariosBarberos>.card>div[style*="grid-template-columns"] label{font-size:8px!important}
+}
+</style>
+'''
+          if '</head>' not in text:
+              raise SystemExit('No se encontró </head>')
+          text = text.replace('</head>', css + '\n</head>', 1)
+          p.write_text(text, encoding='utf-8')
+
+      - name: Guardar cambio
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add admin.barberia_reutilizable.html
+          if git diff --cached --quiet; then
+            echo 'Sin cambios.'
+            exit 0
+          fi
+          git commit -m 'Compactar horarios de barberos en móvil'
+          git push
