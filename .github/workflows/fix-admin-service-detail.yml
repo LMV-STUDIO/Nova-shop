@@ -1,0 +1,54 @@
+name: Fix Admin service detail
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  patch-admin:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Replace client ID with requested service
+        shell: python
+        run: |
+          from pathlib import Path
+          p = Path("admin.barberia_reutilizable.html")
+          text = p.read_text(encoding="utf-8")
+
+          old_sig = '''function abrirDetalleTurno(\n    turno\n){'''
+          new_sig = '''async function abrirDetalleTurno(\n    turno\n){'''
+          if old_sig not in text:
+              raise SystemExit("Function signature not found; no changes made.")
+          text = text.replace(old_sig, new_sig, 1)
+
+          old_fetch_anchor = '''    const detalle =\n        document.getElementById(\n            "detalleTurno"\n        );'''
+          new_fetch_anchor = '''    const detalle =\n        document.getElementById(\n            "detalleTurno"\n        );\n\n    let servicioSolicitado = "-";\n\n    const {\n        data:turnoServicio,\n        error:errorTurnoServicio\n    } =\n        await supabaseClient\n        .from("turno_servicios")\n        .select("servicio_id")\n        .eq("turno_id", turno.id)\n        .limit(1)\n        .maybeSingle();\n\n    if(!errorTurnoServicio && turnoServicio?.servicio_id){\n\n        const {\n            data:servicio\n        } =\n            await supabaseClient\n            .from("servicios")\n            .select("nombre")\n            .eq("id", turnoServicio.servicio_id)\n            .maybeSingle();\n\n        servicioSolicitado =\n            servicio?.nombre || "-";\n    }'''
+          if old_fetch_anchor not in text:
+              raise SystemExit("Detail anchor not found; no changes made.")
+          text = text.replace(old_fetch_anchor, new_fetch_anchor, 1)
+
+          old_block = '''        <div class="detalle-linea">\n\n            <small>\n                ID del cliente\n            </small>\n\n            <strong>\n                ${escapeHtml(\n                    turno.cliente_id ||\n                    "-"\n                )}\n            </strong>\n\n        </div>'''
+          new_block = '''        <div class="detalle-linea">\n\n            <small>\n                Servicio solicitado\n            </small>\n\n            <strong>\n                ${escapeHtml(\n                    servicioSolicitado\n                )}\n            </strong>\n\n        </div>'''
+          if old_block not in text:
+              raise SystemExit("Client ID detail block not found; no changes made.")
+          text = text.replace(old_block, new_block, 1)
+
+          p.write_text(text, encoding="utf-8")
+
+      - name: Commit patch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add admin.barberia_reutilizable.html
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+            exit 0
+          fi
+          git commit -m "Show requested service in appointment details"
+          git push
