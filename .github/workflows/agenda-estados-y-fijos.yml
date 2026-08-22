@@ -1,4 +1,4 @@
-name: Agenda estados y bloqueos fijos
+name: Wire agenda states and recurring fixed blocks
 
 on:
   push:
@@ -8,98 +8,44 @@ permissions:
   contents: write
 
 jobs:
-  patch:
+  wire:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
-      - name: Patch admin and public template
+      - name: Inject reusable scripts
         shell: python
         run: |
           from pathlib import Path
-          import re
 
-          # ---------------- ADMIN ----------------
-          p = Path('admin.barberia_reutilizable.html')
-          t = p.read_text(encoding='utf-8')
-          original = t
+          changes = []
+          files = [
+              ('admin.barberia_reutilizable.html', 'admin-fijos.js'),
+              ('plantilla-barberia_reutilizable.html', 'public-fijos.js'),
+          ]
 
-          css_anchor = '    --rojo:#ff7777;'
-          if 'estado-reservado' not in t:
-              t = t.replace(css_anchor, css_anchor + '''\n    --amarillo:#e8c95d;\n    --naranja:#ffad4a;\n    --celeste:#72cbe8;\n    --violeta:#b58cff;''', 1)
-              marker = '.estado-completado{\n    background:#182b35;\n    color:#8bcbe5;\n}\n'
-              extra = marker + '''\n.estado-reservado{\n    background:#3a2612;\n    color:#ffad4a;\n}\n\n.horario.estado-pendiente{background:#332b13;border-color:#8f7928;color:#e8c95d;}\n.horario.estado-confirmado{background:#3a2612;border-color:#9a6424;color:#ffad4a;}\n.horario.estado-cancelado{background:#351717;border-color:#a34a4a;color:#ff8888;}\n.horario.estado-completado{background:#182b35;border-color:#4d9db8;color:#72cbe8;}\n.horario.fijo-recurrente{background:#281c3c;border-color:#7655a8;color:#c2a6ff;}\n.leyenda-fijo .leyenda-punto{background:#281c3c;border:1px solid #7655a8;}\n'''
-              t = t.replace(marker, extra, 1)
+          for html_name, js_name in files:
+              p = Path(html_name)
+              if not p.exists():
+                  raise SystemExit(f'Missing {html_name}')
+              t = p.read_text(encoding='utf-8')
+              tag = f'<script src="./{js_name}"></script>'
+              if tag not in t:
+                  marker='</body>'
+                  if marker not in t:
+                      raise SystemExit(f'No </body> in {html_name}')
+                  t=t.replace(marker, f'{tag}\n{marker}', 1)
+                  p.write_text(t, encoding='utf-8')
+                  changes.append(html_name)
 
-          legend_old = '''                            <div class="leyenda-item">\n\n                                <span\n                                    class="leyenda-punto punto-bloqueado">\n                                </span>\n\n                                No atiende\n\n                            </div>'''
-          legend_new = '''                            <div class="leyenda-item">\n                                <span class="leyenda-punto punto-bloqueado"></span>\n                                No atiende\n                            </div>\n\n                            <div class="leyenda-item leyenda-fijo">\n                                <span class="leyenda-punto"></span>\n                                Fijo semanal\n                            </div>'''
-          t = t.replace(legend_old, legend_new, 1)
+          if not changes:
+              print('Scripts already wired.')
+              raise SystemExit(0)
 
-          # Add recurring-block management card after the agenda card, before Servicios.
-          section_anchor = '''            <section\n                id="seccion-servicios"'''
-          if 'id="bloqueoFijoBarbero"' not in t:
-              card = '''            <div class="card" id="cardBloqueosFijos">\n\n                <h3>🟪 Bloqueos fijos semanales</h3>\n                <p style="color:var(--gris);font-size:13px;margin-bottom:20px;">\n                    Bloqueá un horario para ese día de la semana todas las semanas.\n                    La página pública también lo respetará.\n                </p>\n\n                <div class="form-grid">\n                    <div class="campo">\n                        <label>Barbero</label>\n                        <select id="bloqueoFijoBarbero"></select>\n                    </div>\n                    <div class="campo">\n                        <label>Día</label>\n                        <select id="bloqueoFijoDia"></select>\n                    </div>\n                    <div class="campo">\n                        <label>Desde</label>\n                        <input type="time" id="bloqueoFijoInicio" value="12:00">\n                    </div>\n                    <div class="campo">\n                        <label>Hasta</label>\n                        <input type="time" id="bloqueoFijoFin" value="13:00">\n                    </div>\n                    <div class="campo campo-completo">\n                        <label>Motivo (opcional)</label>\n                        <input type="text" id="bloqueoFijoMotivo" placeholder="Ej: horario reservado para otro compromiso">\n                    </div>\n                </div>\n\n                <button class="btn" type="button" onclick="crearBloqueoFijo()">\n                    + Agregar fijo semanal\n                </button>\n\n                <div id="listaBloqueosFijos" style="margin-top:20px;">\n                    Cargando bloqueos...\n                </div>\n\n            </div>\n\n'''
-              t = t.replace(section_anchor, card + section_anchor, 1)
-
-          # Make occupied agenda cards use the actual state color.
-          old = '''                        boton.className =\n                            "horario ocupado";'''
-          new = '''                        boton.className =\n                            "horario ocupado estado-" +\n                            String(turno.estado || "pendiente").toLowerCase();'''
-          t = t.replace(old, new, 1)
-
-          # Show a human state label instead of raw state where possible.
-          old_label = '''                        const servicioTexto =\n                            turno.estado ===\n                            "cancelado"\n\n                            ? "Cancelado"\n\n                            : turno.estado;'''
-          new_label = '''                        const servicioTexto =\n                            turno.estado === "cancelado" ? "Cancelado" :\n                            turno.estado === "completado" ? "Realizado" :\n                            turno.estado === "confirmado" ? "Reservado" :\n                            turno.estado === "pendiente" ? "Pendiente" :\n                            turno.estado || "Pendiente";'''
-          t = t.replace(old_label, new_label, 1)
-
-          # Inject recurring-block query into cargarAgenda.
-          anchor = '''    turnosActuales =\n        turnos || [];'''
-          if 'bloqueosRecurrentesAgenda' not in t:
-              injection = '''\n\n    let bloqueosRecurrentesAgenda = [];\n\n    const {\n        data:bloqueosFijosAgenda,\n        error:errorBloqueosFijosAgenda\n    } =\n        await supabaseClient\n        .from("bloqueos_recurrentes_barbero")\n        .select("id,barbero_id,dia_semana,hora_inicio,hora_fin,motivo,activo")\n        .eq("negocio_id", NEGOCIO_ID)\n        .eq("dia_semana", diaSemana)\n        .eq("activo", true);\n\n    if(!errorBloqueosFijosAgenda){\n        bloqueosRecurrentesAgenda = bloqueosFijosAgenda || [];\n    }'''
-              t = t.replace(anchor, anchor + injection, 1)
-
-          # In the free-slot branch, mark recurring blocks as violet and offer removal.
-          free_anchor = '''                    }else{\n\n                        boton.className =\n                            "horario libre";'''
-          free_new = '''                    }else{\n\n                        const bloqueoFijo =\n                            bloqueosRecurrentesAgenda.find(b =>\n                                String(b.barbero_id) === String(barbero.id) &&\n                                horaAMinutos(b.hora_inicio) < slot.fin &&\n                                horaAMinutos(b.hora_fin) > slot.inicio\n                            );\n\n                        if(bloqueoFijo){\n                            boton.className = "horario bloqueado fijo-recurrente";\n                            boton.innerHTML = `\n                                <div class="horario-hora">${minutosAHora(slot.inicio)}</div>\n                                <div class="horario-cliente">Fijo semanal</div>\n                                <div class="horario-servicio">${escapeHtml(bloqueoFijo.motivo || "Horario bloqueado")}</div>\n                                <div class="horario-estado">Todos los ${DIAS_SEMANA[diaSemana]}</div>\n                            `;\n                            boton.onclick = () => eliminarBloqueoFijo(bloqueoFijo.id);\n                            grid.appendChild(boton);\n                            return;\n                        }\n\n                        boton.className =\n                            "horario libre";'''
-          t = t.replace(free_anchor, free_new, 1)
-
-          # Add a small fixed-block button to free slots without replacing their existing text.
-          if 'function crearBloqueoFijo()' not in t:
-              js = r'''\n\n/* =========================================================\n   BLOQUEOS FIJOS SEMANALES\n   ========================================================= */\n\nfunction inicializarBloqueosFijos(){\n    const dia = document.getElementById("bloqueoFijoDia");\n    const barbero = document.getElementById("bloqueoFijoBarbero");\n    if(!dia || !barbero) return;\n\n    dia.innerHTML = DIAS_SEMANA.map((d,i) => `<option value="${i}">${d}</option>`).join("");\n    barbero.innerHTML = (barberosActuales || []).filter(b => b.activo).map(b =>\n        `<option value="${b.id}">${escapeHtml(b.nombre)}</option>`\n    ).join("");\n\n    cargarBloqueosFijos();\n}\n\nasync function cargarBloqueosFijos(){\n    const lista = document.getElementById("listaBloqueosFijos");\n    if(!lista) return;\n    const {data,error} = await supabaseClient\n        .from("bloqueos_recurrentes_barbero")\n        .select("id,barbero_id,dia_semana,hora_inicio,hora_fin,motivo,activo")\n        .eq("negocio_id",NEGOCIO_ID)\n        .eq("activo",true)\n        .order("dia_semana")\n        .order("hora_inicio");\n    if(error){\n        lista.innerHTML = `<div class="mensaje error visible">No se pudieron cargar los fijos: ${escapeHtml(error.message)}</div>`;\n        return;\n    }\n    if(!data?.length){\n        lista.innerHTML = `<div style="color:#888;">No hay horarios fijos creados.</div>`;\n        return;\n    }\n    lista.innerHTML = data.map(b => {\n        const barbero = (barberosActuales || []).find(x => String(x.id) === String(b.barbero_id));\n        return `<div style="display:flex;justify-content:space-between;gap:10px;align-items:center;border:1px solid #7655a8;background:#181329;border-radius:8px;padding:10px;margin-bottom:8px;">\n            <div><strong style="color:#c2a6ff;">🟪 ${escapeHtml(barbero?.nombre || "Barbero")}</strong><br>\n            <span style="color:#ddd;">${DIAS_SEMANA[b.dia_semana]} · ${String(b.hora_inicio).slice(0,5)} - ${String(b.hora_fin).slice(0,5)}</span>\n            ${b.motivo ? `<br><small style="color:#999;">${escapeHtml(b.motivo)}</small>` : ""}</div>\n            <button class="btn btn-danger btn-small" onclick="eliminarBloqueoFijo('${b.id}')">Eliminar</button>\n        </div>`;\n    }).join("");\n}\n\nasync function crearBloqueoFijo(){\n    const barbero_id = document.getElementById("bloqueoFijoBarbero")?.value;\n    const dia_semana = Number(document.getElementById("bloqueoFijoDia")?.value);\n    const hora_inicio = document.getElementById("bloqueoFijoInicio")?.value;\n    const hora_fin = document.getElementById("bloqueoFijoFin")?.value;\n    const motivo = document.getElementById("bloqueoFijoMotivo")?.value.trim() || null;\n    if(!barbero_id || !hora_inicio || !hora_fin || hora_inicio >= hora_fin){\n        mostrarGlobal("Completá barbero, día y un rango horario válido.","error");\n        return;\n    }\n    const {error} = await supabaseClient.from("bloqueos_recurrentes_barbero").insert({\n        negocio_id:NEGOCIO_ID, barbero_id, dia_semana, hora_inicio, hora_fin, motivo, activo:true\n    });\n    if(error){\n        mostrarGlobal("No se pudo crear el fijo: " + error.message,"error");\n        return;\n    }\n    document.getElementById("bloqueoFijoMotivo").value = "";\n    mostrarGlobal("Fijo semanal creado correctamente.");\n    await cargarBloqueosFijos();\n    await cargarAgenda();\n}\n\nasync function eliminarBloqueoFijo(id){\n    if(!confirm("¿Eliminar este horario fijo semanal?")) return;\n    const {error} = await supabaseClient.from("bloqueos_recurrentes_barbero").delete().eq("id",id).eq("negocio_id",NEGOCIO_ID);\n    if(error){\n        mostrarGlobal("No se pudo eliminar el fijo: " + error.message,"error");\n        return;\n    }\n    mostrarGlobal("Fijo semanal eliminado.");\n    await cargarBloqueosFijos();\n    await cargarAgenda();\n}\n\nconst _cargarBarberosAgendaOriginal = cargarBarberos;\ncargarBarberos = async function(){\n    const r = await _cargarBarberosAgendaOriginal();\n    inicializarBloqueosFijos();\n    return r;\n};\n'''
-              # Insert before final script closing tag.
-              t = t.replace('</script>\n\n</body>', js + '\n</script>\n\n</body>', 1)
-
-          p.write_text(t, encoding='utf-8')
-
-          # ---------------- PUBLIC ----------------
-          p = Path('plantilla-barberia_reutilizable.html')
-          t = p.read_text(encoding='utf-8')
-          original_public = t
-
-          # Query recurring blocks for the selected weekday and use them as unavailable slots.
-          anchor = '''        const horario =\n            await obtenerHorarioBarbero(\n                barberoId,\n                diaSemana\n            );'''
-          if 'bloqueosRecurrentesPublicos' not in t:
-              inj = anchor + '''\n\n        const {\n            data:bloqueosRecurrentesPublicos,\n            error:errorBloqueosRecurrentesPublicos\n        } =\n            await supabaseClient\n            .from("bloqueos_recurrentes_barbero")\n            .select("id,barbero_id,dia_semana,hora_inicio,hora_fin,activo")\n            .eq("negocio_id", NEGOCIO_ID)\n            .eq("barbero_id", barberoId)\n            .eq("dia_semana", diaSemana)\n            .eq("activo", true);\n\n        if(errorBloqueosRecurrentesPublicos){\n            console.error("Error leyendo bloqueos fijos:", errorBloqueosRecurrentesPublicos);\n        }'''
-              t = t.replace(anchor, inj, 1)
-
-          # Mark a slot occupied when it overlaps a recurring fixed block.
-          old_occ = '''            const ocupado =\n                (turnosExistentes || [])\n                .some(\n                    turno => {'''
-          new_occ = '''            const ocupadoPorTurno =\n                (turnosExistentes || [])\n                .some(\n                    turno => {'''
-          t = t.replace(old_occ, new_occ, 1)
-          old_end = '''                );\n\n            horarios.push({\n                hora:horaTexto,\n                ocupado\n            });'''
-          new_end = '''                );\n\n            const ocupadoPorFijo =\n                (bloqueosRecurrentesPublicos || [])\n                .some(bloqueo => {\n                    const fijoInicio = horaAMinutos(bloqueo.hora_inicio);\n                    const fijoFin = horaAMinutos(bloqueo.hora_fin);\n                    return fijoInicio < finTurno.getHours()*60 + finTurno.getMinutes() &&\n                           fijoFin > inicioTurno.getHours()*60 + inicioTurno.getMinutes();\n                });\n\n            const ocupado = ocupadoPorTurno || ocupadoPorFijo;\n\n            horarios.push({\n                hora:horaTexto,\n                ocupado\n            });'''
-          t = t.replace(old_end, new_end, 1)
-
-          # If a slot is fixed, make it visually distinct in the public selector.
-          if 'horario.fijo' not in t:
-              t = t.replace('horario.ocupado\n                        ? " ocupado"', 'horario.ocupado\n                        ? " ocupado"')
-
-          p.write_text(t, encoding='utf-8')
-
-      - name: Commit changes
+      - name: Commit generated wiring
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add admin.barberia_reutilizable.html plantilla-barberia_reutilizable.html
-          git diff --cached --quiet && exit 0
-          git commit -m "Add agenda status colors and recurring fixed blocks"
+          git commit -m "Enable recurring fixed blocks and agenda colors"
           git push
