@@ -1,0 +1,90 @@
+name: Adaptar Admin para celular
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Aplicar adaptación móvil sin tocar la lógica
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path('admin.barberia_reutilizable.html')
+          s = p.read_text(encoding='utf-8')
+          marker = '/* LMV MOBILE ADMIN V1 */'
+          if marker in s:
+              print('Parche móvil ya aplicado')
+              raise SystemExit(0)
+          css = r'''<style>
+          /* LMV MOBILE ADMIN V1 */
+          @media (max-width:750px){
+            body{overflow-x:hidden}
+            .sidebar{position:fixed!important;left:0!important;top:0!important;bottom:0!important;width:min(82vw,310px)!important;height:100vh!important;min-height:100vh!important;transform:translateX(-105%)!important;transition:transform .22s ease!important;z-index:1000!important;overflow-y:auto!important;background:#050505!important;box-shadow:12px 0 35px rgba(0,0,0,.45)!important}
+            body.lmv-menu-abierto .sidebar{transform:translateX(0)!important}
+            .sidebar-bottom{position:static!important;padding:10px 15px 20px!important}
+            .app{display:block!important}
+            .main{margin-left:0!important;width:100%!important}
+            .topbar{height:62px!important;padding:0 12px!important;position:sticky!important;top:0!important;z-index:900!important;gap:10px!important}
+            .lmv-mobile-menu{display:flex!important;width:42px!important;height:42px!important;flex:0 0 42px!important;align-items:center!important;justify-content:center!important;border:1px solid var(--borde)!important;border-radius:10px!important;background:#171717!important;color:#fff!important;font-size:22px!important;line-height:1!important}
+            .lmv-mobile-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.62);z-index:999}
+            body.lmv-menu-abierto .lmv-mobile-overlay{display:block}
+            .contenido{padding:18px 14px 30px!important}
+            .stats{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important}
+            .agenda-cabecera{display:block!important}
+            .agenda-fecha{min-width:0!important;width:100%!important}
+            .agenda-leyenda{margin-top:12px!important;gap:9px!important}
+            .horarios-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important;padding:10px!important}
+            .horario{min-height:88px!important;padding:10px!important}
+            .form-grid{grid-template-columns:1fr!important}
+            .form-grid .campo-completo{grid-column:auto!important}
+            .filtros{grid-template-columns:1fr!important}
+            .tabla-wrapper{overflow-x:auto!important}
+            .modal{padding:10px!important;align-items:flex-end!important}
+            .modal-box{max-height:92vh!important;border-radius:16px 16px 0 0!important}
+            .acciones,.form-botones{gap:8px!important}
+            .btn{min-height:40px!important}
+          }
+          @media (min-width:751px){.lmv-mobile-menu,.lmv-mobile-overlay{display:none!important}}
+          </style>'''
+          js = r'''<script>
+          (()=>{
+            function initMobileAdmin(){
+              const top=document.querySelector('.topbar'), side=document.querySelector('.sidebar');
+              if(!top||!side||document.querySelector('.lmv-mobile-menu')) return;
+              const overlay=document.createElement('div');
+              overlay.className='lmv-mobile-overlay';
+              document.body.appendChild(overlay);
+              const b=document.createElement('button');
+              b.type='button'; b.className='lmv-mobile-menu'; b.textContent='☰';
+              b.setAttribute('aria-label','Abrir menú');
+              top.insertBefore(b,top.firstChild);
+              const cerrar=()=>{document.body.classList.remove('lmv-menu-abierto');b.textContent='☰';};
+              b.addEventListener('click',()=>{
+                const abierto=document.body.classList.toggle('lmv-menu-abierto');
+                b.textContent=abierto?'✕':'☰';
+              });
+              overlay.addEventListener('click',cerrar);
+              side.querySelectorAll('button').forEach(x=>x.addEventListener('click',()=>{if(innerWidth<=750) cerrar();}));
+            }
+            if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',initMobileAdmin); else initMobileAdmin();
+            new MutationObserver(initMobileAdmin).observe(document.documentElement,{childList:true,subtree:true});
+          })();
+          </script>'''
+          s=s.replace('</head>',css+'\n</head>',1)
+          s=s.replace('</body>',js+'\n</body>',1)
+          p.write_text(s,encoding='utf-8')
+          PY
+      - name: Commit patch
+        run: |
+          git config user.name "LMV-STUDIO"
+          git config user.email "258666661+LMV-STUDIO@users.noreply.github.com"
+          git add admin.barberia_reutilizable.html
+          git diff --cached --quiet && exit 0
+          git commit -m "Adaptar Admin para celular"
+          git push
