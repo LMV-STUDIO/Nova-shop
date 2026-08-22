@@ -5,6 +5,8 @@ on:
     branches: [main]
     paths:
       - 'admin-historial.js'
+      - '.github/workflows/activar-historial-admin.yml'
+      - 'activar-historial.trigger'
 
 permissions:
   contents: write
