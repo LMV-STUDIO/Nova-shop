@@ -1,0 +1,43 @@
+name: Activar historial en Admin
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'admin-historial.js'
+
+permissions:
+  contents: write
+
+jobs:
+  activar:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Insertar script del historial en el Admin
+        shell: python
+        run: |
+          from pathlib import Path
+          p = Path('admin.barberia_reutilizable.html')
+          text = p.read_text(encoding='utf-8')
+          tag = '<script src="./admin-historial.js"></script>'
+          if tag not in text:
+              marker = '</body>'
+              if marker not in text:
+                  raise SystemExit('No se encontró </body> en el Admin')
+              text = text.replace(marker, f'{tag}\n{marker}', 1)
+              p.write_text(text, encoding='utf-8')
+
+      - name: Guardar cambio
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add admin.barberia_reutilizable.html
+          if git diff --cached --quiet; then
+            echo 'El script ya estaba conectado.'
+            exit 0
+          fi
+          git commit -m 'Activar historial de turnos en Admin'
+          git push
