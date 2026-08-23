@@ -1,1 +1,625 @@
-<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>LMV Studio — Panel</title><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><style>body{margin:0;font-family:Arial;background:#090909;color:#fff}.wrap{max-width:1100px;margin:auto;padding:24px}.top{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #292929;padding-bottom:18px;margin-bottom:22px}.brand{color:#d4af37;font-size:24px;font-weight:800}.user{color:#aaa;font-size:13px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}.card{background:#151515;border:1px solid #292929;border-radius:14px;padding:20px}.card h2{margin:0 0 16px}.campo{margin-bottom:13px}.campo label{display:block;color:#ddd;font-size:13px;font-weight:700;margin-bottom:6px}.campo input{width:100%;padding:11px;border-radius:8px;border:1px solid #333;background:#0d0d0d;color:#fff;box-sizing:border-box}.btn{border:0;border-radius:8px;padding:11px 15px;font-weight:700;cursor:pointer;background:#d4af37;color:#111}.btn.sec{background:#252525;color:#fff;border:1px solid #333}.btn.salir{background:#321515;color:#ff9999}.lista{display:grid;gap:10px}.negocio{border:1px solid #292929;border-radius:10px;padding:14px}.negocio strong{display:block;margin-bottom:5px}.meta{font-size:12px;color:#aaa;margin-bottom:10px;word-break:break-all}.acciones{display:flex;gap:8px;flex-wrap:wrap}.msg{display:none;padding:11px;border-radius:8px;margin-bottom:15px}.msg.ok{display:block;background:#142514;color:#8be58b}.msg.err{display:block;background:#241212;color:#ff9999}.login{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}.loginbox{max-width:430px;width:100%;text-align:center;background:#151515;border:1px solid #292929;border-radius:15px;padding:30px}.loginbox h1{color:#d4af37}@media(max-width:750px){.wrap{padding:15px}.grid{grid-template-columns:1fr}.top{align-items:flex-start;flex-direction:column;gap:15px}.btn{min-height:42px}}</style></head><body><div id="login" class="login"><div class="loginbox"><h1>LMV STUDIO</h1><p>Panel privado de gestión de barberías.</p><button class="btn" onclick="loginGoogle()">🔐 Entrar con Google</button></div></div><div id="app" style="display:none"><div class="wrap"><div class="top"><div><div class="brand">LMV STUDIO</div><div class="user" id="userInfo"></div></div><button class="btn salir" onclick="salir()">Cerrar sesión</button></div><div id="msg" class="msg"></div><div class="grid"><section class="card"><h2>➕ Crear barbería</h2><form id="form"><div class="campo"><label>Nombre</label><input id="nombre" required placeholder="Ej. Barbería Los Pibes"></div><div class="campo"><label>Teléfono</label><input id="telefono" placeholder="Ej. 11 1234-5678"></div><div class="campo"><label>Dirección</label><input id="direccion" placeholder="Ej. Av. ..."></div><div class="campo"><label>Instagram</label><input id="instagram" placeholder="@barberia"></div><div class="campo"><label>Correo Google del dueño</label><input id="duenoEmail" type="email" required placeholder="dueño@gmail.com"></div><button class="btn" type="submit">Crear barbería</button></form></section><section class="card"><h2>🏪 Barberías</h2><div id="lista" class="lista">Cargando...</div></section></div></div></div><script>const SUPABASE_URL='https://cqelidpshitntewsktwx.supabase.co';const SUPABASE_KEY='sb_publishable_o1q2pLVF1zIlZCzPHMaheg_KSawjVvD';const supabaseClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);const MI_ID='61237a18-0393-4308-98ba-a9891f1d5582';const PUBLICA='https://lmv-studio.github.io/Nova-shop/barberia.html';const ADMIN='https://lmv-studio.github.io/Nova-shop/admin.barberia_reutilizable.html';let usuario=null;function mostrarMsg(t,ok=false){const m=document.getElementById('msg');m.textContent=t;m.className='msg '+(ok?'ok':'err');setTimeout(()=>m.className='msg',4000)}async function loginGoogle(){const{error}=await supabaseClient.auth.signInWithOAuth({provider:'google',options:{redirectTo:location.href}});if(error)mostrarMsg(error.message)}async function salir(){await supabaseClient.auth.signOut();location.reload()}async function iniciar(){const{data:{session}}=await supabaseClient.auth.getSession();if(!session){login.style.display='flex';return}usuario=session.user;if(usuario.id!==MI_ID){document.getElementById('login').innerHTML='<div class="loginbox"><h1>Acceso denegado</h1><p>Este panel es privado de LMV Studio.</p><button class="btn" onclick="salir()">Salir</button></div>';return}login.style.display='none';app.style.display='block';userInfo.textContent=usuario.email||usuario.id;await cargarNegocios()}async function cargarNegocios(){const{data,error}=await supabaseClient.from('negocios').select('id,nombre,dueño_id,dueño_email,telefono').order('created_at',{ascending:false});const l=document.getElementById('lista');if(error){l.textContent='No se pudieron cargar: '+error.message;return}if(!data.length){l.textContent='Todavía no hay barberías.';return}l.innerHTML=data.map(n=>{const q=encodeURIComponent(n.id);return '<div class="negocio"><strong>'+esc(n.nombre)+'</strong><div class="meta">ID: '+n.id+'<br>Dueño: '+esc(n.dueño_email||'pendiente')+(n.telefono?'<br>Tel: '+esc(n.telefono):'')+'</div><div class="acciones"><a class="btn" href="'+PUBLICA+'?negocio='+q+'" target="_blank">🌐 Página</a><a class="btn sec" href="'+ADMIN+'?negocio='+q+'" target="_blank">⚙️ Admin</a></div></div>'}).join('')}document.getElementById('form').addEventListener('submit',async e=>{e.preventDefault();const email=document.getElementById('duenoEmail').value.trim().toLowerCase();const payload={nombre:document.getElementById('nombre').value.trim(),telefono:document.getElementById('telefono').value.trim()||null,'dirección':document.getElementById('direccion').value.trim()||null,instagram:document.getElementById('instagram').value.trim()||null,dueño_id:null,dueño_email:email};const{error}=await supabaseClient.from('negocios').insert(payload);if(error){mostrarMsg('No se pudo crear: '+error.message);return}mostrarMsg('Barbería creada. El dueño podrá entrar con ese Google.',true);e.target.reset();await cargarNegocios()});function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]))}supabaseClient.auth.onAuthStateChange(()=>iniciar());iniciar();</script></body></html>
+```html
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>LMV Studio — Panel</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+body{margin:0;font-family:Arial;background:#090909;color:#fff}
+.wrap{max-width:1100px;margin:auto;padding:24px}
+.top{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #292929;padding-bottom:18px;margin-bottom:22px}
+.brand{color:#d4af37;font-size:24px;font-weight:800}
+.user{color:#aaa;font-size:13px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.card{background:#151515;border:1px solid #292929;border-radius:14px;padding:20px}
+.card h2{margin:0 0 16px}
+.campo{margin-bottom:13px}
+.campo label{display:block;color:#ddd;font-size:13px;font-weight:700;margin-bottom:6px}
+.campo input,.campo select{width:100%;padding:11px;border-radius:8px;border:1px solid #333;background:#0d0d0d;color:#fff;box-sizing:border-box}
+.btn{display:inline-block;border:0;border-radius:8px;padding:11px 15px;font-weight:700;cursor:pointer;background:#d4af37;color:#111;text-decoration:none}
+.btn.sec{background:#252525;color:#fff;border:1px solid #333}
+.btn.salir{background:#321515;color:#ff9999}
+.lista{display:grid;gap:10px}
+.negocio{border:1px solid #292929;border-radius:10px;padding:14px}
+.negocio strong{display:block;margin-bottom:5px}
+.meta{font-size:12px;color:#aaa;margin-bottom:10px;word-break:break-all}
+.acciones{display:flex;gap:8px;flex-wrap:wrap}
+.barberos{margin-top:12px;padding-top:12px;border-top:1px solid #292929}
+.barbero{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid #222}
+.barbero:last-child{border-bottom:0}
+.barbero span{font-size:14px}
+.msg{display:none;padding:11px;border-radius:8px;margin-bottom:15px}
+.msg.ok{display:block;background:#142514;color:#8be58b}
+.msg.err{display:block;background:#241212;color:#ff9999}
+.login{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+.loginbox{max-width:430px;width:100%;text-align:center;background:#151515;border:1px solid #292929;border-radius:15px;padding:30px}
+.loginbox h1{color:#d4af37}
+.modal{
+display:none;
+position:fixed;
+inset:0;
+background:rgba(0,0,0,.75);
+align-items:center;
+justify-content:center;
+padding:20px;
+z-index:10
+}
+.modalbox{
+width:100%;
+max-width:420px;
+background:#151515;
+border:1px solid #333;
+border-radius:14px;
+padding:20px;
+box-sizing:border-box
+}
+.modalbox h2{margin-top:0}
+.modalacciones{display:flex;gap:8px;margin-top:15px}
+@media(max-width:750px){
+.wrap{padding:15px}
+.grid{grid-template-columns:1fr}
+.top{align-items:flex-start;flex-direction:column;gap:15px}
+.btn{min-height:42px}
+.acciones{display:grid;grid-template-columns:1fr 1fr}
+.acciones .btn{text-align:center}
+.barbero{align-items:flex-start}
+}
+</style>
+</head>
+
+<body>
+
+<div id="login" class="login">
+<div class="loginbox">
+<h1>LMV STUDIO</h1>
+<p>Panel privado de gestión de barberías.</p>
+<button class="btn" onclick="loginGoogle()">🔐 Entrar con Google</button>
+</div>
+</div>
+
+<div id="app" style="display:none">
+
+<div class="wrap">
+
+<div class="top">
+<div>
+<div class="brand">LMV STUDIO</div>
+<div class="user" id="userInfo"></div>
+</div>
+<button class="btn salir" onclick="salir()">Cerrar sesión</button>
+</div>
+
+<div id="msg" class="msg"></div>
+
+<div class="grid">
+
+<section class="card">
+
+<h2>➕ Crear barbería</h2>
+
+<form id="form">
+
+<div class="campo">
+<label>Nombre</label>
+<input id="nombre" required placeholder="Ej. Barbería Los Pibes">
+</div>
+
+<div class="campo">
+<label>Teléfono</label>
+<input id="telefono" placeholder="Ej. 11 1234-5678">
+</div>
+
+<div class="campo">
+<label>Dirección</label>
+<input id="direccion" placeholder="Ej. Av. ...">
+</div>
+
+<div class="campo">
+<label>Instagram</label>
+<input id="instagram" placeholder="@barberia">
+</div>
+
+<div class="campo">
+<label>Correo Google del dueño</label>
+<input id="duenoEmail" type="email" required placeholder="dueño@gmail.com">
+</div>
+
+<button class="btn" type="submit">Crear barbería</button>
+
+</form>
+
+</section>
+
+<section class="card">
+
+<h2>🏪 Barberías</h2>
+
+<div id="lista" class="lista">
+Cargando...
+</div>
+
+</section>
+
+</div>
+</div>
+</div>
+
+
+<!-- MODAL AGREGAR BARBERO -->
+
+<div id="modalBarbero" class="modal">
+
+<div class="modalbox">
+
+<h2>👤 Agregar barbero</h2>
+
+<p id="barberiaSeleccionada" style="color:#aaa"></p>
+
+<form id="formBarbero">
+
+<div class="campo">
+<label>Nombre del barbero</label>
+<input id="nombreBarbero" required placeholder="Ej. Juan">
+</div>
+
+<div class="modalacciones">
+<button type="submit" class="btn">Agregar</button>
+<button type="button" class="btn sec" onclick="cerrarModal()">Cancelar</button>
+</div>
+
+</form>
+
+</div>
+
+</div>
+
+
+<script>
+
+const SUPABASE_URL='https://cqelidpshitntewsktwx.supabase.co';
+
+const SUPABASE_KEY='sb_publishable_o1q2pLVF1zIlZCzPHMaheg_KSawjVvD';
+
+const supabaseClient=
+window.supabase.createClient(
+SUPABASE_URL,
+SUPABASE_KEY
+);
+
+const MI_ID='61237a18-0393-4308-98ba-a9891f1d5582';
+
+const PUBLICA=
+'https://lmv-studio.github.io/Nova-shop/barberia.html';
+
+const ADMIN=
+'https://lmv-studio.github.io/Nova-shop/admin.barberia_reutilizable.html';
+
+let usuario=null;
+
+let negocioBarberoId=null;
+
+
+function mostrarMsg(t,ok=false){
+
+const m=document.getElementById('msg');
+
+m.textContent=t;
+
+m.className='msg '+(ok?'ok':'err');
+
+setTimeout(()=>m.className='msg',4000);
+
+}
+
+
+async function loginGoogle(){
+
+const{error}=await supabaseClient.auth.signInWithOAuth({
+
+provider:'google',
+
+options:{
+redirectTo:location.href
+}
+
+});
+
+if(error)mostrarMsg(error.message);
+
+}
+
+
+async function salir(){
+
+await supabaseClient.auth.signOut();
+
+location.reload();
+
+}
+
+
+async function iniciar(){
+
+const{data:{session}}=
+await supabaseClient.auth.getSession();
+
+if(!session){
+
+document.getElementById('login').style.display='flex';
+
+return;
+
+}
+
+usuario=session.user;
+
+if(usuario.id!==MI_ID){
+
+document.getElementById('login').innerHTML=`
+
+<div class="loginbox">
+
+<h1>Acceso denegado</h1>
+
+<p>Este panel es privado de LMV Studio.</p>
+
+<button class="btn" onclick="salir()">Salir</button>
+
+</div>
+
+`;
+
+return;
+
+}
+
+document.getElementById('login').style.display='none';
+
+document.getElementById('app').style.display='block';
+
+document.getElementById('userInfo').textContent=
+usuario.email||usuario.id;
+
+await cargarNegocios();
+
+}
+
+
+async function cargarNegocios(){
+
+const{data,error}=
+await supabaseClient
+.from('negocios')
+.select('id,nombre,dueño_id,dueño_email,telefono')
+.order('created_at',{ascending:false});
+
+const l=document.getElementById('lista');
+
+if(error){
+
+l.textContent='No se pudieron cargar: '+error.message;
+
+return;
+
+}
+
+if(!data.length){
+
+l.textContent='Todavía no hay barberías.';
+
+return;
+
+}
+
+
+const html=[];
+
+
+for(const n of data){
+
+const q=encodeURIComponent(n.id);
+
+const barberos=await cargarBarberos(n.id);
+
+let listaBarberos='';
+
+if(barberos.length){
+
+listaBarberos=barberos.map(b=>`
+
+<div class="barbero">
+
+<span>✂️ ${esc(b.nombre)}</span>
+
+<span style="color:#8be58b;font-size:12px">
+${b.activo===false?'Inactivo':'Activo'}
+</span>
+
+</div>
+
+`).join('');
+
+}else{
+
+listaBarberos=
+'<div style="color:#777;font-size:13px">Todavía no hay barberos.</div>';
+
+}
+
+
+html.push(`
+
+<div class="negocio">
+
+<strong>${esc(n.nombre)}</strong>
+
+<div class="meta">
+
+ID: ${n.id}
+
+<br>
+
+Dueño: ${esc(n.dueño_email||'pendiente')}
+
+${n.telefono?'<br>Tel: '+esc(n.telefono):''}
+
+</div>
+
+
+<div class="acciones">
+
+<a class="btn"
+href="${PUBLICA}?negocio=${q}"
+target="_blank">
+
+🌐 Página
+
+</a>
+
+
+<a class="btn sec"
+href="${ADMIN}?negocio=${q}"
+target="_blank">
+
+⚙️ Admin
+
+</a>
+
+
+<button
+class="btn sec"
+onclick="abrirBarbero('${n.id}','${esc(n.nombre).replace(/'/g,"&#039;")}')">
+
+👤 Barbero
+
+</button>
+
+</div>
+
+
+<div class="barberos">
+
+<strong style="font-size:13px">
+Barberos
+</strong>
+
+${listaBarberos}
+
+</div>
+
+</div>
+
+`);
+
+}
+
+
+l.innerHTML=html.join('');
+
+}
+
+
+async function cargarBarberos(negocioId){
+
+const{data,error}=await supabaseClient
+
+.from('barberos')
+
+.select('id,nombre,activo')
+
+.eq('negocio_id',negocioId)
+
+.order('nombre',{ascending:true});
+
+if(error){
+
+console.error('Error cargando barberos:',error);
+
+return [];
+
+}
+
+return data||[];
+
+}
+
+
+function abrirBarbero(id,nombre){
+
+negocioBarberoId=id;
+
+document.getElementById('barberiaSeleccionada').textContent=
+'Barbería: '+nombre;
+
+document.getElementById('nombreBarbero').value='';
+
+document.getElementById('modalBarbero').style.display='flex';
+
+setTimeout(()=>document.getElementById('nombreBarbero').focus(),100);
+
+}
+
+
+function cerrarModal(){
+
+document.getElementById('modalBarbero').style.display='none';
+
+negocioBarberoId=null;
+
+}
+
+
+document.getElementById('formBarbero').addEventListener(
+'submit',
+async e=>{
+
+e.preventDefault();
+
+if(!negocioBarberoId){
+
+mostrarMsg('No se seleccionó una barbería.');
+
+return;
+
+}
+
+const nombre=
+document.getElementById('nombreBarbero')
+.value
+.trim();
+
+if(!nombre)return;
+
+
+const{error}=await supabaseClient
+
+.from('barberos')
+
+.insert({
+
+negocio_id:negocioBarberoId,
+
+nombre:nombre,
+
+activo:true
+
+});
+
+
+if(error){
+
+mostrarMsg('No se pudo agregar el barbero: '+error.message);
+
+return;
+
+}
+
+
+cerrarModal();
+
+mostrarMsg('Barbero agregado correctamente.',true);
+
+await cargarNegocios();
+
+});
+
+
+document.getElementById('form').addEventListener(
+'submit',
+async e=>{
+
+e.preventDefault();
+
+const email=
+document.getElementById('duenoEmail')
+.value
+.trim()
+.toLowerCase();
+
+
+const payload={
+
+nombre:
+document.getElementById('nombre')
+.value
+.trim(),
+
+telefono:
+document.getElementById('telefono')
+.value
+.trim()||null,
+
+'dirección':
+document.getElementById('direccion')
+.value
+.trim()||null,
+
+instagram:
+document.getElementById('instagram')
+.value
+.trim()||null,
+
+dueño_id:null,
+
+dueño_email:email
+
+};
+
+
+const{error}=
+await supabaseClient
+.from('negocios')
+.insert(payload);
+
+
+if(error){
+
+mostrarMsg('No se pudo crear: '+error.message);
+
+return;
+
+}
+
+
+mostrarMsg(
+'Barbería creada. El dueño podrá entrar con ese Google.',
+true
+);
+
+e.target.reset();
+
+await cargarNegocios();
+
+});
+
+
+function esc(v){
+
+return String(v??'')
+.replace(
+/[&<>"']/g,
+c=>({
+'&':'&amp;',
+'<':'&lt;',
+'>':'&gt;',
+'"':'&quot;',
+"'":'&#039;'
+}[c])
+);
+
+}
+
+
+supabaseClient.auth.onAuthStateChange(()=>iniciar());
+
+iniciar();
+
+</script>
+
+</body>
+</html>
+```
