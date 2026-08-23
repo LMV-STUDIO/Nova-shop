@@ -1,5 +1,19 @@
 (() => {
   'use strict';
+
+  function limpiarMarcadorMarkdown(){
+    const limpiar=nodo=>{
+      if(nodo.nodeType===3){
+        const t=nodo.nodeValue||'';
+        if(t.trim()==='```html'||t.trim()==='```'){nodo.remove();return;}
+        if(t.trim().startsWith('```html')) nodo.nodeValue=t.replace(/^\s*```html\s*/,'');
+      }
+    };
+    if(document.body) Array.from(document.body.childNodes).forEach(limpiar);
+  }
+  limpiarMarcadorMarkdown();
+  setTimeout(limpiarMarcadorMarkdown,100);
+
   const C = window.supabaseClient || (typeof supabaseClient !== 'undefined' ? supabaseClient : null);
   const negocioId = new URLSearchParams(location.search).get('negocio');
   if (!C || !negocioId) return;
