@@ -23,6 +23,7 @@
       .horario.fijo-recurrente{background:#45246a!important;border-color:#a56be8!important;color:#ead8ff!important}.horario.fijo-recurrente .horario-estado{color:#ead8ff!important;font-weight:800}
       @media(max-width:900px){.fijo-form{grid-template-columns:1fr 1fr}.fijo-form .campo-completo{grid-column:1/-1}}
       @media(max-width:750px){.fijo-item{align-items:flex-start;flex-direction:column}}
+      .alta-barbero-card{margin-top:0}.alta-barbero-ayuda{color:#999;font-size:13px;margin:-8px 0 18px}.alta-barbero-diagnostico{margin-top:14px;padding:12px;border:1px solid var(--borde);border-radius:8px;background:#0d0d0d;color:#aaa;font-size:12px;word-break:break-word}.alta-barbero-diagnostico strong{color:#fff}
     `; document.head.appendChild(s);
   }
 
@@ -107,9 +108,139 @@
     });
   }
 
+  /* ==========================================================
+     ALTA DE BARBEROS
+     ========================================================== */
+
+  function estilosAltaBarbero(){
+    estilos();
+  }
+
+  async function cargarDiagnosticoBarbero(){
+    const box=document.getElementById('alta-barbero-diagnostico');
+    if(!box)return;
+
+    const {data:userData,error:userError}=await C.auth.getUser();
+
+    if(userError||!userData?.user){
+      box.innerHTML='<strong>Sesión:</strong> no hay un usuario autenticado.';
+      return;
+    }
+
+    const usuario=userData.user;
+    const {data:negocio,error:negocioError}=await C.from('negocios').select('id,"dueño_id",dueño_email').eq('id',negocioId).maybeSingle();
+
+    if(negocioError){
+      box.innerHTML=`<strong>Usuario:</strong> ${esc(usuario.email||'-')}<br><strong>UID:</strong> ${esc(usuario.id)}<br><strong>Negocio:</strong> error consultando dueño: ${esc(negocioError.message)}`;
+      return;
+    }
+
+    const coincide=negocio&&String(negocio.dueño_id)===String(usuario.id);
+    box.innerHTML=`<strong>Usuario conectado:</strong> ${esc(usuario.email||'-')}<br><strong>UID:</strong> ${esc(usuario.id)}<br><strong>Dueño del negocio:</strong> ${esc(negocio?.dueño_email||'-')}<br><strong>UID dueño:</strong> ${esc(negocio?.dueño_id||'-')}<br><strong>Autorización:</strong> <span style="color:${coincide?'#8be58b':'#ff9999'}">${coincide?'COINCIDE':'NO COINCIDE'}</span>`;
+  }
+
+  function htmlAltaBarbero(){
+    return `<div class="card alta-barbero-card" id="alta-barbero-card">
+      <h3>➕ Agregar barbero</h3>
+      <p class="alta-barbero-ayuda">El dueño de esta barbería puede agregar nuevos barberos. El barbero no necesita tener una cuenta de Google.</p>
+      <div class="form-grid">
+        <div class="campo">
+          <label>Nombre del barbero</label>
+          <input id="nuevoBarberoNombre" type="text" maxlength="120" placeholder="Ej: Juan Pérez">
+        </div>
+        <div class="campo">
+          <label>Estado inicial</label>
+          <select id="nuevoBarberoActivo">
+            <option value="true">Activo</option>
+            <option value="false">Inactivo</option>
+          </select>
+        </div>
+      </div>
+      <button type="button" class="btn" id="btnAgregarBarbero">+ Agregar barbero</button>
+      <div id="alta-barbero-diagnostico" class="alta-barbero-diagnostico">Comprobando usuario y propietario...</div>
+    </div>`;
+  }
+
+  async function agregarBarbero(){
+    const nombre=document.getElementById('nuevoBarberoNombre')?.value.trim();
+    const activo=document.getElementById('nuevoBarberoActivo')?.value==='true';
+
+    if(!nombre){
+      if(typeof mostrarGlobal==='function')mostrarGlobal('Ingresá el nombre del barbero.','error');
+      return;
+    }
+
+    const {data:userData,error:userError}=await C.auth.getUser();
+    if(userError||!userData?.user){
+      if(typeof mostrarGlobal==='function')mostrarGlobal('No hay una sesión de Google activa.','error');
+      return;
+    }
+
+    const usuario=userData.user;
+
+    const {data:negocio,error:negocioError}=await C.from('negocios').select('id,"dueño_id",dueño_email').eq('id',negocioId).maybeSingle();
+    if(negocioError||!negocio){
+      if(typeof mostrarGlobal==='function')mostrarGlobal('No se pudo comprobar el propietario del negocio: '+(negocioError?.message||'negocio inexistente'),'error');
+      return;
+    }
+
+    if(String(negocio.dueño_id)!==String(usuario.id)){
+      if(typeof mostrarGlobal==='function')mostrarGlobal('Tu usuario no coincide con el dueño de esta barbería. No se puede agregar el barbero.','error');
+      await cargarDiagnosticoBarbero();
+      return;
+    }
+
+    const {error}=await C.from('barberos').insert({
+      negocio_id:negocioId,
+      nombre,
+      activo,
+      usuario_id:null
+    });
+
+    if(error){
+      console.error('Error agregando barbero:',error);
+      if(typeof mostrarGlobal==='function')mostrarGlobal('No se pudo agregar el barbero: '+error.message,'error');
+      await cargarDiagnosticoBarbero();
+      return;
+    }
+
+    document.getElementById('nuevoBarberoNombre').value='';
+    document.getElementById('nuevoBarberoActivo').value='true';
+
+    if(typeof mostrarGlobal==='function')mostrarGlobal('Barbero agregado correctamente.');
+    await cargarDiagnosticoBarbero();
+    if(typeof cargarBarberos==='function')await cargarBarberos();
+    if(typeof cargarHorariosBarberos==='function')await cargarHorariosBarberos();
+    if(typeof cargarAgenda==='function')await cargarAgenda();
+  }
+
+  function renderAltaBarbero(){
+    if(document.getElementById('alta-barbero-card'))return;
+    const seccion=document.getElementById('seccion-barberos');
+    if(!seccion)return;
+    const cards=seccion.querySelectorAll('.card');
+    if(!cards.length)return;
+    estilosAltaBarbero();
+    cards[0].insertAdjacentHTML('beforebegin',htmlAltaBarbero());
+    const btn=document.getElementById('btnAgregarBarbero');
+    if(btn)btn.addEventListener('click',agregarBarbero);
+    cargarDiagnosticoBarbero();
+  }
+
+  function iniciarAltaBarbero(){
+    renderAltaBarbero();
+    setTimeout(renderAltaBarbero,500);
+    const btnMenu=document.querySelector('[data-seccion="barberos"]');
+    if(btnMenu)btnMenu.addEventListener('click',()=>setTimeout(renderAltaBarbero,50));
+    if(typeof MutationObserver!=='undefined'){
+      new MutationObserver(()=>renderAltaBarbero()).observe(document.body,{childList:true,subtree:true});
+    }
+  }
+
   function iniciar(){
     render(); setTimeout(aplicarEnAgenda,700);
     if(typeof cargarAgenda==='function'&&!cargarAgenda.__fijosWrapped){const original=cargarAgenda;const wrapped=async function(...args){const r=await original.apply(this,args);await aplicarEnAgenda();return r;};wrapped.__fijosWrapped=true;window.cargarAgenda=wrapped;}
+    iniciarAltaBarbero();
   }
 
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',iniciar);else iniciar();
