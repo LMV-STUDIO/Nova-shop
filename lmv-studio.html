@@ -74,6 +74,10 @@ const MI_ID='61237a18-0393-4308-98ba-a9891f1d5582';
 const PUBLICA='https://lmv-studio.github.io/Nova-shop/barberia.html';
 const ADMIN='https://lmv-studio.github.io/Nova-shop/admin.barberia_reutilizable.html';
 const MANUALES_KEY='lmv_los_accesos_manuales_v1';
+const OCULTOS_LMV=new Set([
+'407400e6-6ea6-4372-85f6-3e2792294a65',
+'80832f0d-c784-4f14-85c9-d1994986d567'
+]);
 let usuario=null;
 function mostrarMsg(t,ok=false){const m=document.getElementById('msg');m.textContent=t;m.className='msg '+(ok?'ok':'err');setTimeout(()=>m.className='msg',4000)}
 async function loginGoogle(){const{error}=await supabaseClient.auth.signInWithOAuth({provider:'google',options:{redirectTo:location.href}});if(error)mostrarMsg(error.message)}
@@ -83,7 +87,10 @@ const{data:{session}}=await supabaseClient.auth.getSession();
 if(!session){document.getElementById('login').style.display='flex';return}
 usuario=session.user;
 if(usuario.id!==MI_ID){document.getElementById('login').innerHTML='<div class="loginbox"><h1>Acceso denegado</h1><p>Este panel es privado de LMV Studio.</p><button class="btn" onclick="salir()">Salir</button></div>';return}
-document.getElementById('login').style.display='none';document.getElementById('app').style.display='block';document.getElementById('userInfo').textContent=usuario.email||usuario.id;await cargarNegocios()
+document.getElementById('login').style.display='none';document.getElementById('app').style.display='block';document.getElementById('userInfo').textContent=usuario.email||usuario.id;
+// Limpiamos los accesos manuales de prueba anteriores. No afecta Supabase.
+localStorage.removeItem(MANUALES_KEY);
+await cargarNegocios()
 }
 function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]))}
 function leerManuales(){try{return JSON.parse(localStorage.getItem(MANUALES_KEY)||'[]')}catch{return[]}}
@@ -100,7 +107,10 @@ const{data,error}=await supabaseClient.from('negocios').select('id,nombre,dueño
 const l=document.getElementById('lista');
 if(error){l.textContent='No se pudieron cargar: '+error.message;return}
 const html=[];
-for(const n of (data||[])) html.push(tarjeta(n));
+for(const n of (data||[])){
+if(OCULTOS_LMV.has(String(n.id))) continue;
+html.push(tarjeta(n));
+}
 for(const [i,item] of leerManuales().entries()) html.push(tarjetaManual(item,i));
 if(!html.length){l.textContent='Todavía no hay barberías.';return}
 l.innerHTML=html.join('')
