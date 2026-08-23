@@ -1,0 +1,13 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Admin | Barbería Prueba 3</title></head><body><div style="font-family:Arial;background:#090909;color:#fff;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px">Cargando panel...</div><script>
+(async()=>{
+try{
+ const url='./admin.barberia_reutilizable.html'+location.search;
+ let html=await (await fetch(url,{cache:'no-store'})).text();
+ html=html.replaceAll('admin.barberia_reutilizable.html','admin.barberia_prueba3.html');
+ const css=`<style id="prueba3-barberos-compacto">@media(max-width:750px){#seccion-barberos .card{padding:14px!important;margin-bottom:12px!important;border-radius:12px!important}#seccion-barberos .card h3{font-size:17px!important;margin-bottom:12px!important}#seccion-barberos #horariosBarberos> .card{background:#141414!important}#seccion-barberos #horariosBarberos> .card>div[style*="display:grid"]{grid-template-columns:72px minmax(0,1fr) minmax(0,1fr) 54px!important;gap:6px!important;margin-bottom:7px!important;padding:6px 0!important;border-bottom:1px solid #242424}#seccion-barberos #horariosBarberos> .card>div[style*="display:grid"]>strong{font-size:11px!important;color:#ddd!important;line-height:1.1!important}#seccion-barberos #horariosBarberos input[type="time"]{min-width:0!important;padding:8px 5px!important;font-size:12px!important;height:36px!important}#seccion-barberos #horariosBarberos label{justify-content:center!important;font-size:0!important;white-space:nowrap!important}#seccion-barberos #horariosBarberos label input[type="checkbox"]{width:18px!important;height:18px!important;margin:0!important;accent-color:#d4af37}#seccion-barberos #horariosBarberos .btn{width:100%!important;min-height:42px!important;margin-top:8px!important}}@media(max-width:390px){#seccion-barberos #horariosBarberos> .card>div[style*="display:grid"]{grid-template-columns:62px minmax(0,1fr) minmax(0,1fr) 44px!important;gap:5px!important}#seccion-barberos #horariosBarberos> .card>div[style*="display:grid"]>strong{font-size:10px!important}}</style>`;
+ html=html.replace('</head>',css+'</head>');
+ html=html.replace(/<p\s+style="\s*color:var\(--gris\);\s*font-size:13px;\s*margin-bottom:20px;\s*">\s*Estos horarios son los que utiliza la agenda para mostrar\s*los turnos disponibles\.\s*<\/p>/,'');
+ document.open();document.write(html);document.close();
+}catch(e){document.body.innerHTML='<pre style="white-space:pre-wrap;color:red">No se pudo cargar el panel: '+String(e)+'</pre>'}
+})();
+</script></body></html>
