@@ -66,4 +66,15 @@
     childList: true,
     subtree: true
   });
+
+  function instalarEstilosMobile() {
+    if (document.getElementById('admin-mobile-css')) return;
+    const link = document.createElement('link');
+    link.id = 'admin-mobile-css';
+    link.rel = 'stylesheet';
+    link.href = './admin-mobile.css?v=1';
+    document.head.appendChild(link);
+  }
+
+  instalarEstilosMobile();
 })();
