@@ -73,6 +73,9 @@ const supabaseClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 const MI_ID='61237a18-0393-4308-98ba-a9891f1d5582';
 const PUBLICA='https://lmv-studio.github.io/Nova-shop/barberia.html';
 const ADMIN='https://lmv-studio.github.io/Nova-shop/admin.barberia_reutilizable.html';
+const ADMIN_ESPECIFICOS={
+  '52280149-9d48-4c90-bd60-516499208d9e':'https://lmv-studio.github.io/Nova-shop/admin.barberia_prueba3.html'
+};
 const MANUALES_KEY='lmv_los_accesos_manuales_v1';
 const OCULTOS_LMV=new Set([
 '407400e6-6ea6-4372-85f6-3e2792294a65',
@@ -88,16 +91,17 @@ if(!session){document.getElementById('login').style.display='flex';return}
 usuario=session.user;
 if(usuario.id!==MI_ID){document.getElementById('login').innerHTML='<div class="loginbox"><h1>Acceso denegado</h1><p>Este panel es privado de LMV Studio.</p><button class="btn" onclick="salir()">Salir</button></div>';return}
 document.getElementById('login').style.display='none';document.getElementById('app').style.display='block';document.getElementById('userInfo').textContent=usuario.email||usuario.id;
-// Limpiamos los accesos manuales de prueba anteriores. No afecta Supabase.
 localStorage.removeItem(MANUALES_KEY);
 await cargarNegocios()
 }
 function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]))}
 function leerManuales(){try{return JSON.parse(localStorage.getItem(MANUALES_KEY)||'[]')}catch{return[]}}
 function guardarManuales(items){localStorage.setItem(MANUALES_KEY,JSON.stringify(items))}
+function adminParaNegocio(n){return ADMIN_ESPECIFICOS[String(n.id)]||ADMIN}
 function tarjeta(n){
 const q=encodeURIComponent(n.id);
-return `<div class="negocio"><strong>${esc(n.nombre)}</strong><div class="meta">ID: ${esc(n.id)}<br>Dueño: ${esc(n.dueño_email||'pendiente')}${n.telefono?'<br>Tel: '+esc(n.telefono):''}</div><div class="acciones"><a class="btn" href="${PUBLICA}?negocio=${q}" target="_blank">🌐 Página</a><a class="btn sec" href="${ADMIN}?negocio=${q}" target="_blank">⚙️ Admin</a></div></div>`
+const admin=adminParaNegocio(n);
+return `<div class="negocio"><strong>${esc(n.nombre)}</strong><div class="meta">ID: ${esc(n.id)}<br>Dueño: ${esc(n.dueño_email||'pendiente')}${n.telefono?'<br>Tel: '+esc(n.telefono):''}</div><div class="acciones"><a class="btn" href="${PUBLICA}?negocio=${q}" target="_blank">🌐 Página</a><a class="btn sec" href="${admin}?negocio=${q}" target="_blank">⚙️ Admin</a></div></div>`
 }
 function tarjetaManual(item,index){
 return `<div class="negocio"><strong>${esc(item.nombre)}</strong><div class="meta">Acceso manual · no modifica Supabase</div><div class="acciones"><a class="btn" href="${esc(item.pagina)}" target="_blank" rel="noopener">🌐 Página</a><a class="btn sec" href="${esc(item.admin)}" target="_blank" rel="noopener">⚙️ Admin</a><button class="btn danger" type="button" onclick="eliminarManual(${index})">🗑️ Eliminar</button></div></div>`
