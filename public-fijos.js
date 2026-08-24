@@ -14,25 +14,6 @@
   limpiarMarcadorMarkdown();
   setTimeout(limpiarMarcadorMarkdown,100);
 
-  const C = window.supabaseClient || (typeof supabaseClient !== 'undefined' ? supabaseClient : null);
-  const negocioId = new URLSearchParams(location.search).get('negocio');
-  if (!C || !negocioId) return;
-
-  const hm = v => {
-    const m = String(v ?? '').slice(0,5).match(/^(\d{1,2}):(\d{2})$/);
-    return m ? Number(m[1])*60 + Number(m[2]) : null;
-  };
-  const esc = v => String(v ?? '').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));
-  const dias = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
-
-  async function fijos(barberoId,dia){
-    const {data,error}=await C.from('bloqueos_recurrentes_barbero')
-      .select('id,hora_inicio,hora_fin,motivo')
-      .eq('negocio_id',negocioId).eq('barbero_id',barberoId).eq('dia_semana',dia).eq('activo',true);
-    if(error){console.error('Error consultando fijos:',error);return []}
-    return data||[]
-  }
-
   const style=document.createElement('style');
   style.textContent=`
     .horario-btn.fijo-semanal{background:#281c3c!important;border-color:#7655a8!important;color:#c2a6ff!important;opacity:1!important;cursor:not-allowed!important;text-decoration:none!important}
@@ -44,9 +25,10 @@
 
   function agregarBotonUbicacion(){
     const direccion=document.getElementById('direccion');
-    if(!direccion || document.getElementById('botonUbicacion')) return;
+    if(!direccion) return;
     const texto=(direccion.textContent||'').trim();
     if(!texto || texto==='Dirección del local') return;
+    if(document.getElementById('botonUbicacion')) return;
 
     const boton=document.createElement('a');
     boton.id='botonUbicacion';
@@ -61,6 +43,25 @@
   agregarBotonUbicacion();
   setTimeout(agregarBotonUbicacion,300);
   setTimeout(agregarBotonUbicacion,1000);
+  setTimeout(agregarBotonUbicacion,2000);
+  new MutationObserver(agregarBotonUbicacion).observe(document.body,{subtree:true,childList:true,characterData:true});
+
+  const C = window.supabaseClient || (typeof supabaseClient !== 'undefined' ? supabaseClient : null);
+  const negocioId = new URLSearchParams(location.search).get('negocio');
+  if (!C || !negocioId) return;
+
+  const hm = v => {
+    const m = String(v ?? '').slice(0,5).match(/^(\d{1,2}):(\d{2})$/);
+    return m ? Number(m[1])*60 + Number(m[2]) : null;
+  };
+
+  async function fijos(barberoId,dia){
+    const {data,error}=await C.from('bloqueos_recurrentes_barbero')
+      .select('id,hora_inicio,hora_fin,motivo')
+      .eq('negocio_id',negocioId).eq('barbero_id',barberoId).eq('dia_semana',dia).eq('activo',true);
+    if(error){console.error('Error consultando fijos:',error);return []}
+    return data||[]
+  }
 
   async function aplicarFijos(){
     const b=document.getElementById('barberoSelect')?.value;
