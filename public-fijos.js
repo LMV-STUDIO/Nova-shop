@@ -30,15 +30,37 @@
       .select('id,hora_inicio,hora_fin,motivo')
       .eq('negocio_id',negocioId).eq('barbero_id',barberoId).eq('dia_semana',dia).eq('activo',true);
     if(error){console.error('Error consultando fijos:',error);return []}
-    return data||[];
+    return data||[]
   }
 
   const style=document.createElement('style');
   style.textContent=`
     .horario-btn.fijo-semanal{background:#281c3c!important;border-color:#7655a8!important;color:#c2a6ff!important;opacity:1!important;cursor:not-allowed!important;text-decoration:none!important}
     .horario-btn.fijo-semanal:hover{transform:none!important;color:#c2a6ff!important}
+    .boton-ubicacion{display:inline-flex;align-items:center;justify-content:center;gap:8px;margin-top:14px;padding:10px 16px;border-radius:8px;background:transparent;color:var(--principal);border:1px solid var(--principal);text-decoration:none;font-weight:800;font-size:13px;transition:.2s}
+    .boton-ubicacion:hover{background:var(--principal);color:#111;transform:translateY(-2px)}
   `;
   document.head.appendChild(style);
+
+  function agregarBotonUbicacion(){
+    const direccion=document.getElementById('direccion');
+    if(!direccion || document.getElementById('botonUbicacion')) return;
+    const texto=(direccion.textContent||'').trim();
+    if(!texto || texto==='Dirección del local') return;
+
+    const boton=document.createElement('a');
+    boton.id='botonUbicacion';
+    boton.className='boton-ubicacion';
+    boton.target='_blank';
+    boton.rel='noopener noreferrer';
+    boton.href='https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(texto);
+    boton.innerHTML='📍 Cómo llegar';
+    direccion.parentElement.appendChild(boton);
+  }
+
+  agregarBotonUbicacion();
+  setTimeout(agregarBotonUbicacion,300);
+  setTimeout(agregarBotonUbicacion,1000);
 
   async function aplicarFijos(){
     const b=document.getElementById('barberoSelect')?.value;
