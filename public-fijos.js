@@ -23,10 +23,27 @@
   `;
   document.head.appendChild(style);
 
-  function agregarBotonUbicacion(){
+  function encontrarBloqueUbicacion(){
     const direccion=document.getElementById('direccion');
-    if(!direccion) return;
-    const texto=(direccion.textContent||'').trim();
+    if(direccion) return {direccion,contenedor:direccion.parentElement};
+
+    const tarjetas=[...document.querySelectorAll('.info-card')];
+    const tarjeta=tarjetas.find(card=>{
+      const titulo=card.querySelector('h3');
+      return titulo && titulo.textContent.trim().toLowerCase()==='ubicación';
+    });
+    if(!tarjeta) return null;
+
+    const parrafo=tarjeta.querySelector('p');
+    if(!parrafo) return null;
+    return {direccion:parrafo,contenedor:tarjeta};
+  }
+
+  function agregarBotonUbicacion(){
+    const bloque=encontrarBloqueUbicacion();
+    if(!bloque) return;
+
+    const texto=(bloque.direccion.textContent||'').trim();
     if(!texto || texto==='Dirección del local') return;
     if(document.getElementById('botonUbicacion')) return;
 
@@ -37,7 +54,7 @@
     boton.rel='noopener noreferrer';
     boton.href='https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(texto);
     boton.innerHTML='📍 Cómo llegar';
-    direccion.parentElement.appendChild(boton);
+    bloque.direccion.insertAdjacentElement('afterend',boton);
   }
 
   agregarBotonUbicacion();
