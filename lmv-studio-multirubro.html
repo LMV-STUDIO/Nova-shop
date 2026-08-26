@@ -36,6 +36,8 @@ body{margin:0;font-family:Arial;background:#090909;color:#fff}.wrap{max-width:11
             <option value="ropa">👕 Tienda de ropa</option>
             <option value="cosmetologia">✨ Cosmetología</option>
             <option value="depilacion_laser">⚡ Depilación láser</option>
+            <option value="nails">💅 Nails</option>
+            <option value="lashes">👁️ Lashes</option>
             <option value="lashes_nails">💅 Lashes & Nails</option>
           </select></div>
           <div class="campo"><label>Nombre</label><input id="nombre" required></div>
@@ -62,6 +64,8 @@ const PUBLICAS={
   ropa:BASE+'ropa.html',
   cosmetologia:BASE+'estetica.html',
   depilacion_laser:BASE+'estetica.html',
+  nails:BASE+'nails.html',
+  lashes:BASE+'lashes.html',
   lashes_nails:BASE+'estetica.html'
 };
 const ADMINS={
@@ -70,11 +74,14 @@ const ADMINS={
   ropa:BASE+'admin.ropa.html',
   cosmetologia:BASE+'admin.estetica.html',
   depilacion_laser:BASE+'admin.estetica.html',
+  nails:BASE+'admin.nails.html',
+  lashes:BASE+'admin.lashes.html',
   lashes_nails:BASE+'admin.estetica.html'
 };
 const LABELS={
   barberia:'💈 Barbería', comida:'🍔 Comida', ropa:'👕 Tienda de ropa',
-  cosmetologia:'✨ Cosmetología', depilacion_laser:'⚡ Depilación láser', lashes_nails:'💅 Lashes & Nails'
+  cosmetologia:'✨ Cosmetología', depilacion_laser:'⚡ Depilación láser',
+  nails:'💅 Nails', lashes:'👁️ Lashes', lashes_nails:'💅 Lashes & Nails'
 };
 const $=id=>document.getElementById(id);
 const esc=value=>String(value??'').replace(/[&<>"']/g, char=>({
