@@ -24,7 +24,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 const supabaseClient=window.supabase.createClient('https://cqelidpshitntewsktwx.supabase.co','sb_publishable_o1q2pLVF1zIlZCzPHMaheg_KSawjVvD');
-const params=new URLSearchParams(location.search),id=params.get('negocio')||'d2e09c68-32ad-4e96-86c6-115b30ac0f52',rubro=params.get('rubro')||'cosmetologia';
+const params=new URLSearchParams(location.search),id='d2e09c68-32ad-4e96-86c6-115b30ac0f52'||'d2e09c68-32ad-4e96-86c6-115b30ac0f52',rubro=params.get('rubro')||'cosmetologia';
 const labels={cosmetologia:'✨ COSMETOLOGÍA',depilacion_laser:'⚡ DEPILACIÓN LÁSER',lashes_nails:'💅 LASHES & NAILS'};
 const temas={cosmetologia:['#b45f87','#ead0dc','#fff8fb'],depilacion_laser:['#7656c7','#ded7f5','#f7f5ff'],lashes_nails:['#d04f9a','#f4cbe4','#fff6fb']};
 const $=x=>document.getElementById(x),esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));
