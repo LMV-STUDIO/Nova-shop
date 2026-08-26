@@ -1,0 +1,56 @@
+name: Conectar rubros independientes
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  conectar:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Ajustar IDs independientes
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          cambios = {
+              'nails.html': 'f137c4fc-64f9-4052-be20-bfecf7fac0f6',
+              'estetica.html': 'd2e09c68-32ad-4e96-86c6-115b30ac0f52',
+          }
+
+          for archivo, negocio_id in cambios.items():
+              p = Path(archivo)
+              if not p.exists():
+                  continue
+              s = p.read_text(encoding='utf-8')
+              nuevo, n = re.subn(
+                  r"id\s*=\s*params\.get\('negocio'\)",
+                  f"id=params.get('negocio')||'{negocio_id}'",
+                  s,
+                  count=1,
+              )
+              if n:
+                  p.write_text(nuevo, encoding='utf-8')
+                  print(f'{archivo}: conectado a {negocio_id}')
+              else:
+                  print(f'{archivo}: no se encontró el selector de negocio; no se modifica')
+          PY
+
+      - name: Commit cambios
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add nails.html estetica.html
+          if git diff --cached --quiet; then
+            echo "Sin cambios para aplicar"
+            exit 0
+          fi
+          git commit -m "Conectar plantillas con negocios independientes"
+          git push
