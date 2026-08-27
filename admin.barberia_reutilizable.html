@@ -865,6 +865,15 @@ td{
   }
 }
 </style>
+<!-- LMV-PWA-ADMIN -->
+<link rel="manifest" href="pwa-admin-barberia-reutilizable.webmanifest">
+<meta name="theme-color" content="#1769ff">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="icon" href="icon-lmv.svg" type="image/svg+xml">
+<script>if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./pwa-admin-sw.js',{scope:'./'}).catch(()=>{}));}</script>
+<!-- /LMV-PWA-ADMIN -->
 </head>
 
 <body>

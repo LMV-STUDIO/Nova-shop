@@ -10,6 +10,15 @@
 @media(max-width:600px){.topInner{align-items:flex-start;flex-direction:column;padding:13px 15px}.wrap{padding:17px 13px 45px}.hero{padding:23px 2px 16px}.hero h1{font-size:32px;letter-spacing:-1.3px}.hero:after{font-size:65px;right:3%}.stats{gap:9px;margin-bottom:17px}.stat{padding:15px}.stat strong{font-size:25px}.quick{gap:9px}.quick a{padding:15px}.card{padding:18px;border-radius:20px;margin-bottom:15px}.card h2{font-size:20px}.actions{width:100%}.actions .btn,.actions a{flex:1;text-align:center}.itemTop{display:block}.pill{margin-top:8px}.loginbox{padding:30px 20px}.loginbox h1{font-size:34px}.hoursGrid{grid-template-columns:1fr}.hourCard{padding:15px}.saveHours{align-items:flex-start;flex-direction:column}.saveHours .btn{width:100%}}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
 </style>
+<!-- LMV-PWA-ADMIN -->
+<link rel="manifest" href="pwa-admin-nails.webmanifest">
+<meta name="theme-color" content="#1769ff">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="icon" href="icon-lmv.svg" type="image/svg+xml">
+<script>if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./pwa-admin-sw.js',{scope:'./'}).catch(()=>{}));}</script>
+<!-- /LMV-PWA-ADMIN -->
 </head>
 <body>
 <div id="login" class="login"><div class="loginbox"><div class="logo">LMV STUDIO · NAILS</div><h1>Administración</h1><p class="muted">Gestioná servicios, horarios, secciones y turnos desde cualquier dispositivo.</p><button id="loginBtn" class="btn">🔐 Entrar con Google</button><p id="loginMsg" class="muted"></p></div></div>

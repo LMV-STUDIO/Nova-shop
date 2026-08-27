@@ -9,6 +9,15 @@
 @media(max-width:900px){.grid4{grid-template-columns:repeat(2,1fr)}.days{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:700px){.side{transform:translateX(-100%);transition:.25s;width:260px}.side.open{transform:translateX(0)}.main{margin-left:0;width:100%}.mobileBtn{display:block;background:transparent;border:0;color:#fff;font-size:24px;cursor:pointer}.top{padding:0 16px}.content{padding:18px}.grid4,.formgrid{grid-template-columns:1fr}.days{grid-template-columns:1fr}.card{padding:16px}.top h1{font-size:17px}.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:15}.overlay.show{display:block}}
 </style>
+<!-- LMV-PWA-ADMIN -->
+<link rel="manifest" href="pwa-admin-servicios-reutilizable.webmanifest">
+<meta name="theme-color" content="#1769ff">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="icon" href="icon-lmv.svg" type="image/svg+xml">
+<script>if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./pwa-admin-sw.js',{scope:'./'}).catch(()=>{}));}</script>
+<!-- /LMV-PWA-ADMIN -->
 </head>
 <body>
 <div id="login" class="login hidden"><div class="loginbox"><h1>LMV Studio</h1><h2>Panel de administración</h2><p>Iniciá sesión con Google para administrar tu negocio.</p><button class="btn" style="width:100%" id="googleBtn">Continuar con Google</button><p id="loginMsg"></p></div></div>

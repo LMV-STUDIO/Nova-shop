@@ -1,0 +1,14 @@
+{
+  "name": "LMV Studio — Admin Ferretería",
+  "short_name": "LMV Admin",
+  "description": "Panel de administración de tu negocio.",
+  "start_url": "./admin.ferreteria.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#f5f9ff",
+  "theme_color": "#1769ff",
+  "icons": [
+    {"src": "./icon-lmv.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable"}
+  ]
+}
