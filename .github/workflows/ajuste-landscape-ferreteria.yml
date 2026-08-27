@@ -1,0 +1,31 @@
+name: Ajuste landscape ferreteria
+on:
+  push:
+    paths:
+      - '.github/workflows/ajuste-landscape-ferreteria.yml'
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Ajustar vista horizontal
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('admin.demo-publico-ferreteria.html')
+          s=p.read_text(encoding='utf-8')
+          marker='<!-- LMV LANDSCAPE COMPACT -->'
+          css='''<style id="lmv-landscape-compact">\n@media (orientation:landscape) and (max-width:900px){\n  .main{padding:10px 14px!important}\n  .top{margin-bottom:12px!important;gap:8px!important}\n  .top h1{font-size:22px!important}\n  .muted{font-size:11px!important;margin-top:3px!important}\n  .badge{padding:6px 9px!important;font-size:9px!important}\n  .cards{gap:8px!important}\n  .card{padding:10px!important;border-radius:15px!important}\n  .card span{font-size:10px!important}\n  .card b{font-size:17px!important;margin-top:3px!important}\n  .panel{padding:12px!important;margin-top:10px!important;border-radius:16px!important}\n  .toolbar{margin-bottom:10px!important;gap:8px!important}\n  .toolbar h2{font-size:16px!important}\n  .btn{min-height:36px!important;padding:7px 11px!important;font-size:12px!important}\n  .filters{gap:6px!important;margin-bottom:10px!important}\n  .filters>*{min-height:34px!important;padding:7px 9px!important;font-size:11px!important}\n  .metricRow{gap:8px!important;margin-top:9px!important}\n  .metric{padding:9px!important}\n  .metric b{font-size:16px!important}\n  .chart{height:145px!important;padding-top:7px!important}\n  .demoLock{bottom:6px!important;padding:6px 11px!important;font-size:9px!important}\n}\n@media (orientation:landscape) and (min-width:600px) and (max-width:900px){\n  .cards{grid-template-columns:repeat(4,minmax(0,1fr))!important}\n  .grid2{grid-template-columns:1fr 1fr!important}\n  .stockTable{min-width:900px!important}\n}\n</style>'''
+          if marker not in s:
+              s=s.replace('</head>',marker+'\n'+css+'</head>',1)
+              p.write_text(s,encoding='utf-8')
+          PY
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add admin.demo-publico-ferreteria.html
+          git diff --cached --quiet || git commit -m "fix: compactar tarjetas en landscape de ferreteria"
+          git push
