@@ -24,7 +24,7 @@
 <section class="contact reveal" id="contacto"><div class="contactGrid"><div class="contactCard"><h3>📍 Contacto y ubicación</h3><div class="contactInfo"><div><b>Dirección</b><span id="direccion">—</span></div><div><b>Teléfono</b><span id="telefono">—</span></div><div><b>Instagram</b><span id="instagram">—</span></div></div></div><div class="contactCard"><h3>💬 Contactanos</h3><p>Encontrá el negocio y consultá lo que necesites antes de reservar.</p><div class="contactButtons"><a class="contactBtn" id="igBtn" target="_blank">📸 Instagram</a><a class="contactBtn" id="waBtn" target="_blank">💬 WhatsApp</a><a class="contactBtn" id="mapBtn" target="_blank">📍 Cómo llegar</a></div></div></div></section>
 </main>
 <footer class="wrap footer" id="footerInfo">LMV Studio · Tu negocio, tu presencia.</footer>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="demo-client-mode.js"></script>
 <script>
 const supabaseClient=window.supabase.createClient('https://cqelidpshitntewsktwx.supabase.co','sb_publishable_o1q2pLVF1zIlZCzPHMaheg_KSawjVvD');
 const params=new URLSearchParams(location.search),id=params.get('negocio')||'d2e09c68-32ad-4e96-86c6-115b30ac0f52';
