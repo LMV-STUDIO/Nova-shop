@@ -1,1 +1,16 @@
-<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Demo Admin Ferretería — LMV Studio</title></head><body><script>location.replace('demo-admin.html?rubro=ferreteria')</script></body></html>
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Demo Admin Ferretería — LMV Studio</title>
+<style>html,body{margin:0;width:100%;height:100%;overflow:hidden}iframe{display:block;width:100%;height:100%;border:0}</style>
+</head>
+<body>
+<iframe id="demo" src="admins/originales/admin.ferreteria.html" title="Demo Admin Ferretería"></iframe>
+<script>
+const frame=document.getElementById('demo');
+frame.addEventListener('load',()=>{try{const d=frame.contentDocument,s=d.createElement('style');s.textContent='#login,.login,[class*="login"]{display:none!important}#app,.app{display:block!important}';d.head.appendChild(s);const a=d.getElementById('app');if(a)a.style.display='block';const l=d.getElementById('login');if(l)l.style.display='none'}catch(e){console.error(e)}});
+</script>
+</body>
+</html>
