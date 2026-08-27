@@ -939,7 +939,7 @@ td{
 
 </div>
 
-<div id="app" class="app" style="display:block!important">
+<div id="app" class="app" style="display:none;">
 
     <aside class="sidebar">
 
@@ -1777,19 +1777,44 @@ td{
 
 </body>
 </html>
-<!-- LMV Studio: demo visual protegida, sin persistencia. -->
+<!-- LMV Studio: demo visual con datos ficticios, sin login ni persistencia. -->
 <style>
-#lmv-demo-notice{position:fixed;left:16px;right:16px;bottom:16px;z-index:2147483647;padding:13px 18px;border-radius:12px;background:#111827;color:#fff;font:600 14px/1.4 system-ui,-apple-system,Segoe UI,sans-serif;text-align:center;box-shadow:0 8px 30px rgba(0,0,0,.22)}
+#lmv-demo-notice{position:fixed;left:16px;right:16px;bottom:16px;z-index:2147483647;padding:13px 18px;border-radius:12px;background:#111827;color:#fff;font:600 14px/1.4 system-ui,sans-serif;text-align:center;box-shadow:0 8px 30px rgba(0,0,0,.22)}
 #lmv-demo-notice strong{font-weight:800}
-#lmv-demo-toast{position:fixed;left:50%;top:24px;transform:translateX(-50%);z-index:2147483647;display:none;max-width:calc(100% - 32px);padding:14px 18px;border-radius:12px;background:#111827;color:#fff;font:600 14px/1.4 system-ui,-apple-system,Segoe UI,sans-serif;text-align:center;box-shadow:0 8px 30px rgba(0,0,0,.25)}
+#lmv-demo-toast{position:fixed;left:50%;top:24px;transform:translateX(-50%);z-index:2147483647;display:none;max-width:calc(100% - 32px);padding:14px 18px;border-radius:12px;background:#111827;color:#fff;font:600 14px/1.4 system-ui,sans-serif;text-align:center;box-shadow:0 8px 30px rgba(0,0,0,.25)}
 </style>
 <div id="lmv-demo-notice">🎬 <strong>Esto es una demo visual.</strong> Podés recorrer y probar el panel, pero los cambios no se guardan.</div>
 <div id="lmv-demo-toast">🎬 Esto es una demo visual. Los cambios no se pueden guardar.</div>
 <script>
 (()=>{
-  const toast=()=>{const e=document.getElementById('lmv-demo-toast');if(!e)return;e.style.display='block';clearTimeout(window.__lmvDemoT);window.__lmvDemoT=setTimeout(()=>e.style.display='none',2800)};
-  const isWrite=(el)=>{if(!el)return false;const t=((el.innerText||el.textContent||el.value||el.getAttribute('aria-label')||el.title||'')+'').toLowerCase();return /guardar|crear|eliminar|editar|activar|desactivar|confirmar|actualizar|agregar|añadir|nuevo|borrar|horario|guardar cambios|aceptar/.test(t)};
-  document.addEventListener('submit',e=>{e.preventDefault();e.stopImmediatePropagation();toast()},true);
-  document.addEventListener('click',e=>{const b=e.target.closest('button,[role="button"],input[type="submit"],input[type="button"]');if(isWrite(b)){e.preventDefault();e.stopImmediatePropagation();toast()}},true);
+  const path=location.pathname.toLowerCase();
+  const key=path.includes('nails')?'nails':path.includes('lashes')?'lashes':path.includes('cosmetologia')?'cosmetologia':path.includes('depilacion')?'depilacion':path.includes('comida')?'comida':path.includes('ferreteria')?'ferreteria':'barberia';
+  const data={
+    barberia:{name:'Barbería Demo',items:[['Corte clásico','$8.500','45 min'],['Corte + barba','$12.000','60 min'],['Perfilado de barba','$6.000','30 min']],people:['Martín Gómez','Lucas Fernández','Santiago López'],pros:['Nicolás García','Matías Romero','Franco Díaz']},
+    nails:{name:'Nails Studio Demo',items:[['Manicura semipermanente','$12.000','60 min'],['Kapping gel','$16.000','75 min'],['Soft gel','$20.000','90 min']],people:['Sofía Martínez','Camila Torres','Valentina Ruiz'],pros:['Profesional 1','Profesional 2']},
+    lashes:{name:'Lashes Studio Demo',items:[['Lifting de pestañas','$14.000','60 min'],['Extensiones clásicas','$18.000','90 min'],['Volumen ruso','$24.000','120 min']],people:['Julieta Pérez','Agustina López','Micaela Díaz'],pros:['Profesional 1','Profesional 2']},
+    cosmetologia:{name:'Estética Demo',items:[['Limpieza facial','$15.000','60 min'],['Tratamiento hidratante','$18.000','75 min'],['Radiofrecuencia','$22.000','60 min']],people:['Florencia Silva','Carla Romero','Marina Castro'],pros:['Profesional 1','Profesional 2']},
+    depilacion:{name:'Depilación Láser Demo',items:[['Axilas','$10.000','20 min'],['Piernas','$22.000','45 min'],['Piernas + axilas','$28.000','60 min']],people:['Luciana Gómez','Paula Benítez','Natalia Suárez'],pros:['Profesional 1','Profesional 2']},
+    comida:{name:'Restaurante Demo',items:[['Hamburguesa completa','$9.500','20 min'],['Milanesa con papas','$11.000','25 min'],['Pasta de la casa','$10.500','20 min']],people:['Mesa 4 — Juan Pérez','Mesa 7 — Ana López','Pedido #1042'],pros:['Cocina','Salón']},
+    ferreteria:{name:'Ferretería Demo',items:[['Taladro percutor','$85.000','Stock 12'],['Juego de llaves','$32.000','Stock 25'],['Pintura interior 20L','$48.000','Stock 8']],people:['Cliente mostrador','Pedido #2048','Presupuesto #118'],pros:['Vendedor 1','Vendedor 2']}
+  }[key];
+  const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+  const toast=()=>{const t=$('#lmv-demo-toast');if(!t)return;t.style.display='block';clearTimeout(window.__lmvToast);window.__lmvToast=setTimeout(()=>t.style.display='none',2600)};
+  const write=/guardar|crear|eliminar|editar|activar|desactivar|confirmar|actualizar|agregar|añadir|nuevo|borrar/i;
+  function table(headers,rows){return '<div class="tabla-wrapper"><table><thead><tr>'+headers.map(h=>'<th>'+h+'</th>').join('')+'</tr></thead><tbody>'+rows.map(r=>'<tr>'+r.map(c=>'<td>'+c+'</td>').join('')+'</tr>').join('')+'</tbody></table></div>'}
+  function fill(){
+    ['pantallaCarga','pantallaLogin','pantallaAccesoDenegado'].forEach(id=>{const e=document.getElementById(id);if(e)e.style.display='none'});
+    const app=$('#app');if(app)app.style.display='flex';
+    const n=$('#sidebarNombre');if(n)n.textContent=data.name;
+    $$('.negocio-top').forEach(e=>e.textContent=data.name);
+    $$('.usuario-panel').forEach(e=>e.innerHTML='<div>Administrador demo</div><small>Modo demostración</small>');
+    $$('.stat .numero').forEach((e,i)=>e.textContent=['12','4','3','2'][i]||'3');
+    $$('*').forEach(e=>{if(e.children.length===0&&e.textContent.trim()==='Cargando...'){const box=e.closest('.card,.seccion-admin,section')||e.parentElement;const text=(box.textContent||'').toLowerCase();if(text.includes('turno')||text.includes('reserva'))e.parentElement.innerHTML=table(['Cliente','Fecha','Hora','Servicio','Estado','Acciones'],data.people.map((p,i)=>[p,'27/08/2026',['10:00','11:30','15:00'][i],data.items[i][0],'<span class="estado '+(i===1?'estado-confirmado':'estado-pendiente')+'">'+(i===1?'Confirmado':'Pendiente')+'</span>','<button class="btn btn-small lmv-demo-write">Ver</button>']));else if(text.includes('catálogo')||text.includes('servicio'))e.parentElement.innerHTML=table(['Servicio','Precio','Duración','Estado','Acciones'],data.items.map(s=>[s[0],s[1],s[2],'<span class="estado estado-confirmado">Activo</span>','<button class="btn btn-small lmv-demo-write">Editar</button>']));else if(text.includes('barbero')||text.includes('profesional'))e.parentElement.innerHTML=table(['Nombre','Estado','Horario','Acciones'],data.pros.map(p=>[p,'<span class="estado estado-confirmado">Activo</span>','Lun–Sáb · 09:00–18:00','<button class="btn btn-small lmv-demo-write">Editar</button>']));else e.textContent='Datos de demostración';}});
+    $$('form').forEach(f=>f.addEventListener('submit',e=>{e.preventDefault();e.stopImmediatePropagation();toast()},true));
+    document.addEventListener('click',e=>{const b=e.target.closest('button,input[type=submit],input[type=button]');if(b&&write.test((b.innerText||b.value||b.title||'')+' ')){e.preventDefault();e.stopImmediatePropagation();toast()}},true);
+    window.mostrarSeccion=(name,btn)=>{$$('.seccion-admin').forEach(s=>s.classList.remove('activa'));const s=document.getElementById(name);if(s)s.classList.add('activa');$$('.menu button').forEach(b=>b.classList.remove('activo'));if(btn)btn.classList.add('activo');scrollTo(0,0)};
+    const first=$('.seccion-admin');if(first)first.classList.add('activa');
+  }
+  document.readyState==='loading'?document.addEventListener('DOMContentLoaded',()=>setTimeout(fill,30)):setTimeout(fill,30);
 })();
 </script>
