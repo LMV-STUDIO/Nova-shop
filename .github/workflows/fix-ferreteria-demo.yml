@@ -1,0 +1,32 @@
+name: Fix demo pública Ferretería
+on:
+  push:
+    paths:
+      - '.github/workflows/fix-ferreteria-demo.yml'
+permissions:
+  contents: write
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Cambiar enlace del admin de Ferretería por la demo pública
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('lmv-studio.html')
+          s = p.read_text(encoding='utf-8')
+          old = 'href="admin.ferreteria.html"'
+          new = 'href="admin.demo-publico-ferreteria.html"'
+          if old not in s:
+              raise SystemExit('No se encontró el enlace esperado')
+          p.write_text(s.replace(old, new, 1), encoding='utf-8')
+          PY
+      - name: Guardar cambio
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add lmv-studio.html
+          git diff --cached --quiet && exit 0
+          git commit -m 'Conectar demo pública de Ferretería'
+          git push
