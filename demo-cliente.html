@@ -4,27 +4,30 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>LMV Studio — Demo</title>
-<meta http-equiv="refresh" content="3">
 </head>
 <body>
 <p>Abriendo la demo...</p>
 <script>
 (() => {
   const rubro = new URLSearchParams(location.search).get('rubro') || '';
+
+  // Negocios de demo existentes en Supabase.
   const destinos = {
-    barberia: 'barberia.html',
-    nails: 'nails.html',
-    lashes: 'lashes.html',
-    cosmetologia: 'estetica.html',
-    'depilacion-laser': 'depilacion-laser.html',
-    comida: 'comida.html'
+    barberia: 'barberia.html?negocio=407400e6-6ea6-4372-85f6-3e2792294a65',
+    nails: 'nails.html?negocio=f137c4fc-64f9-4052-be20-bfecf7fac0f6',
+    lashes: 'lashes.html?negocio=b913a594-6416-4089-8116-b7cdc6040e2a',
+    cosmetologia: 'estetica.html?negocio=d2e09c68-32ad-4e96-86c6-115b30ac0f52',
+    'depilacion-laser': 'depilacion-laser.html?negocio=48cc8f86-4849-431f-9e9b-ec98065e5385',
+    comida: 'comida.html?negocio=4201c521-ef4c-4f4a-aa02-9cb2897a6d92'
   };
+
   const destino = destinos[rubro];
   if (destino) {
     location.replace(destino);
-  } else {
-    document.body.innerHTML = '<p>No se encontró la demo solicitada.</p><p><a href="lmv-studio.html#rubros">Volver a rubros</a></p>';
+    return;
   }
+
+  document.body.innerHTML = '<p>No se encontró la demo solicitada.</p><p><a href="lmv-studio.html#rubros">Volver a rubros</a></p>';
 })();
 </script>
 </body>
