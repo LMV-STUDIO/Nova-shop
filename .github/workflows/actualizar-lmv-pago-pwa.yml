@@ -1,0 +1,44 @@
+name: Actualizar LMV pago y PWA
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  actualizar:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Actualizar LMV
+        run: |
+          python3 <<'PY'
+          from pathlib import Path
+          import re
+          p=Path('lmv-studio.html')
+          s=p.read_text(encoding='utf-8')
+
+          # Preparación PWA / aspecto de app
+          s=s.replace('<meta name="viewport" content="width=device-width,initial-scale=1">', '<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">\n<meta name="theme-color" content="#1769ff">\n<link rel="manifest" href="manifest-lmv.json">')
+          if 'navigator.serviceWorker.register' not in s:
+              s=s.replace('</body>', '<script>if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("sw-lmv.js").catch(()=>{}));}</script></body>')
+
+          # Reemplazar bloque de pago/ofertas completo por una versión seleccionable.
+          payment='''<section class="section wrap"><div class="payment"><div><span class="eyebrow">FORMAS DE PAGO</span><h3>Elegí tu método de pago</h3><p style="color:var(--muted)">Seleccioná la modalidad que preferís para que la consulta llegue completa.</p><div class="payitem"><label style="display:block;font-weight:900">💳 Método de pago</label><select id="paymentMethod" style="width:100%;margin-top:9px;padding:12px;border:1px solid var(--line);border-radius:12px;background:#fff;color:var(--ink);font:inherit"><option value="Transferencia">Transferencia</option><option value="Efectivo">Efectivo</option><option value="2 pagos quincenales">2 pagos quincenales</option><option value="Pago semanal">Pago semanal</option><option value="Otro">Otro</option></select></div><div class="payitem"><b>📆 Mensualidad</b><span>La mensualidad se acuerda según el modelo contratado.</span></div></div><div><span class="eyebrow">OPCIONES</span><h3>¿Tu negocio necesita algo especial?</h3><p style="color:var(--muted)">Podés marcar una o varias opciones.</p><label class="payitem" style="display:block;cursor:pointer"><input type="checkbox" class="businessOption" value="Cadena de negocios"> 🏢 Cadena de negocios</label><label class="payitem" style="display:block;cursor:pointer"><input type="checkbox" class="businessOption" value="Entre 5 y 10 empleados"> 👥 Entre 5 y 10 empleados</label><label class="payitem" style="display:block;cursor:pointer"><input type="checkbox" class="businessOption" value="Más de 1000 productos"> 📦 Más de 1000 productos</label><label class="payitem" style="display:block;cursor:pointer"><input type="checkbox" class="businessOption" value="Otro (comentar en el mensaje)"> ✏️ Otro <span style="display:block;margin-left:24px">(comentar en el mensaje)</span></label></div></div></section>'''
+          s,n=re.subn(r'<section class="section wrap"><div class="payment">.*?</section>',payment,s,count=1,flags=re.S)
+
+          # Enviar pago y opciones elegidas a WhatsApp.
+          old="const text='Hola LMV Studio! Me interesa una solución para '+selectedRubro+'. Elegí '+selectedModel+'. Quiero conocer las condiciones y comenzar a trabajar.';"
+          new="const payment=document.getElementById('paymentMethod')?.value||'No especificado'; const options=[...document.querySelectorAll('.businessOption:checked')].map(x=>x.value); const optionsText=options.length?options.join(', '):'Ninguna'; const text='Hola LMV Studio! Me interesa una solución para '+selectedRubro+'. Elegí '+selectedModel+'. Método de pago: '+payment+'. Opciones: '+optionsText+'. Quiero conocer las condiciones y comenzar a trabajar.';"
+          s=s.replace(old,new)
+          p.write_text(s,encoding='utf-8')
+          PY
+      - name: Commit cambios
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add lmv-studio.html manifest-lmv.json sw-lmv.js
+          git diff --cached --quiet && exit 0
+          git commit -m "LMV: metodo de pago, opciones y modo app"
+          git push
