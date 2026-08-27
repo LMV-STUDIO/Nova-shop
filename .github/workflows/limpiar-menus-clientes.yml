@@ -25,20 +25,37 @@ jobs:
                   continue
               s=p.read_text(encoding='utf-8')
 
-              # El modo demo se activa únicamente con ?demo=true y se coloca
-              # después de cargar Supabase pero antes del JavaScript de la página.
+              # Quitar restos del menu movil antiguo cuando existe el nuevo menu LMV.
+              s=re.sub(r'<button[^>]*class="menuBtn"[^>]*>.*?</button>','',s,count=1,flags=re.S)
+              marker='<div class="mobileMenu"'
+              start=s.find(marker)
+              if start>=0:
+                  depth=0
+                  for m in re.finditer(r'<div\b[^>]*>|</div>',s[start:],re.I):
+                      tag=m.group(0)
+                      if tag.lower().startswith('<div') and not tag.rstrip().endswith('/>'):
+                          depth+=1
+                      elif tag.lower()=='</div>':
+                          depth-=1
+                          if depth==0:
+                              s=s[:start]+s[start+m.end():]
+                              break
+
+              # Nails aveva ancora listener riferiti al vecchio menu rimosso.
+              s=re.sub(r'function openMenu\(\)\{.*?\}\s*function closeMenu\(\)\{.*?\}\$\([\'\"]menuBtn[\'\"]\)\.addEventListener\([\s\S]*?\);', '', s, count=1)
+
+              # Inserir modo demo dopo Supabase y antes del JS propio de la página.
               if demo_tag not in s:
-                  marker='<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>'
-                  if marker in s:
-                      s=s.replace(marker,marker+demo_tag,1)
+                  marker2='<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>'
+                  if marker2 in s:
+                      s=s.replace(marker2,marker2+demo_tag,1)
                   else:
-                      # Algunas páginas pueden tener el CDN con otra capitalización.
                       m=re.search(r'<script[^>]+src=["\']https://cdn\.jsdelivr\.net/npm/@supabase/supabase-js@2[^>]*></script>',s,re.I)
                       if m:
                           s=s[:m.end()]+demo_tag+s[m.end():]
               p.write_text(s,encoding='utf-8')
 
-          # LMV muestra las paginas cliente reales en modo demo, sin crear copias.
+          # LMV muestra las páginas cliente reales en modo demo, sin crear copias.
           p=Path('lmv-studio.html')
           if p.exists():
               s=p.read_text(encoding='utf-8')
@@ -60,5 +77,5 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add nails.html lashes.html estetica.html depilacion-laser.html barberia.html comida.html ferreteria.html ropa.html lmv-studio.html
-          git diff --cached --quiet || git commit -m 'feat: separar modo demo de paginas cliente reales'
+          git diff --cached --quiet || git commit -m 'fix: separar modo demo de paginas cliente reales'
           git push
