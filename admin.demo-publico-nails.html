@@ -4,8 +4,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Demo Admin Nails — LMV Studio</title>
+<style>html,body{margin:0;width:100%;height:100%;overflow:hidden}iframe{display:block;width:100%;height:100%;border:0}</style>
 </head>
 <body>
-<script>location.replace('demo-admin.html?rubro=nails');</script>
+<iframe id="demo" src="admins/originales/admin.nails.html" title="Demo Admin Nails"></iframe>
+<script>
+const frame=document.getElementById('demo');
+frame.addEventListener('load',()=>{try{const d=frame.contentDocument,s=d.createElement('style');s.textContent='#login,.login,[class*="login"]{display:none!important}#app,.app{display:block!important}';d.head.appendChild(s);const a=d.getElementById('app');if(a)a.style.display='block';const l=d.getElementById('login');if(l)l.style.display='none'}catch(e){console.error(e)}});
+</script>
 </body>
 </html>
