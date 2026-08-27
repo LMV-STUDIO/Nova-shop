@@ -1,0 +1,68 @@
+name: Aislar demos públicas
+
+on:
+  push:
+    paths:
+      - '.github/workflows/aislar-demos-publicas.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  aislar:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Cambiar enlaces comerciales a demos públicas
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          p = Path('lmv-studio.html')
+          s = p.read_text(encoding='utf-8')
+
+          clientes = {
+              'barberia.html': 'demo-cliente.html?rubro=barberia',
+              'nails.html': 'demo-cliente.html?rubro=nails',
+              'lashes.html': 'demo-cliente.html?rubro=lashes',
+              'estetica.html': 'demo-cliente.html?rubro=cosmetologia',
+              'depilacion-laser.html': 'demo-cliente.html?rubro=depilacion-laser',
+              'comida.html': 'demo-cliente.html?rubro=comida',
+              'ferreteria.html': 'demo-cliente.html?rubro=ferreteria',
+          }
+
+          admins = {
+              'admin.barberia_reutilizable.html': 'admin.demo-publico-barberia.html',
+              'admin.nails.html': 'admin.demo-publico-nails.html',
+              'admin.lashes.html': 'admin.demo-publico-lashes.html',
+              'admin.estetica.html': 'admin.demo-publico-cosmetologia.html',
+              'admin.depilacion-laser.html': 'admin.demo-publico-depilacion-laser.html',
+              'admin.comida.html': 'admin.demo-publico-comida.html',
+              'admin.ferreteria.html': 'admin.demo-publico-ferreteria.html',
+          }
+
+          for old, new in clientes.items():
+              s = re.sub(re.escape(old) + r'\?negocio=[^\"\']+', new, s)
+
+          for old, new in admins.items():
+              s = re.sub(re.escape(old) + r'\?negocio=[^\"\']+', new, s)
+
+          p.write_text(s, encoding='utf-8')
+          PY
+
+      - name: Commit cambios
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add lmv-studio.html
+          if git diff --cached --quiet; then
+            echo 'Sin cambios necesarios.'
+            exit 0
+          fi
+          git commit -m 'Separar demos públicas de datos reales'
+          git push
