@@ -1,0 +1,94 @@
+name: PWA admins reales
+
+on:
+  push:
+    paths:
+      - '.github/workflows/pwa-admins-reales.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  pwa:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Agregar PWA a admins reales
+        shell: python
+        run: |
+          from pathlib import Path
+          import re
+
+          admins = [
+              'admin.barberia_reutilizable.html',
+              'admin.comida.html',
+              'admin.depilacion-laser.html',
+              'admin.estetica.html',
+              'admin.ferreteria.html',
+              'admin.lashes.html',
+              'admin.nails.html',
+              'admin.ropa.html',
+              'admin.servicios_reutilizable.html',
+          ]
+
+          labels = {
+              'barberia_reutilizable': 'Barbería',
+              'comida': 'Gastronomía',
+              'depilacion-laser': 'Depilación Láser',
+              'estetica': 'Estética',
+              'ferreteria': 'Ferretería',
+              'lashes': 'Lashes',
+              'nails': 'Nails',
+              'ropa': 'Tienda de Ropa',
+              'servicios_reutilizable': 'Servicios',
+          }
+
+          for filename in admins:
+              p = Path(filename)
+              if not p.exists():
+                  continue
+              key = p.stem.replace('admin.', '')
+              slug = re.sub(r'[^a-z0-9-]+', '-', key.lower()).strip('-')
+              manifest = f'''{{
+            "name": "LMV Studio — Admin {labels.get(key, 'Negocio')}",
+            "short_name": "LMV Admin",
+            "description": "Panel de administración de tu negocio.",
+            "start_url": "./{filename}",
+            "scope": "./",
+            "display": "standalone",
+            "orientation": "portrait-primary",
+            "background_color": "#f5f9ff",
+            "theme_color": "#1769ff",
+            "icons": [
+              {{"src": "./icon-lmv.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable"}}
+            ]
+          }}
+          '''
+              Path(f'pwa-admin-{slug}.webmanifest').write_text(manifest, encoding='utf-8')
+
+              text = p.read_text(encoding='utf-8')
+              marker = '<!-- LMV-PWA-ADMIN -->'
+              if marker not in text:
+                  block = f'''{marker}\n<link rel="manifest" href="pwa-admin-{slug}.webmanifest">\n<meta name="theme-color" content="#1769ff">\n<meta name="mobile-web-app-capable" content="yes">\n<meta name="apple-mobile-web-app-capable" content="yes">\n<meta name="apple-mobile-web-app-status-bar-style" content="default">\n<link rel="icon" href="icon-lmv.svg" type="image/svg+xml">\n<script>if('serviceWorker' in navigator){{window.addEventListener('load',()=>navigator.serviceWorker.register('./pwa-admin-sw.js',{{scope:'./'}}).catch(()=>{{}}));}}</script>\n<!-- /LMV-PWA-ADMIN -->\n'''
+                  if re.search(r'</head>', text, flags=re.I):
+                      text = re.sub(r'</head>', block + '</head>', text, count=1, flags=re.I)
+                  else:
+                      text = block + text
+                  p.write_text(text, encoding='utf-8')
+
+          Path('pwa-admin-sw.js').write_text('''const CACHE = 'lmv-admin-pwa-v1';\nself.addEventListener('install', event => self.skipWaiting());\nself.addEventListener('activate', event => event.waitUntil(self.clients.claim()));\nself.addEventListener('fetch', event => {\n  if (event.request.method === 'GET') {\n    event.respondWith(fetch(event.request).catch(() => caches.match(event.request)));\n  }\n});\n''', encoding='utf-8')
+
+      - name: Commit changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add admin.*.html pwa-admin-*.webmanifest pwa-admin-sw.js
+          if git diff --cached --quiet; then
+            echo "Sin cambios"
+          else
+            git commit -m "feat: convertir admins reales en PWA instalable"
+            git push
+          fi
