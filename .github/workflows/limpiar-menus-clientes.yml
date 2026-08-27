@@ -10,38 +10,55 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Quitar menu movil duplicado de clientes estetica
+      - name: Ajustar paginas cliente y modo demo
         run: |
           python3 <<'PY'
           from pathlib import Path
           import re
-          files=['nails.html','lashes.html','estetica.html','depilacion-laser.html']
-          for fn in files:
+
+          client_files=['nails.html','lashes.html','estetica.html','depilacion-laser.html','barberia.html','comida.html','ferreteria.html','ropa.html']
+          demo_tag='<script src="demo-client-mode.js"></script>'
+
+          for fn in client_files:
               p=Path(fn)
               if not p.exists():
                   continue
               s=p.read_text(encoding='utf-8')
-              # Elimina el boton del menu antiguo, dejando el boton LMV.
-              s=re.sub(r'<button[^>]*class="menuBtn"[^>]*>.*?</button>','',s,count=1,flags=re.S)
-              # Elimina el drawer antiguo mobileMenu completo respetando divs anidados.
-              marker='<div class="mobileMenu"'
-              start=s.find(marker)
-              if start>=0:
-                  pos=start; depth=0
-                  for m in re.finditer(r'<div\b[^>]*>|</div>',s[start:],re.I):
-                      tag=m.group(0)
-                      if tag.lower().startswith('<div') and not tag.rstrip().endswith('/>'):
-                          depth+=1
-                      elif tag.lower()=='</div>':
-                          depth-=1
-                          if depth==0:
-                              end=start+m.end(); s=s[:start]+s[end:]; break
+
+              # El modo demo se activa únicamente con ?demo=true y se coloca
+              # después de cargar Supabase pero antes del JavaScript de la página.
+              if demo_tag not in s:
+                  marker='<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>'
+                  if marker in s:
+                      s=s.replace(marker,marker+demo_tag,1)
+                  else:
+                      # Algunas páginas pueden tener el CDN con otra capitalización.
+                      m=re.search(r'<script[^>]+src=["\']https://cdn\.jsdelivr\.net/npm/@supabase/supabase-js@2[^>]*></script>',s,re.I)
+                      if m:
+                          s=s[:m.end()]+demo_tag+s[m.end():]
+              p.write_text(s,encoding='utf-8')
+
+          # LMV muestra las paginas cliente reales en modo demo, sin crear copias.
+          p=Path('lmv-studio.html')
+          if p.exists():
+              s=p.read_text(encoding='utf-8')
+              replacements={
+                'demo-cliente.html?rubro=barberia':'barberia.html?demo=true',
+                'demo-cliente.html?rubro=nails':'nails.html?demo=true',
+                'demo-cliente.html?rubro=lashes':'lashes.html?demo=true',
+                'demo-cliente.html?rubro=cosmetologia':'estetica.html?demo=true',
+                'demo-cliente.html?rubro=depilacion-laser':'depilacion-laser.html?demo=true',
+                'demo-cliente.html?rubro=comida':'comida.html?demo=true',
+                'ferreteria.html">🌐 Ver demo':'ferreteria.html?demo=true">🌐 Ver demo'
+              }
+              for old,new in replacements.items():
+                  s=s.replace(old,new)
               p.write_text(s,encoding='utf-8')
           PY
       - name: Commit cambios
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add nails.html lashes.html estetica.html depilacion-laser.html
-          git diff --cached --quiet || git commit -m 'fix: quitar menus duplicados en clientes'
+          git add nails.html lashes.html estetica.html depilacion-laser.html barberia.html comida.html ferreteria.html ropa.html lmv-studio.html
+          git diff --cached --quiet || git commit -m 'feat: separar modo demo de paginas cliente reales'
           git push
