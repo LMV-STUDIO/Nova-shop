@@ -33,7 +33,7 @@ let servicios=[],seleccionados=[],horarios=[],fechaElegida=null,horaElegida=null
 function money(v){return Number(v||0).toLocaleString('es-AR')}
 function abrirMenu(){mobileMenu.classList.add('open');document.body.style.overflow='hidden'}
 function cerrarMenu(){mobileMenu.classList.remove('open');document.body.style.overflow=''}
-menuBtn.onclick=abrirMenu;mobileClose.onclick=cerrarMenu;mobileShade.onclick=cerrarMenu;document.querySelectorAll('.mobileLinks a').forEach(a=>a.onclick=cerrarMenu);
+menuBtn.onclick=abrirMenu;mobileClose.onclick=cerrarMenu;mobileShade.onclick=cerrarMenu;
 function serviceHTML(s){const on=seleccionados.some(x=>x.id===s.id);return `<article class="service"><span class="tag">${s.categoria==='general'?'General':'Facial'} · ${Number(s.duracion_minutos||0)} min</span><div class="serviceTop"><h4>${esc(s.nombre)}</h4><span class="price">$${money(s.precio)}</span></div><p>${esc(s.descripcion||'Servicio personalizado.')}</p><div class="meta">${Number(s.duracion_minutos||0)} minutos</div><button class="btn ${on?'added':''}" data-service="${s.id}">${on?'Agregado':'Agregar'}</button></article>`}
 function renderServicios(){const grid=$('serviciosGrid');grid.innerHTML=servicios.length?servicios.map(serviceHTML).join(''):'<div class="empty">No hay servicios activos disponibles.</div>';document.querySelectorAll('[data-service]').forEach(b=>b.onclick=()=>toggleService(b.dataset.service))}
 function toggleService(sid){const s=servicios.find(x=>x.id===sid);if(!s)return;const i=seleccionados.findIndex(x=>x.id===sid);if(i>=0)seleccionados.splice(i,1);else seleccionados.push(s);renderServicios();updateSummary();if(fechaElegida)renderHorarios(fechaElegida)}
