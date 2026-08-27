@@ -1,0 +1,64 @@
+name: Ajustar LMV - selección y precios
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'lmv-studio.html'
+      - '.github/workflows/ajustar-lmv-seleccion.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  ajustar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Aplicar ajustes
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('lmv-studio.html')
+          s=p.read_text(encoding='utf-8')
+
+          # Paso 3 -> Paso 2
+          s=s.replace('>PASO 3<', '>PASO 2<')
+
+          # Botón explícito para seleccionar cada rubro. El botón no abre la demo.
+          old='</p><div class="demoBtns">'
+          new='</p><button class="btn selectRubro" type="button">✓ Seleccionar</button><div class="demoBtns">'
+          s=s.replace(old,new)
+
+          # El botón Seleccionar debe seleccionar la tarjeta sin disparar enlaces.
+          marker="rubros.forEach(card=>card.addEventListener('click',e=>{if(e.target.closest('a'))return;"
+          if marker in s:
+              s=s.replace(marker, "rubros.forEach(card=>card.addEventListener('click',e=>{if(e.target.closest('a'))return;")
+
+          # Hacer que el botón tenga el mismo comportamiento que tocar la tarjeta.
+          needle="rubros.forEach(card=>card.addEventListener('click',e=>{if(e.target.closest('a'))return;rubros.forEach(x=>x.classList.remove('selected'));card.classList.add('selected');selectedRubro=card.dataset.rubro;update();document.getElementById('planes').scrollIntoView({behavior:'smooth',block:'start'});}));"
+          replacement="rubros.forEach(card=>{const seleccionar=()=>{rubros.forEach(x=>x.classList.remove('selected'));card.classList.add('selected');selectedRubro=card.dataset.rubro;update();document.getElementById('planes').scrollIntoView({behavior:'smooth',block:'start'});};card.addEventListener('click',e=>{if(e.target.closest('a'))return;seleccionar()});const b=card.querySelector('.selectRubro');if(b)b.addEventListener('click',e=>{e.stopPropagation();seleccionar()});});"
+          if needle in s:
+              s=s.replace(needle,replacement)
+
+          # Precios de implementación solicitados.
+          s=s.replace('Implementación para local: $200.000','Implementación para local: $80.000',1)
+          s=s.replace('Implementación para local: $200.000','Implementación para local: $100.000',1)
+          s=s.replace('Implementación para local: $200.000','Implementación para local: $120.000',1)
+
+          # Estilo del botón Seleccionar y mayor claridad de la tarjeta elegida.
+          css='''\n.selectRubro{width:100%;margin-top:16px;background:var(--soft);color:var(--deep);border:2px solid var(--line);padding:10px 14px;font-size:12px}.rubro.selected{border-color:var(--blue);box-shadow:0 0 0 3px rgba(23,105,255,.12),0 22px 55px rgba(23,105,255,.17)}.rubro.selected .selectRubro{background:var(--blue);color:#fff;border-color:var(--blue)}\n'''
+          s=s.replace('</style>',css+'</style>')
+
+          p.write_text(s,encoding='utf-8')
+          PY
+
+      - name: Publicar cambios
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add lmv-studio.html
+          git diff --cached --quiet && exit 0
+          git commit -m 'Mejorar selección de rubro y ajustar paso 2'
+          git push
