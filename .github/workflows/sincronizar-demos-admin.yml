@@ -30,13 +30,29 @@ jobs:
               'admins/originales/admin.comida.html': ['admin.demo-publico-comida.html','admins/publicos/admin.demo-publico-comida.html'],
               'admins/originales/admin.ferreteria.html': ['admin.demo-publico-ferreteria.html','admins/publicos/admin.demo-publico-ferreteria.html'],
           }
+          demo_script = r'''<style>
+          #lmv-demo-notice{position:fixed;left:16px;right:16px;bottom:16px;z-index:2147483647;padding:13px 18px;border-radius:12px;background:#111827;color:#fff;font:600 14px/1.4 system-ui,-apple-system,Segoe UI,sans-serif;text-align:center;box-shadow:0 8px 30px rgba(0,0,0,.22)}
+          #lmv-demo-notice strong{font-weight:800}
+          #lmv-demo-toast{position:fixed;left:50%;top:24px;transform:translateX(-50%);z-index:2147483647;display:none;max-width:calc(100% - 32px);padding:14px 18px;border-radius:12px;background:#111827;color:#fff;font:600 14px/1.4 system-ui,-apple-system,Segoe UI,sans-serif;text-align:center;box-shadow:0 8px 30px rgba(0,0,0,.25)}
+          </style>
+          <div id="lmv-demo-notice">🎬 <strong>Esto es una demo visual.</strong> Podés recorrer y probar el panel, pero los cambios no se guardan.</div>
+          <div id="lmv-demo-toast">🎬 Esto es una demo visual. Los cambios no se pueden guardar.</div>
+          <script>
+          (()=>{
+            const toast=()=>{const e=document.getElementById('lmv-demo-toast');if(!e)return;e.style.display='block';clearTimeout(window.__lmvDemoT);window.__lmvDemoT=setTimeout(()=>e.style.display='none',2800)};
+            const isWrite=(el)=>{if(!el)return false;const t=((el.innerText||el.textContent||el.value||el.getAttribute('aria-label')||el.title||'')+'').toLowerCase();return /guardar|crear|eliminar|editar|activar|desactivar|confirmar|actualizar|agregar|añadir|nuevo|borrar|horario|guardar cambios|aceptar/.test(t)};
+            document.addEventListener('submit',e=>{e.preventDefault();e.stopImmediatePropagation();toast()},true);
+            document.addEventListener('click',e=>{const b=e.target.closest('button,[role="button"],input[type="submit"],input[type="button"]');if(isWrite(b)){e.preventDefault();e.stopImmediatePropagation();toast()}},true);
+          })();
+          </script>
+          '''
           for source, targets in pairs.items():
               html = Path(source).read_text(encoding='utf-8')
               html = re.sub(r'<script\b[^>]*>.*?</script\s*>', '', html, flags=re.I|re.S)
               html = re.sub(r'<script\b[^>]*/\s*>', '', html, flags=re.I|re.S)
               html = re.sub(r'(<[^>]*\bid=["\']login["\'][^>]*)(>)', lambda m: re.sub(r'\sstyle=["\'][^"\']*["\']','',m.group(1),flags=re.I)+' style="display:none!important"'+m.group(2), html, count=1, flags=re.I)
               html = re.sub(r'(<[^>]*\bid=["\']app["\'][^>]*)(>)', lambda m: re.sub(r'\sstyle=["\'][^"\']*["\']','',m.group(1),flags=re.I)+' style="display:block!important"'+m.group(2), html, count=1, flags=re.I)
-              html += '\n<!-- LMV Studio: demo visual, sincronizada con el original. Sin login ni JS. -->\n'
+              html += '\n<!-- LMV Studio: demo visual protegida, sin persistencia. -->\n' + demo_script
               for target in targets:
                   p=Path(target); p.parent.mkdir(parents=True,exist_ok=True); p.write_text(html,encoding='utf-8')
           PY
@@ -46,5 +62,5 @@ jobs:
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add admin.demo-publico-*.html admins/publicos/admin.demo-publico-*.html
           git diff --cached --quiet && exit 0
-          git commit -m 'Sincronizar demos admin con visual de originales'
+          git commit -m 'Proteger demos admin contra cambios guardados'
           git push
