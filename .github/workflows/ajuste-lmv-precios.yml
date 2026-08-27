@@ -1,0 +1,38 @@
+name: Ajustar LMV Studio
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'lmv-studio.html'
+      - '.github/workflows/ajuste-lmv-precios.yml'
+
+jobs:
+  ajustar:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Ajustar LMV
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('lmv-studio.html')
+          s = p.read_text(encoding='utf-8')
+          s = s.replace('<a class="btn sec" href="lmv-studio-multirubro.html">⚙️ Mi administración</a>', '')
+          s = s.replace('Implementación para local: $200.000', 'Implementación para local: $80.000', 1)
+          s = s.replace('Implementación para local: $200.000', 'Implementación para local: $100.000', 1)
+          s = s.replace('Implementación para local: $200.000', 'Implementación para local: $120.000', 1)
+          p.write_text(s, encoding='utf-8')
+          PY
+
+      - name: Commit changes
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add lmv-studio.html
+          git diff --cached --quiet || git commit -m 'Actualizar precios de implementación y quitar administración superior'
+          git push
