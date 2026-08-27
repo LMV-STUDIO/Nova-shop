@@ -2,7 +2,7 @@
   "name": "LMV Studio — Admin Nails",
   "short_name": "LMV Admin",
   "description": "Panel de administración de tu negocio.",
-  "start_url": "./admin.nails.html",
+  "start_url": "./admin.nails.html?negocio=f137c4fc-64f9-4052-be20-bfecf7fac0f6",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait-primary",
