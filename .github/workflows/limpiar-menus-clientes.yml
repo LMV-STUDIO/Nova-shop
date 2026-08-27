@@ -1,0 +1,47 @@
+name: Limpiar menus duplicados en paginas cliente
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Quitar menu movil duplicado de clientes estetica
+        run: |
+          python3 <<'PY'
+          from pathlib import Path
+          import re
+          files=['nails.html','lashes.html','estetica.html','depilacion-laser.html']
+          for fn in files:
+              p=Path(fn)
+              if not p.exists():
+                  continue
+              s=p.read_text(encoding='utf-8')
+              # Elimina el boton del menu antiguo, dejando el boton LMV.
+              s=re.sub(r'<button[^>]*class="menuBtn"[^>]*>.*?</button>','',s,count=1,flags=re.S)
+              # Elimina el drawer antiguo mobileMenu completo respetando divs anidados.
+              marker='<div class="mobileMenu"'
+              start=s.find(marker)
+              if start>=0:
+                  pos=start; depth=0
+                  for m in re.finditer(r'<div\b[^>]*>|</div>',s[start:],re.I):
+                      tag=m.group(0)
+                      if tag.lower().startswith('<div') and not tag.rstrip().endswith('/>'):
+                          depth+=1
+                      elif tag.lower()=='</div>':
+                          depth-=1
+                          if depth==0:
+                              end=start+m.end(); s=s[:start]+s[end:]; break
+              p.write_text(s,encoding='utf-8')
+          PY
+      - name: Commit cambios
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add nails.html lashes.html estetica.html depilacion-laser.html
+          git diff --cached --quiet || git commit -m 'fix: quitar menus duplicados en clientes'
+          git push
