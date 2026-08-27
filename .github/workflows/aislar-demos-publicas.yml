@@ -46,10 +46,10 @@ jobs:
           }
 
           for old, new in clientes.items():
-              s = re.sub(re.escape(old) + r'\?negocio=[^\"\']+', new, s)
+              s = re.sub(re.escape(old) + r'\?negocio=[^"]+', new, s)
 
           for old, new in admins.items():
-              s = re.sub(re.escape(old) + r'\?negocio=[^\"\']+', new, s)
+              s = re.sub(re.escape(old) + r'\?negocio=[^"]+', new, s)
 
           p.write_text(s, encoding='utf-8')
           PY
