@@ -1,0 +1,10 @@
+{
+  "name": "LMV Studio",
+  "short_name": "LMV Studio",
+  "start_url": "./lmv-studio.html",
+  "display": "standalone",
+  "background_color": "#f5f9ff",
+  "theme_color": "#1769ff",
+  "description": "LMV Studio — Sistemas para negocios",
+  "icons": []
+}
