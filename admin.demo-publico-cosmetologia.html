@@ -28,4 +28,19 @@
 </section></div></main></div>
 
 </body></html>
-<!-- LMV Studio: demo visual, sincronizada con el original. Sin login ni JS. -->
+<!-- LMV Studio: demo visual protegida, sin persistencia. -->
+<style>
+#lmv-demo-notice{position:fixed;left:16px;right:16px;bottom:16px;z-index:2147483647;padding:13px 18px;border-radius:12px;background:#111827;color:#fff;font:600 14px/1.4 system-ui,-apple-system,Segoe UI,sans-serif;text-align:center;box-shadow:0 8px 30px rgba(0,0,0,.22)}
+#lmv-demo-notice strong{font-weight:800}
+#lmv-demo-toast{position:fixed;left:50%;top:24px;transform:translateX(-50%);z-index:2147483647;display:none;max-width:calc(100% - 32px);padding:14px 18px;border-radius:12px;background:#111827;color:#fff;font:600 14px/1.4 system-ui,-apple-system,Segoe UI,sans-serif;text-align:center;box-shadow:0 8px 30px rgba(0,0,0,.25)}
+</style>
+<div id="lmv-demo-notice">🎬 <strong>Esto es una demo visual.</strong> Podés recorrer y probar el panel, pero los cambios no se guardan.</div>
+<div id="lmv-demo-toast">🎬 Esto es una demo visual. Los cambios no se pueden guardar.</div>
+<script>
+(()=>{
+  const toast=()=>{const e=document.getElementById('lmv-demo-toast');if(!e)return;e.style.display='block';clearTimeout(window.__lmvDemoT);window.__lmvDemoT=setTimeout(()=>e.style.display='none',2800)};
+  const isWrite=(el)=>{if(!el)return false;const t=((el.innerText||el.textContent||el.value||el.getAttribute('aria-label')||el.title||'')+'').toLowerCase();return /guardar|crear|eliminar|editar|activar|desactivar|confirmar|actualizar|agregar|añadir|nuevo|borrar|horario|guardar cambios|aceptar/.test(t)};
+  document.addEventListener('submit',e=>{e.preventDefault();e.stopImmediatePropagation();toast()},true);
+  document.addEventListener('click',e=>{const b=e.target.closest('button,[role="button"],input[type="submit"],input[type="button"]');if(isWrite(b)){e.preventDefault();e.stopImmediatePropagation();toast()}},true);
+})();
+</script>
