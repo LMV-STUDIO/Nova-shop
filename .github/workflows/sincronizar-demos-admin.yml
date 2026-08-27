@@ -1,0 +1,50 @@
+name: Sincronizar demos visuales de admins
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'admins/originales/**'
+      - '.github/workflows/sincronizar-demos-admin.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Generar copias demo visuales
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          pairs = {
+              'admins/originales/admin.barberia_reutilizable.html': ['admin.demo-publico-barberia.html','admins/publicos/admin.demo-publico-barberia.html'],
+              'admins/originales/admin.nails.html': ['admin.demo-publico-nails.html','admins/publicos/admin.demo-publico-nails.html'],
+              'admins/originales/admin.lashes.html': ['admin.demo-publico-lashes.html','admins/publicos/admin.demo-publico-lashes.html'],
+              'admins/originales/admin.estetica.html': ['admin.demo-publico-cosmetologia.html','admins/publicos/admin.demo-publico-cosmetologia.html'],
+              'admins/originales/admin.depilacion-laser.html': ['admin.demo-publico-depilacion-laser.html','admins/publicos/admin.demo-publico-depilacion-laser.html'],
+              'admins/originales/admin.comida.html': ['admin.demo-publico-comida.html','admins/publicos/admin.demo-publico-comida.html'],
+              'admins/originales/admin.ferreteria.html': ['admin.demo-publico-ferreteria.html','admins/publicos/admin.demo-publico-ferreteria.html'],
+          }
+          for source, targets in pairs.items():
+              html = Path(source).read_text(encoding='utf-8')
+              html = re.sub(r'<script\b[^>]*>.*?</script\s*>', '', html, flags=re.I|re.S)
+              html = re.sub(r'<script\b[^>]*/\s*>', '', html, flags=re.I|re.S)
+              html = re.sub(r'(<[^>]*\bid=["\']login["\'][^>]*)(>)', lambda m: re.sub(r'\sstyle=["\'][^"\']*["\']','',m.group(1),flags=re.I)+' style="display:none!important"'+m.group(2), html, count=1, flags=re.I)
+              html = re.sub(r'(<[^>]*\bid=["\']app["\'][^>]*)(>)', lambda m: re.sub(r'\sstyle=["\'][^"\']*["\']','',m.group(1),flags=re.I)+' style="display:block!important"'+m.group(2), html, count=1, flags=re.I)
+              html += '\n<!-- LMV Studio: demo visual, sincronizada con el original. Sin login ni JS. -->\n'
+              for target in targets:
+                  p=Path(target); p.parent.mkdir(parents=True,exist_ok=True); p.write_text(html,encoding='utf-8')
+          PY
+      - name: Commit y publicar demos
+        run: |
+          git config user.name 'LMV Studio Bot'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add admin.demo-publico-*.html admins/publicos/admin.demo-publico-*.html
+          git diff --cached --quiet && exit 0
+          git commit -m 'Sincronizar demos admin con visual de originales'
+          git push
