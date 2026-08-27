@@ -1,0 +1,67 @@
+name: Agregar menu lateral a clientes
+
+on:
+  push:
+    paths:
+      - '.github/workflows/menu-lateral-clientes.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  menu:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Inyectar menu lateral en paginas cliente
+        shell: python
+        run: |
+          from pathlib import Path
+          files = [
+              'nails.html',
+              'lashes.html',
+              'estetica.html',
+              'depilacion-laser.html',
+              'comida.html',
+              'ferreteria.html',
+          ]
+          configs = {
+            'nails.html': ('💅 LMV · NAILS', '#d14b91', ['💎 Servicios', '📅 Reservar turno', '📍 Contacto y ubicación'], ['#servicios','#reservar','#contacto']),
+            'lashes.html': ('👁️ LMV · LASHES', '#9b6cff', ['✨ Servicios', '📅 Reservar turno', '📍 Contacto y ubicación'], ['#servicios','#reservar','#contacto']),
+            'estetica.html': ('✨ LMV · ESTÉTICA', '#8b5cf6', ['✨ Servicios', '📅 Reservar turno', '📍 Contacto y ubicación'], ['#servicios','#reservar','#contacto']),
+            'depilacion-laser.html': ('🔦 LMV · LÁSER', '#0f766e', ['✨ Tratamientos', '📅 Reservar turno', '📍 Contacto y ubicación'], ['#servicios','#reservar','#contacto']),
+            'comida.html': ('🍔 LMV · COMIDA', '#d97706', ['🏠 Inicio', '🍔 Menú', '🛒 Mi pedido', '📍 Contacto'], ['#inicio','#menu','#carrito','#contacto']),
+            'ferreteria.html': ('🧰 LMV · FERRETERÍA', '#1769ff', ['🏠 Inicio', '🧰 Catálogo', '📦 Productos', '📍 Contacto'], ['#inicio','#catalogo','#productos','#contacto']),
+          }
+          css = '''\n/* LMV — menú lateral cliente */\n.lmv-menu-btn{display:none;position:relative;z-index:110;border:0;border-radius:14px;width:44px;height:44px;font-size:22px;cursor:pointer;background:var(--lmv-accent,#1769ff);color:#fff;box-shadow:0 8px 22px rgba(0,0,0,.12)}\n.lmv-drawer{position:fixed;inset:0;z-index:1000;display:none}.lmv-drawer.open{display:block}.lmv-drawer-shade{position:absolute;inset:0;background:rgba(10,12,20,.48);backdrop-filter:blur(2px)}.lmv-drawer-panel{position:absolute;left:0;top:0;height:100%;width:min(340px,88vw);background:#fff;color:#172033;padding:24px;box-shadow:20px 0 55px rgba(0,0,0,.22);transform:translateX(-105%);transition:transform .3s ease;display:flex;flex-direction:column}.lmv-drawer.open .lmv-drawer-panel{transform:translateX(0)}.lmv-drawer-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:26px;font-weight:950}.lmv-drawer-close{border:0;background:#f2f4f8;border-radius:12px;width:42px;height:42px;font-size:23px;cursor:pointer}.lmv-drawer-links{display:grid;gap:10px}.lmv-drawer-links a{padding:16px;border-radius:16px;background:#f7f8fb;color:#172033;text-decoration:none;font-weight:900;transition:.2s}.lmv-drawer-links a:hover{background:color-mix(in srgb,var(--lmv-accent) 14%,white);transform:translateX(3px)}@media(max-width:850px){.lmv-menu-btn{display:inline-flex;align-items:center;justify-content:center}.lmv-desktop-nav{display:none!important}}\n'''
+          for name in files:
+              p=Path(name)
+              if not p.exists():
+                  print('SKIP', name); continue
+              s=p.read_text(encoding='utf-8')
+              if 'id="lmvMobileMenu"' in s:
+                  print('YA',name); continue
+              brand,accent,labels,hrefs=configs[name]
+              s=s.replace('</style>', css.replace('var(--lmv-accent,#1769ff)', accent) + '</style>', 1)
+              nav_marker='</nav>'
+              # Hide the existing desktop navigation only on mobile; the new button is inserted at the end of the first nav.
+              pos=s.find(nav_marker)
+              if pos!=-1:
+                  insert=f'''<button class="lmv-menu-btn" id="lmvMenuBtn" aria-label="Abrir menú">☰</button>'''
+                  s=s[:pos]+insert+s[pos:]
+              else:
+                  s=s.replace('<body>', '<body>\n'+f'<button class="lmv-menu-btn" id="lmvMenuBtn" aria-label="Abrir menú">☰</button>',1)
+              links=''.join(f'<a href="{h}">{lab}</a>' for lab,h in zip(labels,hrefs))
+              menu=f'''\n<div class="lmv-drawer" id="lmvMobileMenu" aria-hidden="true"><div class="lmv-drawer-shade" id="lmvMenuShade"></div><aside class="lmv-drawer-panel"><div class="lmv-drawer-top"><span>{brand}</span><button class="lmv-drawer-close" id="lmvMenuClose" aria-label="Cerrar menú">×</button></div><nav class="lmv-drawer-links">{links}</nav></aside></div>\n'''
+              s=s.replace('</body>', menu + '''<script>(function(){const m=document.getElementById('lmvMobileMenu'),b=document.getElementById('lmvMenuBtn'),c=document.getElementById('lmvMenuClose'),sh=document.getElementById('lmvMenuShade');if(!m||!b)return;const close=()=>{m.classList.remove('open');m.setAttribute('aria-hidden','true');document.body.style.overflow=''};b.addEventListener('click',()=>{m.classList.add('open');m.setAttribute('aria-hidden','false');document.body.style.overflow='hidden'});[c,sh].forEach(x=>x&&x.addEventListener('click',close));m.querySelectorAll('a').forEach(a=>a.addEventListener('click',close));document.addEventListener('keydown',e=>{if(e.key==='Escape')close()});})();</script>\n</body>''',1)
+              p.write_text(s,encoding='utf-8')
+              print('OK',name)
+      - name: Publicar cambios
+        run: |
+          git config user.name 'LMV Studio Bot'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add nails.html lashes.html estetica.html depilacion-laser.html comida.html ferreteria.html
+          git diff --cached --quiet && exit 0
+          git commit -m 'Agregar menu lateral responsive a paginas cliente [skip ci]'
+          git push
