@@ -1,0 +1,105 @@
+name: Proteger demos públicas de admin
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/proteger-demos-admin.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  patch-demos:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Convertir demos en modo visual sin login ni persistencia
+        shell: python
+        run: |
+          from pathlib import Path
+
+          files = [
+              'admin.demo-publico-nails.html',
+              'admin.demo-publico-lashes.html',
+              'admin.demo-publico-cosmetologia.html',
+              'admin.demo-publico-depilacion-laser.html',
+              'admin.demo-publico-comida.html',
+              'admin.demo-publico-ferreteria.html',
+          ]
+
+          rubros = {
+              'admin.demo-publico-nails.html': ('Nails', '💅', [('Sofía','Manicura semipermanente','10:00'),('Camila','Soft gel','11:30'),('Valentina','Nail art','15:00')], [('Manicura semipermanente','$18.000'),('Soft gel','$24.000'),('Nail art','$12.000')]),
+              'admin.demo-publico-lashes.html': ('Lashes', '👁️', [('Martina','Extensiones clásicas','10:30'),('Julieta','Volumen','13:00'),('Agustina','Lifting','16:30')], [('Lifting de pestañas','$20.000'),('Extensiones clásicas','$28.000'),('Volumen ruso','$32.000')]),
+              'admin.demo-publico-cosmetologia.html': ('Cosmetología', '✨', [('Lucía','Limpieza facial','09:30'),('Sofía','Tratamiento facial','12:00'),('Micaela','Peeling','17:00')], [('Limpieza facial','$22.000'),('Peeling','$25.000'),('Tratamiento facial','$30.000')]),
+              'admin.demo-publico-depilacion-laser.html': ('Depilación Láser', '🔦', [('Carla','Piernas completas','10:00'),('Florencia','Axilas','13:30'),('Rocío','Piernas + axilas','18:00')], [('Piernas completas','$35.000'),('Axilas','$18.000'),('Piernas + axilas','$45.000')]),
+              'admin.demo-publico-comida.html': ('Gastronomía', '🍔', [('Pedido #1042','2 hamburguesas + papas','12:30'),('Pedido #1043','Pizza grande','13:15'),('Pedido #1044','Combo familiar','20:10')], [('Hamburguesa completa','$12.500'),('Pizza muzzarella','$14.000'),('Combo familiar','$28.000')]),
+              'admin.demo-publico-ferreteria.html': ('Ferretería', '🧰', [('Juan Pérez','12 productos','Venta mostrador'),('Ferretería Norte','8 productos','Cuenta corriente'),('Carlos Gómez','5 productos','Transferencia')], [('Taladro percutor','$85.000'),('Amoladora 4 1/2"','$62.000'),('Juego de mechas','$18.500')]),
+          }
+
+          patch = r'''<style id="lmv-demo-style">
+          #lmv-demo-banner{position:sticky;top:0;z-index:9999;background:#10213d;color:#fff;padding:10px 16px;text-align:center;font:800 13px system-ui;border-bottom:3px solid currentColor}
+          </style>
+          <script id="lmv-demo-script">
+          (()=>{
+            const DATA=__DATA__;
+            const esc=s=>String(s).replace(/[&<>\"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;'}[m]));
+            function toast(msg){let t=document.getElementById('lmv-demo-toast');if(t)t.remove();t=document.createElement('div');t.id='lmv-demo-toast';t.textContent=msg;t.style.cssText='position:fixed;right:20px;bottom:20px;z-index:10000;background:#10213d;color:#fff;padding:14px 18px;border-radius:14px;font:800 13px system-ui;box-shadow:0 15px 40px rgba(0,0,0,.2)';document.body.appendChild(t);setTimeout(()=>t.remove(),2800)}
+            function sample(title,items){return '<div style="display:grid;gap:10px">'+items.map(x=>'<div style="padding:14px;border:1px solid rgba(120,120,120,.2);border-radius:14px;background:#fff"><b>'+esc(x[0])+'</b><div style="opacity:.72;font-size:12px;margin-top:4px">'+esc(x[1])+'</div><div style="opacity:.65;font-size:11px;margin-top:5px">'+esc(x[2])+'</div></div>').join('')+'</div>'}
+            function seed(){
+              document.querySelectorAll('body *').forEach(el=>{if(el.childElementCount===0&&el.textContent.trim()==='Cargando...')el.textContent='Datos de demostración'});
+              const ids=['turnos','reservas','servicios','productos','catalogo','barberos','profesionales','horarios','agenda'];
+              ids.forEach(id=>{const el=document.getElementById(id);if(!el)return;if(!el.dataset.lmvSeeded){el.dataset.lmvSeeded='1';el.innerHTML=sample(id,DATA.items)}});
+              document.querySelectorAll('[id^="stat"], [id*="Stat"], .stat strong').forEach((el,i)=>{if(el.textContent.trim()==='0'||el.textContent.trim()==='Cargando...')el.textContent=String([12,9,24,5][i%4])});
+              const name=document.getElementById('nombreNegocio');if(name)name.textContent=DATA.name+' Demo';
+            }
+            function demo(){
+              const login=document.getElementById('login');const app=document.getElementById('app');if(login)login.style.display='none';if(app){app.style.display='block';app.classList.remove('hidden')}
+              if(!document.getElementById('lmv-demo-banner')){const b=document.createElement('div');b.id='lmv-demo-banner';b.textContent='🎬 Esto es una demo visual · Podés probar las funciones, pero los cambios no se pueden guardar.';document.body.prepend(b)}
+              seed();
+            }
+            document.addEventListener('click',e=>{
+              const el=e.target.closest('button,[type="submit"],input[type="submit"]');if(!el)return;
+              const text=(el.textContent||el.value||'').toLowerCase();
+              if(/guardar|agregar|crear|eliminar|borrar|editar|activar|desactivar|cambiar|actualizar|salir|login|google|entrar/.test(text)){e.preventDefault();e.stopImmediatePropagation();toast('🎬 Esto es una demo visual. Los cambios no se pueden guardar.');return false}
+            },true);
+            document.addEventListener('submit',e=>{e.preventDefault();e.stopImmediatePropagation();toast('🎬 Esto es una demo visual. Los cambios no se pueden guardar.')},true);
+            demo();setTimeout(demo,300);setTimeout(demo,1200);setInterval(()=>{const login=document.getElementById('login');if(login&&getComputedStyle(login).display!=='none')demo();seed()},2500);
+          })();
+          </script>'''
+
+          for path in files:
+              p=Path(path)
+              if not p.exists():
+                  continue
+              text=p.read_text(encoding='utf-8')
+              if 'id="lmv-demo-script"' in text:
+                  continue
+              name,icon,turns,services=rubros[path]
+              data='{'+f'"name":{name!r},"icon":{icon!r},"items":{turns!r}'+'}'
+              # Convert Python repr to valid JSON-ish JS safely.
+              import json
+              jsdata=json.dumps({'name':name,'icon':icon,'items':turns}, ensure_ascii=False)
+              block=patch.replace('__DATA__',jsdata)
+              if '</body>' in text:
+                  text=text.replace('</body>',block+'\n</body>',1)
+              else:
+                  text += '\n'+block
+              p.write_text(text,encoding='utf-8')
+
+      - name: Commit changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add admin.demo-publico-*.html
+          if git diff --cached --quiet; then
+            echo "No hay cambios para guardar"
+          else
+            git commit -m "Convertir demos de admin en modo visual sin login"
+            git push
+          fi
