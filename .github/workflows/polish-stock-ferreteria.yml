@@ -1,0 +1,52 @@
+name: Acomodar stock demo ferreteria
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+permissions:
+  contents: write
+jobs:
+  polish:
+    if: github.event_name == 'workflow_dispatch' || !contains(github.event.head_commit.message, 'acomodar cuadro de stock')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Mejorar tabla de stock
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('admin.demo-publico-ferreteria.html')
+          s=p.read_text(encoding='utf-8')
+          css='''<style id="stock-final-polish">
+          #stock .toolbar{align-items:center}
+          #stock .tablewrap{margin-top:4px}
+          #stock table{min-width:980px;table-layout:auto}
+          #stock th{font-size:10px;letter-spacing:.5px;text-align:left}
+          #stock td{font-size:13px}
+          #stock td:nth-child(1){min-width:82px}
+          #stock td:nth-child(2){min-width:230px}
+          #stock td:nth-child(3){min-width:120px}
+          #stock td:nth-child(4),#stock td:nth-child(5){min-width:90px}
+          #stock td:nth-child(6),#stock td:nth-child(7){min-width:65px;text-align:center}
+          #stock td:nth-child(8){min-width:75px}
+          #stock td:nth-child(9){min-width:125px}
+          #stock td:nth-child(10){min-width:80px}
+          #stock tbody tr:hover td{background:#f7faff}
+          @media(max-width:720px){
+            #stock .tablewrap{margin-left:-1px;margin-right:-1px;border-radius:14px}
+            #stock table{min-width:920px}
+            #stock th,#stock td{padding:11px 10px}
+            #stock .filters input{min-width:190px}
+          }
+          </style>'''
+          if 'id="stock-final-polish"' not in s:
+              s=s.replace('</head>',css+'</head>',1)
+          p.write_text(s,encoding='utf-8')
+          PY
+      - name: Publicar cambio
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add admin.demo-publico-ferreteria.html
+          git diff --cached --quiet || git commit -m 'fix: acomodar cuadro de stock'
+          git push
