@@ -25,16 +25,16 @@
 <script>
 const KEY='lmv_accesos_v2';
 const seed=[
-{id:'407400e6-6ea6-4372-85f6-3e2792294a65',name:'Barbero Demo',category:'Barbería',client:'https://lmv-studio.github.io/Nova-shop/plantilla-barberia.html?negocio=407400e6-6ea6-4372-85f6-3e2792294a65',admin:'https://lmv-studio.github.io/Nova-shop/admin.barberia_reutilizable.html?negocio=407400e6-6ea6-4372-85f6-3e2792294a65'},
-{id:'4201c521-ef4c-4f4a-aa02-9cb2897a6d92',name:'prueba lmv comida',category:'Gastronomía',client:'https://lmv-studio.github.io/Nova-shop/comida.html?negocio=4201c521-ef4c-4f4a-aa02-9cb2897a6d92',admin:'https://lmv-studio.github.io/Nova-shop/admin.comida.html?negocio=4201c521-ef4c-4f4a-aa02-9cb2897a6d92'},
-{id:'f137c4fc-64f9-4052-be20-bfecf7fac0f6',name:'LMV Nails Demo',category:'Nails',client:'https://lmv-studio.github.io/Nova-shop/nails.html?negocio=f137c4fc-64f9-4052-be20-bfecf7fac0f6',admin:'https://lmv-studio.github.io/Nova-shop/admin.nails.html?negocio=f137c4fc-64f9-4052-be20-bfecf7fac0f6'},
-{id:'254f8810-f2d8-43e0-b186-530f9fcad8d4',name:'Ferretería prueba',category:'Ferretería',client:'',admin:''}
+{id:'407400e6-6ea6-4372-85f6-3e2792294a65',name:'Barbero Demo',category:'Barbería',client:'https://lmv-studio.github.io/Nova-shop/barberia.html?negocio=407400e6-6ea6-4372-85f6-3e2792294a65',admin:'https://lmv-studio.github.io/Nova-shop/admins/originales/admin.barberia_reutilizable.html?negocio=407400e6-6ea6-4372-85f6-3e2792294a65'},
+{id:'4201c521-ef4c-4f4a-aa02-9cb2897a6d92',name:'prueba lmv comida',category:'Gastronomía',client:'https://lmv-studio.github.io/Nova-shop/comida.html?negocio=4201c521-ef4c-4f4a-aa02-9cb2897a6d92',admin:'https://lmv-studio.github.io/Nova-shop/admins/originales/admin.comida.html?negocio=4201c521-ef4c-4f4a-aa02-9cb2897a6d92'},
+{id:'f137c4fc-64f9-4052-be20-bfecf7fac0f6',name:'LMV Nails Demo',category:'Nails',client:'https://lmv-studio.github.io/Nova-shop/nails.html?negocio=f137c4fc-64f9-4052-be20-bfecf7fac0f6',admin:'https://lmv-studio.github.io/Nova-shop/admins/originales/admin.nails.html?negocio=f137c4fc-64f9-4052-be20-bfecf7fac0f6'},
+{id:'254f8810-f2d8-43e0-b186-530f9fcad8d4',name:'Ferretería prueba',category:'Ferretería',client:'https://lmv-studio.github.io/Nova-shop/ferreteria.html?negocio=254f8810-f2d8-43e0-b186-530f9fcad8d4',admin:'https://lmv-studio.github.io/Nova-shop/admins/originales/admin.ferreteria.html?negocio=254f8810-f2d8-43e0-b186-530f9fcad8d4'}
 ];
 let businesses=JSON.parse(localStorage.getItem(KEY)||'null');
-if(!Array.isArray(businesses)){businesses=seed;persist()}
+if(!Array.isArray(businesses)){businesses=seed;persist()}else{businesses=businesses.map(b=>{const s=seed.find(x=>x.id===b.id);return s?{...b,client:s.client,admin:s.admin}:b});persist()}
 let editingId=null;
 function persist(){localStorage.setItem(KEY,JSON.stringify(businesses))}
-function esc(v){return String(v??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]))}
+function esc(v){return String(v??'').replace(/[&<>'\"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','\"':'&quot;'}[c]))}
 function toast(t){const e=document.getElementById('toast');e.textContent=t;e.style.display='block';setTimeout(()=>e.style.display='none',2200)}
 function openUrl(url){if(!url){toast('Todavía no hay un link guardado');return}window.open(url,'_blank','noopener,noreferrer')}
 function copyUrl(url){if(!url){toast('No hay link para copiar');return}navigator.clipboard?.writeText(url).then(()=>toast('Link copiado')).catch(()=>{prompt('Copiá este link:',url)})}
