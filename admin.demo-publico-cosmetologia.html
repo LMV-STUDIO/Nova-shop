@@ -27,36 +27,6 @@
 <div class="card"><div class="cardHead"><div><h2>📅 Turnos</h2><p class="muted">Gestioná las reservas recibidas.</p></div><span class="sectionTag">RESERVAS</span></div><div id="turnos">Cargando...</div></div>
 </section></div></main></div>
 
-<style id="lmv-demo-style">
-#lmv-demo-banner{position:sticky;top:0;z-index:9999;background:#10213d;color:#fff;padding:10px 16px;text-align:center;font:800 13px system-ui;border-bottom:3px solid currentColor}
-</style>
-<script id="lmv-demo-script">
-(()=>{
-  const DATA={"name": "Cosmetología", "icon": "✨", "items": [["Lucía", "Limpieza facial", "09:30"], ["Sofía", "Tratamiento facial", "12:00"], ["Micaela", "Peeling", "17:00"]]};
-  const esc=s=>String(s).replace(/[&<>\"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;'}[m]));
-  function toast(msg){let t=document.getElementById('lmv-demo-toast');if(t)t.remove();t=document.createElement('div');t.id='lmv-demo-toast';t.textContent=msg;t.style.cssText='position:fixed;right:20px;bottom:20px;z-index:10000;background:#10213d;color:#fff;padding:14px 18px;border-radius:14px;font:800 13px system-ui;box-shadow:0 15px 40px rgba(0,0,0,.2)';document.body.appendChild(t);setTimeout(()=>t.remove(),2800)}
-  function sample(title,items){return '<div style="display:grid;gap:10px">'+items.map(x=>'<div style="padding:14px;border:1px solid rgba(120,120,120,.2);border-radius:14px;background:#fff"><b>'+esc(x[0])+'</b><div style="opacity:.72;font-size:12px;margin-top:4px">'+esc(x[1])+'</div><div style="opacity:.65;font-size:11px;margin-top:5px">'+esc(x[2])+'</div></div>').join('')+'</div>'}
-  function seed(){
-    document.querySelectorAll('body *').forEach(el=>{if(el.childElementCount===0&&el.textContent.trim()==='Cargando...')el.textContent='Datos de demostración'});
-    const ids=['turnos','reservas','servicios','productos','catalogo','barberos','profesionales','horarios','agenda'];
-    ids.forEach(id=>{const el=document.getElementById(id);if(!el)return;if(!el.dataset.lmvSeeded){el.dataset.lmvSeeded='1';el.innerHTML=sample(id,DATA.items)}});
-    document.querySelectorAll('[id^="stat"], [id*="Stat"], .stat strong').forEach((el,i)=>{if(el.textContent.trim()==='0'||el.textContent.trim()==='Cargando...')el.textContent=String([12,9,24,5][i%4])});
-    const name=document.getElementById('nombreNegocio');if(name)name.textContent=DATA.name+' Demo';
-  }
-  function demo(){
-    const login=document.getElementById('login');const app=document.getElementById('app');if(login)login.style.display='none';if(app){app.style.display='block';app.classList.remove('hidden')}
-    if(!document.getElementById('lmv-demo-banner')){const b=document.createElement('div');b.id='lmv-demo-banner';b.textContent='🎬 Esto es una demo visual · Podés probar las funciones, pero los cambios no se pueden guardar.';document.body.prepend(b)}
-    seed();
-  }
-  document.addEventListener('click',e=>{
-    const el=e.target.closest('button,[type="submit"],input[type="submit"]');if(!el)return;
-    const text=(el.textContent||el.value||'').toLowerCase();
-    if(/guardar|agregar|crear|eliminar|borrar|editar|activar|desactivar|cambiar|actualizar|salir|login|google|entrar/.test(text)){e.preventDefault();e.stopImmediatePropagation();toast('🎬 Esto es una demo visual. Los cambios no se pueden guardar.');return false}
-  },true);
-  document.addEventListener('submit',e=>{e.preventDefault();e.stopImmediatePropagation();toast('🎬 Esto es una demo visual. Los cambios no se pueden guardar.')},true);
-  demo();setTimeout(demo,300);setTimeout(demo,1200);setInterval(()=>{const login=document.getElementById('login');if(login&&getComputedStyle(login).display!=='none')demo();seed()},2500);
-})();
-</script>
 </body></html>
 <!-- LMV Studio: demo visual con datos ficticios, sin login ni persistencia. -->
 <style>
