@@ -47,6 +47,18 @@ jobs:
           s=s.replace('Implementación para local: $200.000','Implementación para local: $100.000',1)
           s=s.replace('Implementación para local: $200.000','Implementación para local: $120.000',1)
 
+          # Los botones de administración de las demos públicas deben usar la carpeta oficial admins/publicos.
+          admin_links={
+              'admin.demo-publico-nails.html':'admins/publicos/admin.demo-publico-nails.html',
+              'admin.demo-publico-lashes.html':'admins/publicos/admin.demo-publico-lashes.html',
+              'admin.demo-publico-cosmetologia.html':'admins/publicos/admin.demo-publico-cosmetologia.html',
+              'admin.demo-publico-depilacion-laser.html':'admins/publicos/admin.demo-publico-depilacion-laser.html',
+              'admin.demo-publico-comida.html':'admins/publicos/admin.demo-publico-comida.html',
+              'admin.demo-publico-ferreteria.html':'admins/publicos/admin.demo-publico-ferreteria.html',
+          }
+          for old,new in admin_links.items():
+              s=s.replace(f'href="{old}"',f'href="{new}"')
+
           # Estilo del botón Seleccionar y mayor claridad de la tarjeta elegida.
           css='''\n.selectRubro{width:100%;margin-top:16px;background:var(--soft);color:var(--deep);border:2px solid var(--line);padding:10px 14px;font-size:12px}.rubro.selected{border-color:var(--blue);box-shadow:0 0 0 3px rgba(23,105,255,.12),0 22px 55px rgba(23,105,255,.17)}.rubro.selected .selectRubro{background:var(--blue);color:#fff;border-color:var(--blue)}\n'''
           s=s.replace('</style>',css+'</style>')
