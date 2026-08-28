@@ -15,7 +15,9 @@
 <link rel="icon" href="icon-lmv.svg" type="image/svg+xml">
 <script>if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./pwa-admin-sw.js',{scope:'./'}).catch(()=>{}));}</script>
 <!-- /LMV-PWA-ADMIN -->
-</head>
+<style id="lmv-horarios-css">
+.lmv-hours-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:15px}.lmv-hour{border:1px solid #dce7f6;border-radius:14px;padding:14px;background:linear-gradient(145deg,#fff,#f7faff)}.lmv-hour-top{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:11px}.lmv-hour-top b{font-size:14px}.lmv-hour-top label{font-size:11px;color:#66758d;display:flex;align-items:center;gap:6px}.lmv-hour-fields{display:grid;grid-template-columns:1fr 1fr;gap:8px}.lmv-hour-fields label{font-size:10px;color:#66758d;font-weight:800}.lmv-hour-fields input{width:100%;margin-top:4px;padding:9px;border:1px solid #dce7f6;border-radius:8px;background:#fff;color:#10213d}.lmv-hours-save{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:14px;padding:12px;border:1px solid #dce7f6;border-radius:12px;background:#f5f8fd}.lmv-hours-save span{font-size:12px;color:#66758d}.lmv-hour.closed{opacity:.6}@media(max-width:750px){.lmv-hours-grid{grid-template-columns:1fr}.lmv-hours-save{align-items:flex-start;flex-direction:column}.lmv-hours-save .btn{width:100%}}
+</style></head>
 <body>
 <div id="login" class="login"><div class="loginbox"><div class="logo">LMV STUDIO · LASHES</div><h1>Administración</h1><p class="muted">Gestioná turnos, catálogo, horarios y datos del estudio desde cualquier dispositivo.</p><button id="loginBtn" class="btn">🔐 Entrar con Google</button><p id="loginMsg" class="muted"></p></div></div>
 <div id="app" style="display:none"><header class="top"><div class="topInner"><div><div class="brand">LMV STUDIO · LASHES</div><div class="business" id="nombreNegocio">Cargando...</div></div><div class="actions"><a id="pagina" class="btn sec" target="_blank" rel="noopener">🌐 Ver página</a><button id="logout" class="btn red">Salir</button></div></div></header>
@@ -41,4 +43,42 @@ async function cargarHorarios(){const r=await s.from('horarios_negocio').select(
 $('saveHours').addEventListener('click',async()=>{for(const c of [...document.querySelectorAll('.hourCard')]){const dia=Number(c.dataset.dia),activo=c.querySelector('.hActivo').checked,inicio=c.querySelector('.hInicio').value,fin=c.querySelector('.hFin').value,old=horariosData.find(x=>Number(x.dia_semana)===dia);const r=old?await s.from('horarios_negocio').update({hora_inicio:inicio,hora_fin:fin,activo}).eq('negocio_id',id).eq('dia_semana',dia):await s.from('horarios_negocio').insert({negocio_id:id,dia_semana:dia,hora_inicio:inicio,hora_fin:fin,activo});if(r.error){msg(r.error.message);return}}msg('Horarios guardados correctamente');await cargarHorarios()});
 async function cargarServicios(){const r=await s.from('servicios').select('*').eq('negocio_id',id).order('created_at',{ascending:false});if(r.error){$('servicios').textContent=r.error.message;return}const data=r.data||[];const grupos={extensiones:'👁️ Extensiones',lifting:'✨ Lifting',cejas:'🤎 Cejas',general:'✨ General'};$('statServicios').textContent=data.length;$('statActivos').textContent=data.filter(x=>x.activo).length;$('servicios').innerHTML=data.map(x=>`<div class="item"><div class="itemTop"><div><b>${esc(x.nombre)}</b><div class="muted">${esc(grupos[x.categoria]||'✨ General')} · $${Number(x.precio||0).toLocaleString('es-AR')} · ${Number(x.duracion_minutos||0)} min</div></div><span class="pill ${x.activo?'':'off'}">${x.activo?'ACTIVO':'INACTIVO'}</span></div><p class="muted">${esc(x.descripcion||'Sin descripción')}</p><button class="btn sec small" onclick="toggleServicio('${x.id}',${x.activo?'false':'true'})">${x.activo?'Desactivar':'Activar'}</button></div>`).join('')||'<div class="empty">Todavía no hay servicios.</div>'}async function toggleServicio(sid,activo){const r=await s.from('servicios').update({activo}).eq('id',sid).eq('negocio_id',id);msg(r.error?r.error.message:'Estado actualizado');await cargarServicios()}
 async function cargarTurnos(){const r=await s.from('turnos').select('id,nombre_cliente,cliente_nombre,fecha_hora_inicio,fecha_hora_fin,precio_reservado_total,estado').eq('negocios_id',id).order('fecha_hora_inicio',{ascending:false}).limit(50);if(r.error){$('turnos').textContent=r.error.message;return}const data=r.data||[];$('statTurnos').textContent=data.length;$('statPendientes').textContent=data.filter(t=>t.estado==='pendiente').length;$('turnos').innerHTML=data.map(t=>`<div class="item"><div class="itemTop"><div><b>Cliente · ${esc(t.nombre_cliente||t.cliente_nombre||'Cliente')}</b><div class="muted">${new Date(t.fecha_hora_inicio).toLocaleString('es-AR')} · $${Number(t.precio_reservado_total||0).toLocaleString('es-AR')}</div></div><span class="pill">${esc(t.estado||'pendiente')}</span></div><div class="row" style="margin-top:12px"><button class="btn small" onclick="estado('${t.id}','confirmado')">Confirmar</button><button class="btn sec small" onclick="estado('${t.id}','finalizado')">Finalizar</button><button class="btn red small" onclick="estado('${t.id}','cancelado')">Cancelar</button></div></div>`).join('')||'<div class="empty">No hay turnos todavía.</div>'}async function estado(tid,e){const r=await s.from('turnos').update({estado:e}).eq('id',tid).eq('negocios_id',id);msg(r.error?r.error.message:'Estado actualizado');await cargarTurnos()}s.auth.onAuthStateChange(()=>setTimeout(init,0));init();
+</script><section class="card" id="lmvHorariosCard"><div class="cardHead"><div><h2>🕐 Horarios de atención</h2><p class="muted">Estos horarios controlan cuándo tus clientes pueden reservar.</p></div><span class="tag">AGENDA</span></div><div id="lmvHorariosGrid" class="lmv-hours-grid"><div class="empty">Cargando horarios...</div></div><div class="lmv-hours-save"><span>Guardá los horarios para actualizar la disponibilidad de la página.</span><button id="lmvGuardarHorarios" class="btn">Guardar horarios</button></div><div id="lmvHorariosMsg" class="muted" style="margin-top:10px"></div></section><script id="lmvHorariosScript">
+(function(){
+  const SUPABASE_URL='https://cqelidpshitntewsktwx.supabase.co';
+  const SUPABASE_KEY='sb_publishable_o1q2pLVF1zIlZCzPHMaheg_KSawjVvD';
+  const C=window.supabase?.createClient?.(SUPABASE_URL,SUPABASE_KEY);
+  const negocioId=new URLSearchParams(location.search).get('negocio');
+  const days=['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+  let rows=[];
+  const $=x=>document.getElementById(x);
+  function render(){
+    const box=$('lmvHorariosGrid'); if(!box)return;
+    box.innerHTML=days.map((name,i)=>{const r=rows.find(x=>Number(x.dia_semana)===i);const open=r?Boolean(r.abierto)&&r.activo!==false:false;return `<div class="lmv-hour ${open?'':'closed'}"><div class="lmv-hour-top"><b>${name}</b><label><input class="lmv-open" data-day="${i}" type="checkbox" ${open?'checked':''}> Atiende este día</label></div><div class="lmv-hour-fields"><label>Desde<input data-day="${i}" data-field="inicio" type="time" value="${r?.hora_inicio?String(r.hora_inicio).slice(0,5):'09:00'}"></label><label>Hasta<input data-day="${i}" data-field="fin" type="time" value="${r?.hora_fin?String(r.hora_fin).slice(0,5):'18:00'}"></label></div></div>`}).join('');
+    document.querySelectorAll('.lmv-open').forEach(x=>x.onchange=()=>x.closest('.lmv-hour').classList.toggle('closed',!x.checked));
+  }
+  async function load(){
+    if(!C||!negocioId)return;
+    const r=await C.from('horarios_negocio').select('id,dia_semana,abierto,hora_inicio,hora_fin,activo').eq('negocio_id',negocioId).order('dia_semana');
+    if(r.error){$('lmvHorariosGrid').innerHTML='<div class="empty">No se pudieron cargar los horarios.</div>';return}
+    rows=r.data||[];render();
+  }
+  async function save(){
+    if(!C||!negocioId)return;
+    const out=$('lmvHorariosMsg');out.textContent='Guardando horarios...';
+    for(let i=0;i<7;i++){
+      const open=document.querySelector(`.lmv-open[data-day="${i}"]`)?.checked;
+      const ini=document.querySelector(`[data-day="${i}"][data-field="inicio"]`)?.value||'09:00';
+      const fin=document.querySelector(`[data-day="${i}"][data-field="fin"]`)?.value||'18:00';
+      if(open&&ini>=fin){out.textContent='Error: revisá el horario de '+days[i]+'.';return}
+      const old=rows.find(x=>Number(x.dia_semana)===i);
+      const payload={negocio_id:negocioId,dia_semana:i,abierto:open,hora_inicio:open?ini:null,hora_fin:open?fin:null,activo:open};
+      const r=old?await C.from('horarios_negocio').update(payload).eq('id',old.id).eq('negocio_id',negocioId):await C.from('horarios_negocio').insert(payload);
+      if(r.error){out.textContent='Error en '+days[i]+': '+r.error.message;return}
+    }
+    out.textContent='✓ Horarios guardados correctamente.';await load();
+  }
+  function boot(){const b=$('lmvGuardarHorarios');if(!b)return;setTimeout(load,500);b.onclick=save;}
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
+})();
 </script></body></html>

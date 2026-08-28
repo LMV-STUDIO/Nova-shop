@@ -19,7 +19,9 @@
 <link rel="icon" href="icon-lmv.svg" type="image/svg+xml">
 <script>if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./pwa-admin-sw.js',{scope:'./'}).catch(()=>{}));}</script>
 <!-- /LMV-PWA-ADMIN -->
-</head>
+<style id="lmv-horarios-css">
+.lmv-hours-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:15px}.lmv-hour{border:1px solid #dce7f6;border-radius:14px;padding:14px;background:linear-gradient(145deg,#fff,#f7faff)}.lmv-hour-top{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:11px}.lmv-hour-top b{font-size:14px}.lmv-hour-top label{font-size:11px;color:#66758d;display:flex;align-items:center;gap:6px}.lmv-hour-fields{display:grid;grid-template-columns:1fr 1fr;gap:8px}.lmv-hour-fields label{font-size:10px;color:#66758d;font-weight:800}.lmv-hour-fields input{width:100%;margin-top:4px;padding:9px;border:1px solid #dce7f6;border-radius:8px;background:#fff;color:#10213d}.lmv-hours-save{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:14px;padding:12px;border:1px solid #dce7f6;border-radius:12px;background:#f5f8fd}.lmv-hours-save span{font-size:12px;color:#66758d}.lmv-hour.closed{opacity:.6}@media(max-width:750px){.lmv-hours-grid{grid-template-columns:1fr}.lmv-hours-save{align-items:flex-start;flex-direction:column}.lmv-hours-save .btn{width:100%}}
+</style></head>
 <body>
 <div id="login" class="login"><div class="loginbox"><div class="logo">LMV STUDIO</div><h1>Administración</h1><p class="muted">Gestioná servicios, horarios, secciones y turnos desde cualquier dispositivo.</p><button id="loginBtn" class="btn">🔐 Entrar con Google</button><p id="loginMsg" class="muted"></p></div></div>
 <div id="app" class="app" style="display:none">
@@ -58,4 +60,42 @@ async function cargarHorarios(){const r=await s.from('horarios_negocio').select(
 function renderHorarios(){const map=Object.fromEntries(horariosData.map(h=>[Number(h.dia_semana),h]));$('horarios').innerHTML=dias.map((dia,i)=>{const h=map[i]||{};const abierto=h.abierto===true;return `<div class="hourCard ${abierto?'open':''}" data-day-card="${i}"><div class="hourTop"><span class="dayName">${dia}</span><span class="dayState">${abierto?'ABIERTO':'CERRADO'}</span></div><label class="miniSwitch"><input class="dayOpen" data-day="${i}" type="checkbox" ${abierto?'checked':''}> Día de atención</label><div class="hourFields" style="margin-top:11px"><label class="hourField"><span>Desde</span><input class="dayFrom" data-day="${i}" type="time" value="${h.hora_inicio||'09:00'}"></label><label class="hourField"><span>Hasta</span><input class="dayTo" data-day="${i}" type="time" value="${h.hora_fin||'18:00'}"></label></div></div>`}).join('');document.querySelectorAll('.dayOpen').forEach(ch=>ch.addEventListener('change',()=>{const card=document.querySelector(`[data-day-card="${ch.dataset.day}"]`);card.classList.toggle('open',ch.checked);card.querySelector('.dayState').textContent=ch.checked?'ABIERTO':'CERRADO'}))}
 $('saveHours').addEventListener('click',async()=>{for(let i=0;i<7;i++){const open=document.querySelector(`.dayOpen[data-day="${i}"]`).checked,from=document.querySelector(`.dayFrom[data-day="${i}"]`).value,to=document.querySelector(`.dayTo[data-day="${i}"]`).value;const old=horariosData.find(h=>Number(h.dia_semana)===i);let r;if(old){r=await s.from('horarios_negocio').update({abierto:open,hora_inicio:open?from:null,hora_fin:open?to:null}).eq('id',old.id).eq('negocio_id',id)}else{r=await s.from('horarios_negocio').insert({negocio_id:id,dia_semana:i,abierto:open,hora_inicio:open?from:null,hora_fin:open?to:null,activo:open})}if(r.error){msg(r.error.message);return}}msg('Horarios guardados correctamente');await cargarHorarios()});
 s.auth.onAuthStateChange(()=>setTimeout(init,0));init();
+</script><section class="card" id="lmvHorariosCard"><div class="cardHead"><div><h2>🕐 Horarios de atención</h2><p class="muted">Estos horarios controlan cuándo tus clientes pueden reservar.</p></div><span class="tag">AGENDA</span></div><div id="lmvHorariosGrid" class="lmv-hours-grid"><div class="empty">Cargando horarios...</div></div><div class="lmv-hours-save"><span>Guardá los horarios para actualizar la disponibilidad de la página.</span><button id="lmvGuardarHorarios" class="btn">Guardar horarios</button></div><div id="lmvHorariosMsg" class="muted" style="margin-top:10px"></div></section><script id="lmvHorariosScript">
+(function(){
+  const SUPABASE_URL='https://cqelidpshitntewsktwx.supabase.co';
+  const SUPABASE_KEY='sb_publishable_o1q2pLVF1zIlZCzPHMaheg_KSawjVvD';
+  const C=window.supabase?.createClient?.(SUPABASE_URL,SUPABASE_KEY);
+  const negocioId=new URLSearchParams(location.search).get('negocio');
+  const days=['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+  let rows=[];
+  const $=x=>document.getElementById(x);
+  function render(){
+    const box=$('lmvHorariosGrid'); if(!box)return;
+    box.innerHTML=days.map((name,i)=>{const r=rows.find(x=>Number(x.dia_semana)===i);const open=r?Boolean(r.abierto)&&r.activo!==false:false;return `<div class="lmv-hour ${open?'':'closed'}"><div class="lmv-hour-top"><b>${name}</b><label><input class="lmv-open" data-day="${i}" type="checkbox" ${open?'checked':''}> Atiende este día</label></div><div class="lmv-hour-fields"><label>Desde<input data-day="${i}" data-field="inicio" type="time" value="${r?.hora_inicio?String(r.hora_inicio).slice(0,5):'09:00'}"></label><label>Hasta<input data-day="${i}" data-field="fin" type="time" value="${r?.hora_fin?String(r.hora_fin).slice(0,5):'18:00'}"></label></div></div>`}).join('');
+    document.querySelectorAll('.lmv-open').forEach(x=>x.onchange=()=>x.closest('.lmv-hour').classList.toggle('closed',!x.checked));
+  }
+  async function load(){
+    if(!C||!negocioId)return;
+    const r=await C.from('horarios_negocio').select('id,dia_semana,abierto,hora_inicio,hora_fin,activo').eq('negocio_id',negocioId).order('dia_semana');
+    if(r.error){$('lmvHorariosGrid').innerHTML='<div class="empty">No se pudieron cargar los horarios.</div>';return}
+    rows=r.data||[];render();
+  }
+  async function save(){
+    if(!C||!negocioId)return;
+    const out=$('lmvHorariosMsg');out.textContent='Guardando horarios...';
+    for(let i=0;i<7;i++){
+      const open=document.querySelector(`.lmv-open[data-day="${i}"]`)?.checked;
+      const ini=document.querySelector(`[data-day="${i}"][data-field="inicio"]`)?.value||'09:00';
+      const fin=document.querySelector(`[data-day="${i}"][data-field="fin"]`)?.value||'18:00';
+      if(open&&ini>=fin){out.textContent='Error: revisá el horario de '+days[i]+'.';return}
+      const old=rows.find(x=>Number(x.dia_semana)===i);
+      const payload={negocio_id:negocioId,dia_semana:i,abierto:open,hora_inicio:open?ini:null,hora_fin:open?fin:null,activo:open};
+      const r=old?await C.from('horarios_negocio').update(payload).eq('id',old.id).eq('negocio_id',negocioId):await C.from('horarios_negocio').insert(payload);
+      if(r.error){out.textContent='Error en '+days[i]+': '+r.error.message;return}
+    }
+    out.textContent='✓ Horarios guardados correctamente.';await load();
+  }
+  function boot(){const b=$('lmvGuardarHorarios');if(!b)return;setTimeout(load,500);b.onclick=save;}
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
+})();
 </script></body></html>
