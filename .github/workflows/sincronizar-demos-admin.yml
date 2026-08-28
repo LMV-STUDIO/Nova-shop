@@ -91,3 +91,5 @@ jobs:
           git diff --cached --quiet && exit 0
           git commit -m 'Demos admin con datos ficticios visibles'
           git push
+
+# Regeneración solicitada: los admins demo deben reflejar los horarios de los originales; barbería conserva su demo sin horario de LMV Studio.
