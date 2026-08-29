@@ -1,0 +1,19 @@
+{
+  "name": "Portal Mayorista — Distribuidora Central",
+  "short_name": "Portal Mayorista",
+  "description": "Compras mayoristas y herramientas para analizar costos, margen y rentabilidad.",
+  "start_url": "./distribuidora-compras.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#edf2f7",
+  "theme_color": "#101a2b",
+  "icons": [
+    {
+      "src": "icon-lmv.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
