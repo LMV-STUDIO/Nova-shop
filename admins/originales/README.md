@@ -15,3 +15,4 @@ Los archivos originales siguen temporalmente en la raíz para no romper URLs exi
 - `admin.ropa.html`
 - `admin.servicios_reutilizable.html`
 - `admin.barberia_prueba3.html`
+
