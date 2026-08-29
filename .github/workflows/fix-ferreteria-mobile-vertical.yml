@@ -30,3 +30,4 @@ jobs:
           git add admins/originales/admin.ferreteria.html
           git diff --cached --quiet || git commit -m "fix: ferreteria mobile vertical"
           git push
+# trigger
