@@ -41,10 +41,13 @@ jobs:
                               s=s[:start]+s[start+m.end():]
                               break
 
-              # Nails aveva ancora listener riferiti al vecchio menu rimosso.
+              # Eliminar listeners del menu antiguo en las paginas que ya usan el drawer LMV.
               s=re.sub(r'function openMenu\(\)\{.*?\}\s*function closeMenu\(\)\{.*?\}\$\([\'\"]menuBtn[\'\"]\)\.addEventListener\([\s\S]*?\);', '', s, count=1)
+              s=re.sub(r'function abrirMenu\(\)\{.*?\}\s*function cerrarMenu\(\)\{.*?\}\s*menuBtn\.onclick=abrirMenu;mobileClose\.onclick=cerrarMenu;mobileShade\.onclick=cerrarMenu;', '', s, count=1)
+              s=re.sub(r'\$\([\'\"]menuBtn[\'\"]\)\.onclick=.*?;\$\([\'\"]mobileClose[\'\"]\)\.onclick=.*?;\$\([\'\"]mobileShade[\'\"]\)\.onclick=.*?;', '', s, count=1)
+              s=re.sub(r'\$\([\'\"]menuBtn[\'\"]\)\.onclick=.*?;\$\([\'\"]mobileClose[\'\"]\)\.onclick=.*?;\$\([\'\"]mobileShade[\'\"]\)\.onclick=.*?;', '', s, count=1)
 
-              # Inserir modo demo dopo Supabase y antes del JS propio de la página.
+              # Inserir modo demo después de Supabase y antes del JS propio de la página.
               if demo_tag not in s:
                   marker2='<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>'
                   if marker2 in s:
@@ -77,5 +80,5 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add nails.html lashes.html estetica.html depilacion-laser.html barberia.html comida.html ferreteria.html ropa.html lmv-studio.html
-          git diff --cached --quiet || git commit -m 'fix: separar modo demo de paginas cliente reales'
+          git diff --cached --quiet || git commit -m 'fix: corregir listeners del menu movil'
           git push
