@@ -1,0 +1,31 @@
+name: Integrar mejoras distribuidora
+on:
+  push:
+    paths:
+      - 'distribuidora-v3.trigger'
+permissions:
+  contents: write
+jobs:
+  integrar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Integrar script en las dos páginas
+        shell: python
+        run: |
+          from pathlib import Path
+          for name in ['distribuidora-compras.html','distribuidora-proveedor.html']:
+              p=Path(name)
+              s=p.read_text(encoding='utf-8')
+              tag='<script src="distribuidora-v3.js"></script>'
+              if tag not in s:
+                  s=s.replace('</body>', tag+'\n</body>', 1)
+                  p.write_text(s,encoding='utf-8')
+      - name: Guardar cambios y limpiar workflow temporal
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          rm -f distribuidora-v3.trigger .github/workflows/integrar-distribuidora-v3.yml
+          git add distribuidora-compras.html distribuidora-proveedor.html distribuidora-v3.js .github/workflows/integrar-distribuidora-v3.yml distribuidora-v3.trigger
+          git commit -m 'Integrar mejoras comerciales en distribuidora' || exit 0
+          git push
