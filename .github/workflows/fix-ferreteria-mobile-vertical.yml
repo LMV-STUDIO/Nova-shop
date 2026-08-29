@@ -1,0 +1,32 @@
+name: Fix ferreteria mobile vertical
+on:
+  push:
+    paths:
+      - '.github/workflows/fix-ferreteria-mobile-vertical.yml'
+permissions:
+  contents: write
+jobs:
+  patch:
+    if: ${{ !contains(github.event.head_commit.message, 'fix: ferreteria mobile vertical') }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Ajustar solamente CSS responsive
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('admins/originales/admin.ferreteria.html')
+          s=p.read_text(encoding='utf-8')
+          marker='/* LMV FERRETERIA MOBILE VERTICAL FINAL */'
+          css='''\n/* LMV FERRETERIA MOBILE VERTICAL FINAL */\n@media (max-width:760px){\n  html,body{width:100%;max-width:100%;overflow-x:hidden}\n  .layout{display:block!important;width:100%!important;min-width:0!important}\n  .side{width:100%!important;height:auto!important;position:relative!important;top:auto!important;padding:12px 10px!important}\n  .brand{font-size:15px!important;padding:2px 7px 10px!important;white-space:normal!important}\n  .demo{margin:0 4px 10px!important;font-size:9px!important;line-height:1.3!important}\n  .nav{display:grid!important;grid-template-columns:1fr 1fr!important;gap:5px!important;overflow:visible!important}\n  .nav button{width:100%!important;min-width:0!important;margin:0!important;padding:10px 9px!important;font-size:12px!important;line-height:1.2!important}\n  .main{width:100%!important;max-width:100%!important;min-width:0!important;padding:10px 8px 28px!important;overflow:hidden!important}\n  .top{width:100%!important;align-items:stretch!important;flex-direction:column!important;gap:7px!important;margin-bottom:10px!important}\n  .top h1{font-size:21px!important;line-height:1.15!important;overflow-wrap:anywhere!important}\n  .badge{width:100%!important;text-align:center!important;font-size:9px!important;padding:7px 8px!important;line-height:1.25!important;white-space:normal!important}\n  .section{width:100%!important;min-width:0!important}\n  .panel{width:100%!important;min-width:0!important;margin-top:10px!important;padding:12px!important;border-radius:15px!important}\n  .panel h2{font-size:16px!important;line-height:1.2!important;margin-bottom:10px!important}\n  .toolbar{align-items:stretch!important;flex-direction:column!important;gap:8px!important;margin-bottom:10px!important}\n  .toolbar .btn{width:100%!important}\n  .btn{font-size:11px!important;padding:9px 11px!important;min-height:36px!important}\n  .filters{display:grid!important;grid-template-columns:1fr 1fr!important;gap:6px!important;width:100%!important;margin-bottom:10px!important}\n  .filters button,.filters select,.filters input{width:100%!important;min-width:0!important;font-size:11px!important;padding:8px!important}\n  .filters input{grid-column:1/-1!important}\n  .tablewrap{width:100%!important;max-width:100%!important;overflow-x:auto!important;-webkit-overflow-scrolling:touch!important}\n  table{min-width:520px!important;font-size:11px!important}\n  th,td{padding:8px 7px!important}\n  .cards{grid-template-columns:1fr!important;gap:7px!important;width:100%!important}\n  .card{width:100%!important;padding:11px 13px!important;border-radius:15px!important}\n  .card span{font-size:10px!important}\n  .card b{font-size:21px!important;margin-top:4px!important}\n  .grid2{grid-template-columns:1fr!important;gap:0!important}\n  .control{padding:12px!important;border-radius:14px!important}\n  .controlHead{gap:9px!important}\n  .controlHead b{font-size:12px!important}\n  .controlHead span{font-size:10px!important}\n  .controlConfig{grid-template-columns:1fr!important}\n  .metricRow{grid-template-columns:1fr!important}\n  .chart{height:145px!important;gap:5px!important;overflow-x:auto!important;padding-bottom:25px!important}\n  .modal{padding:8px!important}\n  .modalbox{width:100%!important;max-width:100%!important;padding:15px!important;border-radius:18px!important}\n  .modalActions{flex-direction:column!important}\n  .modalActions .btn{width:100%!important}\n}\n@media (max-width:480px){\n  .nav{grid-template-columns:1fr!important}\n  .nav button{font-size:12px!important;padding:10px 11px!important}\n  .main{padding:8px 7px 25px!important}\n  .panel{padding:11px!important}\n  .filters{grid-template-columns:1fr!important}\n  .filters input{grid-column:auto!important}\n  table{min-width:500px!important}\n}\n'''
+          if marker not in s:
+              s=s.replace('</style>',css+'</style>',1)
+              p.write_text(s,encoding='utf-8')
+          PY
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add admins/originales/admin.ferreteria.html
+          git diff --cached --quiet || git commit -m "fix: ferreteria mobile vertical"
+          git push
