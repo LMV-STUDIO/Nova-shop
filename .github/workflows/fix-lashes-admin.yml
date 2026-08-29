@@ -1,0 +1,34 @@
+name: Fix Lashes admin
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Remove obsolete logout listener
+        shell: bash
+        run: |
+          set -e
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path('admins/originales/admin.lashes.html')
+          s = p.read_text(encoding='utf-8')
+          old = "$('loginBtn').addEventListener('click',login);$('logout').addEventListener('click',async()=>{await s.auth.signOut();location.reload()});"
+          new = "$('loginBtn').addEventListener('click',login);"
+          if old in s:
+              s = s.replace(old, new)
+              p.write_text(s, encoding='utf-8')
+          PY
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if git diff --quiet -- admins/originales/admin.lashes.html; then exit 0; fi
+          git add admins/originales/admin.lashes.html
+          git commit -m "fix: repair lashes admin refresh"
+          git push origin HEAD:main
