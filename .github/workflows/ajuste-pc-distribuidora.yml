@@ -1,0 +1,32 @@
+name: Ajuste PC distribuidora
+on:
+  push:
+    paths:
+      - '.github/workflows/ajuste-pc-distribuidora.yml'
+permissions:
+  contents: write
+jobs:
+  ajustar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Aplicar diseño desktop
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('distribuidora-compras.html')
+          s=p.read_text(encoding='utf-8')
+          marker='/* DESKTOP DISTRIBUIDORA V2 */'
+          if marker not in s:
+              css='''\n/* DESKTOP DISTRIBUIDORA V2 */\n@media (min-width:1001px){\n  body{background:#dfe6ed;}\n  .wrap{width:min(1500px,96%);}\n  .top{padding:20px 3%;box-shadow:0 3px 18px #08132155;}\n  .brand{font-size:24px;}\n  .brand small{font-size:11px;}\n  .hero{margin:28px 0 22px;min-height:300px;padding:38px 42px;grid-template-columns:1.55fr .65fr;border-radius:22px;box-shadow:0 10px 28px #10243b18;}\n  .hero h1{font-size:54px;max-width:850px;}\n  .hero p{font-size:19px;max-width:760px;}\n  .badge{font-size:13px;padding:11px 15px;}\n  .visual{min-height:235px;padding:27px;border-radius:19px;}\n  .visual .big{font-size:68px;}\n  .visual strong{font-size:24px;}\n  .visual span{font-size:14px;line-height:1.45;}\n  .section{margin:28px 0;}\n  .section-title{font-size:34px;}\n  .section-sub{font-size:15px;margin-bottom:16px;}\n  .features{gap:18px;}\n  .feature{min-height:190px;padding:25px;border-radius:18px;box-shadow:0 7px 18px #10243b0d;}\n  .feature .ico{font-size:44px;}\n  .feature h3{font-size:20px;}\n  .feature p{font-size:14px;line-height:1.5;}\n  .market{gap:18px;}\n  .market-card{min-height:165px;padding:25px;border-radius:18px;box-shadow:0 9px 22px #10243b22;}\n  .market-card label{font-size:13px;}\n  .market-card strong{font-size:42px;margin:12px 0;}\n  .market-card span{font-size:13px;}\n  .layout{grid-template-columns:minmax(0,1fr) 500px;gap:25px;}\n  .catalog,.buybox{border-radius:20px;box-shadow:0 10px 28px #10243b18;}\n  .catalog-head{padding:30px 32px;}\n  .catalog-head h2{font-size:36px;}\n  .catalog-head p{font-size:15px;}\n  .filters{padding:16px;gap:12px;}\n  .filters input,.filters select{padding:15px;font-size:15px;}\n  .products{padding:18px;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;}\n  .product{padding:21px;border-radius:17px;min-height:225px;display:flex;flex-direction:column;}\n  .code{font-size:11px;}\n  .product h3{font-size:21px;line-height:1.2;}\n  .base{font-size:13px;}\n  .price{font-size:32px;margin-top:auto;}\n  .unit{font-size:12px;}\n  .row{gap:10px;margin-top:16px;}\n  .qty{width:90px;padding:14px;font-size:16px;}\n  .btn{padding:14px 19px;font-size:15px;}\n  .buybox{top:92px;}\n  .buy-head{padding:30px;}\n  .buy-head h2{font-size:36px;}\n  .buy-head p{font-size:15px;}\n  .buybody{padding:26px;}\n  .marginbox{padding:21px;margin-bottom:21px;border-radius:16px;}\n  .marginbox label{font-size:17px;}\n  .marginline{gap:14px;}\n  .marginline input{width:120px;padding:14px;font-size:23px;}\n  .calc{font-size:13px;}\n  .cartitem{padding:16px 0;}\n  .cartitem b{font-size:16px;}\n  .cartitem small{font-size:12px;}\n  .cartline{font-size:14px;}\n  .totals{padding:19px;margin-top:18px;}\n  .total{font-size:27px;}\n  .profit{font-size:18px;}\n  .info{font-size:13px;padding:15px;}\n  .buy-action{width:100%;font-size:19px;padding:18px;margin-top:6px;border-radius:12px;}\n  .how{gap:18px;}\n  .step{padding:23px;border-radius:17px;}\n  .stepnum{width:48px;height:48px;font-size:20px;}\n  .step h3{font-size:18px;}\n  .step p{font-size:13px;}\n}\n'''
+              s=s.replace('</style>',css+'</style>',1)
+              p.write_text(s,encoding='utf-8')
+          PY
+      - name: Commitir y eliminar workflow temporal
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add distribuidora-compras.html .github/workflows/ajuste-pc-distribuidora.yml
+          git rm .github/workflows/ajuste-pc-distribuidora.yml
+          git diff --cached --quiet || git commit -m "Mejorar diseño desktop de compra distribuidora"
+          git push
