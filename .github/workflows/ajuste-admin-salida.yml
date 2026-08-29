@@ -1,0 +1,49 @@
+name: Ajustar admins
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  ajustar:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Quitar salida y barra lateral fija de admins
+        shell: python
+        run: |
+          from pathlib import Path
+          import re
+
+          for path in Path('.').glob('admin.*.html'):
+              text = path.read_text(encoding='utf-8')
+              original = text
+
+              # Eliminar cualquier boton/enlace con clase btn-salir.
+              text = re.sub(r'\s*<button[^>]*class=["\'][^"\']*btn-salir[^"\']*["\'][^>]*>.*?</button>', '', text, flags=re.I|re.S)
+              text = re.sub(r'\s*<a[^>]*class=["\'][^"\']*btn-salir[^"\']*["\'][^>]*>.*?</a>', '', text, flags=re.I|re.S)
+
+              # La barra lateral deja de quedar fija al hacer scroll.
+              text = text.replace('position:fixed;\n    left:0;\n    top:0;\n    bottom:0;', 'position:absolute;\n    left:0;\n    top:0;')
+
+              # En mobile ya es relativa y conserva el comportamiento responsive.
+              if text != original:
+                  path.write_text(text, encoding='utf-8')
+                  print(f'Actualizado: {path}')
+
+          # Este workflow es de un solo uso.
+          Path('.github/workflows/ajuste-admin-salida.yml').unlink(missing_ok=True)
+
+      - name: Guardar cambios
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add admin.*.html .github/workflows/ajuste-admin-salida.yml
+          git diff --cached --quiet && exit 0
+          git commit -m 'Quitar salida y barra fija de admins'
+          git push
