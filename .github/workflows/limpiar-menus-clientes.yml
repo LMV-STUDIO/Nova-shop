@@ -18,6 +18,7 @@ jobs:
 
           client_files=['nails.html','lashes.html','estetica.html','depilacion-laser.html','barberia.html','comida.html','ferreteria.html','ropa.html']
           demo_tag='<script src="demo-client-mode.js"></script>'
+          load_fix='''<script>/* LMV: reintento de carga inicial */\n(function(){\n  function retryLoad(){\n    try{\n      var n=document.getElementById('nombre');\n      if(n && String(n.textContent||'').trim()==='Cargando...' && typeof loadBusiness==='function') loadBusiness();\n      var p=document.getElementById('principales');\n      if(p && String(p.textContent||'').trim()==='Cargando...' && typeof loadServices==='function') loadServices();\n      var d=document.getElementById('days');\n      if(d && !d.children.length && typeof loadHours==='function') loadHours();\n    }catch(e){}\n  }\n  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',function(){setTimeout(retryLoad,700);});\n  else setTimeout(retryLoad,700);\n  setTimeout(retryLoad,1800);\n})();</script>'''
 
           for fn in client_files:
               p=Path(fn)
@@ -46,7 +47,7 @@ jobs:
               s=re.sub(r'function abrirMenu\(\)\{.*?\}\s*function cerrarMenu\(\)\{.*?\}\s*menuBtn\.onclick=abrirMenu;mobileClose\.onclick=cerrarMenu;mobileShade\.onclick=cerrarMenu;', '', s, count=1)
               s=re.sub(r'\$\([\'\"]menuBtn[\'\"]\)\.onclick=.*?;\$\([\'\"]mobileClose[\'\"]\)\.onclick=.*?;\$\([\'\"]mobileShade[\'\"]\)\.onclick=.*?;', '', s, count=1)
 
-              # Inserir modo demo después de Supabase y antes del JS propio de la página.
+              # Insertar modo demo después de Supabase y antes del JS propio de la página.
               if demo_tag not in s:
                   marker2='<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>'
                   if marker2 in s:
@@ -55,6 +56,10 @@ jobs:
                       m=re.search(r'<script[^>]+src=["\']https://cdn\.jsdelivr\.net/npm/@supabase/supabase-js@2[^>]*></script>',s,re.I)
                       if m:
                           s=s[:m.end()]+demo_tag+s[m.end():]
+
+              # Evitar que el titulo/nombre quede en Cargando... si a primeira consulta demora ou falha temporariamente.
+              if 'LMV: reintento de carga inicial' not in s:
+                  s=s.replace('</body>',load_fix+'</body>')
               p.write_text(s,encoding='utf-8')
 
           # LMV muestra las páginas cliente reales en modo demo, sin crear copias.
@@ -79,5 +84,5 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add nails.html lashes.html estetica.html depilacion-laser.html barberia.html comida.html ferreteria.html ropa.html
-          git diff --cached --quiet || git commit -m 'fix: corregir listeners del menu movil'
+          git diff --cached --quiet || git commit -m 'fix: corregir carga inicial paginas cliente'
           git push
