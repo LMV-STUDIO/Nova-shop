@@ -26,8 +26,8 @@ jobs:
                   continue
               s=p.read_text(encoding='utf-8')
 
-              # Quitar restos del menu movil antiguo cuando existe el nuevo menu LMV.
-              s=re.sub(r'<button[^>]*class="menuBtn"[^>]*>.*?</button>','',s,count=1,flags=re.S)
+              # Quitar el boton movil antiguo (incluye variantes .menuBtn y .menu) cuando existe el nuevo menu LMV.
+              s=re.sub(r'<button[^>]*class="(?:menuBtn|menu)"[^>]*>.*?</button>','',s,count=1,flags=re.S)
               marker='<div class="mobileMenu"'
               start=s.find(marker)
               if start>=0:
@@ -53,11 +53,11 @@ jobs:
                   if marker2 in s:
                       s=s.replace(marker2,marker2+demo_tag,1)
                   else:
-                      m=re.search(r'<script[^>]+src=["\']https://cdn\.jsdelivr\.net/npm/@supabase/supabase-js@2[^>]*></script>',s,re.I)
+                      m=re.search(r'<script[^>]+src=["\']https://cdn\.jsdelivr\.net/npm/supabase-js@2[^>]*></script>',s,re.I)
                       if m:
                           s=s[:m.end()]+demo_tag+s[m.end():]
 
-              # Evitar que el titulo/nombre quede en Cargando... si a primeira consulta demora ou falha temporariamente.
+              # Evitar que el titulo/nombre quede en Cargando... si la primera consulta demora o falla temporariamente.
               if 'LMV: reintento de carga inicial' not in s:
                   s=s.replace('</body>',load_fix+'</body>')
               p.write_text(s,encoding='utf-8')
