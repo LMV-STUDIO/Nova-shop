@@ -1,0 +1,34 @@
+name: Aplicar experiencia 2.0 a paginas cliente
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  redesign:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Inyectar estructura visual y animaciones
+        run: |
+          python3 <<'PY'
+          from pathlib import Path
+          files=['nails.html','lashes.html','estetica.html','depilacion-laser.html','barberia.html','comida.html','ferreteria.html','ropa.html']
+          css='<link rel="stylesheet" href="lmv-experiencia-clientes.css">'
+          js='<script src="lmv-experiencia-clientes.js"></script>'
+          for fn in files:
+              p=Path(fn)
+              if not p.exists(): continue
+              s=p.read_text(encoding='utf-8')
+              if css not in s: s=s.replace('</head>',css+'</head>',1)
+              if js not in s: s=s.replace('</body>',js+'</body>',1)
+              p.write_text(s,encoding='utf-8')
+          PY
+      - name: Publicar
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add nails.html lashes.html estetica.html depilacion-laser.html barberia.html comida.html ferreteria.html ropa.html
+          git diff --cached --quiet || git commit -m 'feat: experiencia visual 2.0 en paginas cliente'
+          git push
