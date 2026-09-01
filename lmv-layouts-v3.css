@@ -1,18 +1,1 @@
-/* LMV SAFE LAYOUT PATCH */
-html[data-lmv-rubro]{scroll-behavior:smooth}
-html[data-lmv-rubro] body{overflow-x:hidden}
-html[data-lmv-rubro] *,html[data-lmv-rubro] *::before,html[data-lmv-rubro] *::after{box-sizing:border-box}
-html[data-lmv-rubro] img{max-width:100%;height:auto}
-html[data-lmv-rubro] .cards,html[data-lmv-rubro] .serviceGrid,html[data-lmv-rubro] #services{min-width:0}
-html[data-lmv-rubro] .card,html[data-lmv-rubro] .service,html[data-lmv-rubro] .serviceBox,html[data-lmv-rubro] .contact{min-width:0;max-width:100%}
-html[data-lmv-rubro] input,html[data-lmv-rubro] select,html[data-lmv-rubro] textarea,html[data-lmv-rubro] button{max-width:100%;box-sizing:border-box}
-html[data-lmv-rubro] .lmv-v4-reveal{opacity:0;transform:translateY(18px);transition:opacity .55s ease,transform .55s ease}
-html[data-lmv-rubro] .lmv-v4-reveal.lmv-v4-show{opacity:1;transform:none}
-html[data-lmv-rubro] .lmv-v4-nav{position:fixed;z-index:9999;top:12px;left:50%;transform:translateX(-50%);width:min(1100px,calc(100% - 24px));min-height:48px;padding:7px 10px 7px 16px;border:1px solid rgba(0,0,0,.10);border-radius:16px;background:rgba(255,255,255,.94);backdrop-filter:blur(12px);display:flex;align-items:center;gap:12px;box-shadow:0 8px 28px rgba(0,0,0,.10)}
-html[data-lmv-rubro] .lmv-v4-nav strong{white-space:nowrap;font-size:12px;overflow:hidden;text-overflow:ellipsis}
-html[data-lmv-rubro] .lmv-v4-navlinks{display:flex;align-items:center;justify-content:center;gap:3px;flex:1;min-width:0}
-html[data-lmv-rubro] .lmv-v4-nav a{color:inherit;text-decoration:none;font-size:11px;font-weight:700;padding:8px 10px;border-radius:999px;white-space:nowrap}
-html[data-lmv-rubro] .lmv-v4-cta{background:#171a22!important;color:#fff!important;margin-left:auto}
-html[data-lmv-rubro] .lmv-v4-progress{position:fixed;z-index:10000;top:0;left:0;height:2px;width:0;background:currentColor}
-@media(max-width:760px){html[data-lmv-rubro] .lmv-v4-nav{width:calc(100% - 16px);top:8px}html[data-lmv-rubro] .lmv-v4-navlinks{display:none!important}html[data-lmv-rubro] .lmv-v4-cta{margin-left:auto!important}}
-@media(prefers-reduced-motion:reduce){html[data-lmv-rubro] .lmv-v4-reveal{opacity:1;transform:none;transition:none}}
+/* Disabled: restored original client-page layout. */
