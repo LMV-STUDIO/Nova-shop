@@ -1,0 +1,1428 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>KŌRA — Architecture / Interiors / Objects</title>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,500;1,500&display=swap');
+
+:root{
+  --bg:#11110f;
+  --paper:#e9e5db;
+  --ink:#151513;
+  --muted:#8d8a81;
+  --line:rgba(233,229,219,.16);
+  --acid:#d8ff65;
+  --serif:"Playfair Display",Georgia,serif;
+  --sans:Manrope,Arial,sans-serif;
+  --mono:"DM Mono",monospace;
+}
+
+*{box-sizing:border-box}
+
+html{
+  scroll-behavior:smooth;
+}
+
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--paper);
+  font-family:var(--sans);
+  overflow-x:hidden;
+}
+
+a{
+  color:inherit;
+  text-decoration:none;
+}
+
+button{
+  font:inherit;
+}
+
+::selection{
+  background:var(--acid);
+  color:#111;
+}
+
+/* =========================
+   GRAIN
+========================= */
+
+.noise{
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  z-index:100;
+  opacity:.035;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* =========================
+   PROGRESS / CURSOR
+========================= */
+
+.progress{
+  position:fixed;
+  z-index:101;
+  top:0;
+  left:0;
+  width:0;
+  height:2px;
+  background:var(--acid);
+}
+
+.cursor{
+  position:fixed;
+  z-index:102;
+  pointer-events:none;
+  width:15px;
+  height:15px;
+  border:1px solid var(--acid);
+  border-radius:50%;
+  transform:translate(-50%,-50%);
+  mix-blend-mode:difference;
+  transition:
+    width .25s ease,
+    height .25s ease;
+}
+
+/* =========================
+   HEADER
+========================= */
+
+header{
+  position:fixed;
+  z-index:90;
+  top:0;
+  left:0;
+  right:0;
+  padding:25px 4vw;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.brand{
+  font-size:13px;
+  font-weight:800;
+  letter-spacing:.18em;
+}
+
+.brand sup{
+  color:var(--acid);
+  font-size:8px;
+}
+
+.nav{
+  display:flex;
+  gap:30px;
+  font:10px var(--mono);
+  text-transform:uppercase;
+  letter-spacing:.1em;
+}
+
+.nav a{
+  opacity:.62;
+  transition:.25s;
+}
+
+.nav a:hover{
+  opacity:1;
+  color:var(--acid);
+}
+
+.menu-btn{
+  display:none;
+  background:none;
+  border:0;
+  color:var(--paper);
+  font-size:20px;
+}
+
+/* =========================
+   HERO
+========================= */
+
+.hero{
+  min-height:100svh;
+  position:relative;
+  display:flex;
+  align-items:end;
+  padding:145px 4vw 7vh;
+  border-bottom:1px solid var(--line);
+  overflow:hidden;
+}
+
+.hero-art{
+  position:absolute;
+  right:4vw;
+  top:13vh;
+  width:50vw;
+  height:73vh;
+  overflow:hidden;
+  background:#222;
+}
+
+.hero-art img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  filter:grayscale(.55) contrast(1.08);
+  animation:slowzoom 12s ease-in-out infinite alternate;
+}
+
+.hero-art:after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:
+    linear-gradient(
+      90deg,
+      var(--bg) 0%,
+      rgba(17,17,15,.1) 36%,
+      rgba(17,17,15,.12) 100%
+    ),
+    linear-gradient(
+      0deg,
+      var(--bg) 0%,
+      transparent 28%
+    );
+}
+
+.hero-copy{
+  position:relative;
+  z-index:2;
+  max-width:900px;
+}
+
+.eyebrow{
+  font:10px var(--mono);
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:var(--acid);
+  display:flex;
+  gap:11px;
+  align-items:center;
+}
+
+.eyebrow:before{
+  content:"";
+  width:30px;
+  height:1px;
+  background:var(--acid);
+}
+
+h1{
+  font-size:clamp(70px,11.5vw,175px);
+  line-height:.79;
+  letter-spacing:-.085em;
+  font-weight:600;
+  margin:25px 0 38px;
+}
+
+h1 em{
+  font-family:var(--serif);
+  font-weight:500;
+  letter-spacing:-.06em;
+}
+
+.hero-meta{
+  display:flex;
+  align-items:end;
+  gap:45px;
+}
+
+.hero-meta p{
+  font-size:12px;
+  line-height:1.8;
+  color:#aaa69d;
+  max-width:330px;
+  margin:0;
+}
+
+.scroll-label{
+  font:9px var(--mono);
+  text-transform:uppercase;
+  writing-mode:vertical-rl;
+  color:#77746c;
+}
+
+.orbit{
+  position:absolute;
+  right:7%;
+  bottom:8%;
+  z-index:3;
+  width:125px;
+  height:125px;
+  border:1px solid rgba(233,229,219,.4);
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  text-align:center;
+  font:9px var(--mono);
+  letter-spacing:.08em;
+  animation:spin 18s linear infinite;
+}
+
+.orbit b{
+  color:var(--acid);
+  font-size:20px;
+  display:block;
+}
+
+/* =========================
+   MARQUEE
+========================= */
+
+.marquee{
+  overflow:hidden;
+  border-bottom:1px solid var(--line);
+  white-space:nowrap;
+  padding:16px 0;
+  color:#747168;
+  font:9px var(--mono);
+  letter-spacing:.15em;
+  text-transform:uppercase;
+}
+
+.marquee-track{
+  display:inline-block;
+  animation:marquee 28s linear infinite;
+}
+
+.marquee span{
+  margin:0 32px;
+}
+
+.marquee i{
+  font-style:normal;
+  color:var(--acid);
+}
+
+/* =========================
+   GENERIC SECTIONS
+========================= */
+
+section{
+  padding:125px 4vw;
+}
+
+.section-grid{
+  display:grid;
+  grid-template-columns:1fr 2fr;
+  gap:50px;
+}
+
+.index{
+  font:10px var(--mono);
+  color:#737067;
+  letter-spacing:.1em;
+}
+
+.title{
+  font-size:clamp(44px,6.3vw,96px);
+  line-height:.91;
+  letter-spacing:-.065em;
+  margin:0;
+}
+
+.title em{
+  font-family:var(--serif);
+  font-weight:500;
+}
+
+/* =========================
+   STATEMENT
+========================= */
+
+.statement{
+  margin:80px 0 0 auto;
+  max-width:850px;
+  font-size:clamp(24px,3.1vw,45px);
+  line-height:1.13;
+  letter-spacing:-.04em;
+}
+
+.statement span{
+  color:#77746d;
+}
+
+/* =========================
+   PROJECTS
+========================= */
+
+.projects{
+  background:var(--paper);
+  color:var(--ink);
+}
+
+.projects .index{
+  color:#77746d;
+}
+
+.project-grid{
+  margin-top:70px;
+  display:grid;
+  grid-template-columns:1.35fr .65fr;
+  gap:1px;
+  background:#bcb7ac;
+  border:1px solid #bcb7ac;
+}
+
+.project{
+  background:var(--paper);
+  padding:28px;
+  position:relative;
+  min-height:270px;
+  overflow:hidden;
+}
+
+.project.big{
+  grid-row:span 2;
+  min-height:540px;
+}
+
+.project img{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  filter:grayscale(1);
+  transition:
+    transform .8s ease,
+    filter .8s ease;
+}
+
+.project.big img{
+  filter:grayscale(.65);
+}
+
+.project:after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:
+    linear-gradient(
+      0deg,
+      rgba(0,0,0,.72),
+      transparent 65%
+    );
+  opacity:.8;
+}
+
+.project:hover img{
+  transform:scale(1.06);
+  filter:grayscale(.05);
+}
+
+.project-info{
+  position:absolute;
+  z-index:2;
+  left:28px;
+  right:28px;
+  bottom:25px;
+  color:white;
+  display:flex;
+  justify-content:space-between;
+  align-items:end;
+}
+
+.project-info h3{
+  font-family:var(--serif);
+  font-size:32px;
+  font-weight:500;
+  margin:0 0 5px;
+}
+
+.project-info small{
+  font:9px var(--mono);
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+
+.project-arrow{
+  font-size:25px;
+  transition:.3s;
+}
+
+.project:hover .project-arrow{
+  transform:translate(6px,-6px);
+  color:var(--acid);
+}
+
+/* =========================
+   METHOD
+========================= */
+
+.manifesto{
+  display:grid;
+  grid-template-columns:.75fr 1.25fr;
+  gap:10vw;
+}
+
+.number{
+  font:clamp(90px,15vw,230px)/.75 var(--mono);
+  letter-spacing:-.1em;
+  color:#292925;
+}
+
+.accord{
+  border-top:1px solid var(--line);
+}
+
+.row{
+  display:grid;
+  grid-template-columns:55px 1fr 30px;
+  gap:20px;
+  padding:29px 0;
+  border-bottom:1px solid var(--line);
+  transition:.3s;
+}
+
+.row:hover{
+  padding-left:10px;
+}
+
+.row small{
+  font:9px var(--mono);
+  color:var(--acid);
+}
+
+.row h3{
+  margin:0 0 8px;
+  font-size:22px;
+  letter-spacing:-.03em;
+}
+
+.row p{
+  margin:0;
+  color:#858178;
+  font-size:12px;
+  line-height:1.7;
+  max-width:520px;
+}
+
+.row b{
+  font-weight:400;
+  color:#77746d;
+}
+
+/* =========================
+   IMAGE BREAK
+========================= */
+
+.full-image{
+  height:78vh;
+  min-height:550px;
+  position:relative;
+  padding:0;
+  overflow:hidden;
+}
+
+.full-image img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  filter:grayscale(.35);
+  transform:scale(1.05);
+}
+
+.full-image:after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:
+    linear-gradient(
+      90deg,
+      rgba(17,17,15,.86),
+      transparent 62%
+    ),
+    linear-gradient(
+      0deg,
+      rgba(17,17,15,.75),
+      transparent 55%
+    );
+}
+
+.image-copy{
+  position:absolute;
+  z-index:2;
+  left:8vw;
+  bottom:9vh;
+  max-width:720px;
+}
+
+.image-copy .title{
+  font-size:clamp(50px,7vw,105px);
+}
+
+.image-copy p{
+  color:#aaa69e;
+  max-width:420px;
+  font-size:12px;
+  line-height:1.8;
+}
+
+/* =========================
+   CONTACT
+========================= */
+
+.contact{
+  background:var(--acid);
+  color:#111;
+  display:grid;
+  grid-template-columns:1.2fr .8fr;
+  gap:80px;
+  align-items:end;
+}
+
+.contact h2{
+  font-size:clamp(65px,10vw,155px);
+  line-height:.78;
+  letter-spacing:-.085em;
+  margin:20px 0 0;
+}
+
+.contact h2 em{
+  font-family:var(--serif);
+  font-weight:500;
+}
+
+.contact-info{
+  font:10px var(--mono);
+  line-height:2.1;
+  text-transform:uppercase;
+  border-top:1px solid rgba(17,17,15,.3);
+  padding-top:20px;
+}
+
+.cta{
+  display:inline-flex;
+  margin-top:28px;
+  border:1px solid #111;
+  border-radius:100px;
+  padding:14px 18px;
+  font:10px var(--mono);
+  text-transform:uppercase;
+  transition:.3s;
+}
+
+.cta:hover{
+  background:#111;
+  color:var(--acid);
+}
+
+/* =========================
+   FOOTER
+========================= */
+
+footer{
+  padding:28px 4vw;
+  display:flex;
+  justify-content:space-between;
+  color:#69675f;
+  font:9px var(--mono);
+  text-transform:uppercase;
+}
+
+footer strong{
+  color:var(--paper);
+}
+
+/* =========================
+   REVEAL
+========================= */
+
+.reveal{
+  opacity:0;
+  transform:translateY(35px);
+  transition:
+    opacity .9s ease,
+    transform .9s ease;
+}
+
+.reveal.show{
+  opacity:1;
+  transform:none;
+}
+
+/* =========================
+   ANIMATIONS
+========================= */
+
+@keyframes slowzoom{
+  from{
+    transform:scale(1.05);
+  }
+  to{
+    transform:scale(1.12);
+  }
+}
+
+@keyframes spin{
+  to{
+    transform:rotate(360deg);
+  }
+}
+
+@keyframes marquee{
+  to{
+    transform:translateX(-50%);
+  }
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+@media(max-width:800px){
+
+  header{
+    padding:18px 5vw;
+  }
+
+  .nav{
+    display:none;
+  }
+
+  .menu-btn{
+    display:block;
+  }
+
+  .hero{
+    min-height:900px;
+    padding:115px 5vw 7vh;
+  }
+
+  .hero-art{
+    left:5vw;
+    right:auto;
+    top:19vh;
+    width:90vw;
+    height:57vh;
+  }
+
+  .hero-copy{
+    margin-top:auto;
+  }
+
+  .hero-copy:after{
+    content:"";
+    position:absolute;
+    z-index:-1;
+    left:-25px;
+    right:-25px;
+    bottom:-35px;
+    height:260px;
+    background:
+      linear-gradient(
+        0deg,
+        var(--bg),
+        transparent
+      );
+  }
+
+  h1{
+    font-size:clamp(65px,18vw,108px);
+    margin:20px 0 25px;
+  }
+
+  .hero-meta{
+    gap:20px;
+  }
+
+  .scroll-label{
+    display:none;
+  }
+
+  .orbit{
+    width:85px;
+    height:85px;
+    font-size:7px;
+    right:8%;
+    bottom:17%;
+  }
+
+  section{
+    padding:82px 5vw;
+  }
+
+  .section-grid{
+    grid-template-columns:1fr;
+    gap:18px;
+  }
+
+  .statement{
+    margin-top:50px;
+  }
+
+  .project-grid{
+    grid-template-columns:1fr;
+  }
+
+  .project.big{
+    grid-row:auto;
+    min-height:420px;
+  }
+
+  .project{
+    min-height:300px;
+  }
+
+  .manifesto{
+    grid-template-columns:1fr;
+    gap:65px;
+  }
+
+  .number{
+    font-size:125px;
+  }
+
+  .full-image{
+    height:67vh;
+    min-height:480px;
+  }
+
+  .image-copy{
+    left:7vw;
+    right:7vw;
+    bottom:7vh;
+  }
+
+  .contact{
+    grid-template-columns:1fr;
+    gap:50px;
+  }
+
+  .contact h2{
+    font-size:clamp(65px,18vw,110px);
+  }
+
+  footer{
+    padding:24px 5vw;
+  }
+
+  footer span:last-child{
+    display:none;
+  }
+
+  .cursor{
+    display:none;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="noise"></div>
+<div class="progress"></div>
+<div class="cursor"></div>
+
+<header>
+
+<a href="#" class="brand">
+KŌRA<sup>®</sup>
+</a>
+
+<nav class="nav">
+<a href="#studio">Studio</a>
+<a href="#work">Obras</a>
+<a href="#method">Método</a>
+<a href="#contact">Contacto</a>
+</nav>
+
+<button class="menu-btn" aria-label="Abrir menú">
+☰
+</button>
+
+</header>
+
+<main>
+
+<!-- HERO -->
+
+<section class="hero">
+
+<div class="hero-art">
+
+<img
+src="https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=1800&q=90"
+alt="Interior minimalista"
+>
+
+</div>
+
+<div class="hero-copy">
+
+<div class="eyebrow">
+Buenos Aires · Architecture / Objects
+</div>
+
+<h1>
+Espacios<br>
+que <em>permanecen.</em>
+</h1>
+
+<div class="hero-meta">
+
+<p>
+Estudio independiente de arquitectura e interiores.
+Diseñamos lugares serenos, precisos y hechos para durar.
+</p>
+
+<span class="scroll-label">
+Descubrir ↓
+</span>
+
+</div>
+
+</div>
+
+<div class="orbit">
+
+<span>
+EST. 2012
+<br>
+<b>✳</b>
+<br>
+BUENOS AIRES
+</span>
+
+</div>
+
+</section>
+
+
+<!-- MARQUEE -->
+
+<div class="marquee">
+
+<div class="marquee-track">
+
+<span>Arquitectura</span>
+<i>✳</i>
+
+<span>Materia</span>
+<i>✳</i>
+
+<span>Luz</span>
+<i>✳</i>
+
+<span>Silencio</span>
+<i>✳</i>
+
+<span>Arquitectura</span>
+<i>✳</i>
+
+<span>Materia</span>
+<i>✳</i>
+
+<span>Luz</span>
+<i>✳</i>
+
+</div>
+
+</div>
+
+
+<!-- STUDIO -->
+
+<section id="studio">
+
+<div class="section-grid reveal">
+
+<span class="index">
+01 / Studio
+</span>
+
+<h2 class="title">
+
+No diseñamos<br>
+para impresionar.<br>
+
+Diseñamos para
+<em>quedarse.</em>
+
+</h2>
+
+</div>
+
+<p class="statement reveal">
+
+KŌRA nace de una idea simple:
+
+<span>
+cuando cada decisión tiene una razón,
+el espacio deja de ser decoración
+y se convierte en experiencia.
+</span>
+
+</p>
+
+</section>
+
+
+<!-- PROJECTS -->
+
+<section id="work" class="projects">
+
+<div class="section-grid reveal">
+
+<span class="index">
+02 / Selected work
+</span>
+
+<h2 class="title">
+
+Una colección<br>
+de <em>atmósferas.</em>
+
+</h2>
+
+</div>
+
+
+<div class="project-grid">
+
+<article class="project big reveal">
+
+<img
+src="https://images.unsplash.com/photo-1600607688969-a5bfcd646154?auto=format&fit=crop&w=1400&q=88"
+alt="Casa de piedra"
+>
+
+<div class="project-info">
+
+<div>
+
+<small>
+Residencial · 2026
+</small>
+
+<h3>
+Casa Canto
+</h3>
+
+</div>
+
+<span class="project-arrow">
+↗
+</span>
+
+</div>
+
+</article>
+
+
+<article class="project reveal">
+
+<img
+src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1100&q=88"
+alt="Interior contemporáneo"
+>
+
+<div class="project-info">
+
+<div>
+
+<small>
+Interior · 2025
+</small>
+
+<h3>
+Casa Sur
+</h3>
+
+</div>
+
+<span class="project-arrow">
+↗
+</span>
+
+</div>
+
+</article>
+
+
+<article class="project reveal">
+
+<img
+src="https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=1100&q=88"
+alt="Espacio de diseño"
+>
+
+<div class="project-info">
+
+<div>
+
+<small>
+Hospitality · 2025
+</small>
+
+<h3>
+Forma 02
+</h3>
+
+</div>
+
+<span class="project-arrow">
+↗
+</span>
+
+</div>
+
+</article>
+
+</div>
+
+</section>
+
+
+<!-- METHOD -->
+
+<section id="method">
+
+<div class="section-grid reveal">
+
+<span class="index">
+03 / Method
+</span>
+
+<h2 class="title">
+
+La belleza<br>
+está en <em>cómo.</em>
+
+</h2>
+
+</div>
+
+
+<div class="manifesto" style="margin-top:75px">
+
+<div class="number reveal">
+04
+</div>
+
+
+<div class="accord reveal">
+
+<div class="row">
+
+<small>01</small>
+
+<div>
+
+<h3>
+Observar
+</h3>
+
+<p>
+Primero entendemos la luz,
+el clima, las personas y el ritmo
+que ya existe en el lugar.
+</p>
+
+</div>
+
+<b>↗</b>
+
+</div>
+
+
+<div class="row">
+
+<small>02</small>
+
+<div>
+
+<h3>
+Reducir
+</h3>
+
+<p>
+Quitamos lo innecesario hasta
+encontrar la idea que merece quedarse.
+</p>
+
+</div>
+
+<b>↗</b>
+
+</div>
+
+
+<div class="row">
+
+<small>03</small>
+
+<div>
+
+<h3>
+Construir
+</h3>
+
+<p>
+Materiales honestos,
+encuentros precisos y una obsesión
+saludable por los detalles.
+</p>
+
+</div>
+
+<b>↗</b>
+
+</div>
+
+
+<div class="row">
+
+<small>04</small>
+
+<div>
+
+<h3>
+Habitar
+</h3>
+
+<p>
+El proyecto termina cuando alguien
+entra, deja sus cosas y siente
+que pertenece.
+</p>
+
+</div>
+
+<b>↗</b>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- IMAGE BREAK -->
+
+<section class="full-image">
+
+<img
+src="https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=1900&q=90"
+alt="Arquitectura contemporánea"
+>
+
+<div class="image-copy reveal">
+
+<span class="eyebrow">
+Materia / Luz / Tiempo
+</span>
+
+<h2 class="title">
+
+La calma<br>
+también puede<br>
+ser <em>radical.</em>
+
+</h2>
+
+<p>
+Trabajamos con piedra, madera,
+hormigón, metal y luz natural.
+Materiales que envejecen bien
+y espacios que no necesitan
+seguir tendencias.
+</p>
+
+</div>
+
+</section>
+
+
+<!-- CONTACT -->
+
+<section id="contact" class="contact">
+
+<div>
+
+<span class="index">
+04 / Contacto
+</span>
+
+<h2>
+
+Hablemos<br>
+de tu <em>espacio.</em>
+
+</h2>
+
+</div>
+
+
+<div class="contact-info">
+
+<div>
+San Telmo · Buenos Aires · Argentina
+</div>
+
+<div>
+Lun — Vie · 09:00 — 18:00
+</div>
+
+<div>
+hola@kora.studio · @kora.studio
+</div>
+
+<a
+class="cta"
+href="mailto:hola@kora.studio"
+>
+Iniciar conversación ↗
+</a>
+
+</div>
+
+</section>
+
+</main>
+
+
+<footer>
+
+<span>
+© 2026 <strong>KŌRA</strong> Studio
+</span>
+
+<span>
+Architecture · Interiors · Objects
+</span>
+
+</footer>
+
+
+<script>
+
+/* =========================
+   SCROLL PROGRESS
+========================= */
+
+const progress =
+document.querySelector('.progress');
+
+addEventListener('scroll',()=>{
+
+const h =
+document.documentElement;
+
+const percent =
+scrollY /
+(h.scrollHeight-innerHeight)
+*100;
+
+progress.style.width =
+percent+'%';
+
+});
+
+
+/* =========================
+   CUSTOM CURSOR
+========================= */
+
+const cursor =
+document.querySelector('.cursor');
+
+addEventListener('pointermove',(e)=>{
+
+cursor.style.left =
+e.clientX+'px';
+
+cursor.style.top =
+e.clientY+'px';
+
+});
+
+
+document.querySelectorAll('a').forEach(a=>{
+
+a.addEventListener('mouseenter',()=>{
+
+cursor.style.width='42px';
+cursor.style.height='42px';
+
+});
+
+a.addEventListener('mouseleave',()=>{
+
+cursor.style.width='15px';
+cursor.style.height='15px';
+
+});
+
+});
+
+
+/* =========================
+   SCROLL REVEAL
+========================= */
+
+const observer =
+new IntersectionObserver(
+
+entries=>{
+
+entries.forEach(entry=>{
+
+if(entry.isIntersecting){
+
+entry.target.classList.add('show');
+
+}
+
+});
+
+},
+
+{
+threshold:.12
+}
+
+);
+
+
+document
+.querySelectorAll('.reveal')
+.forEach(element=>{
+
+observer.observe(element);
+
+});
+
+
+/* =========================
+   MOBILE MENU
+========================= */
+
+const menuButton =
+document.querySelector('.menu-btn');
+
+const nav =
+document.querySelector('.nav');
+
+menuButton.addEventListener('click',()=>{
+
+nav.classList.toggle('mobile-open');
+
+});
+
+</script>
+
+</body>
+</html>
