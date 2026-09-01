@@ -1,5 +1,5 @@
 /* LMV Studio — capa visual premium para paginas cliente. No toca JS, Supabase, IDs ni reservas. */
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Manrope:wght@600;700;800&family=Playfair+Display:wght@600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Manrope:wght@600;700;800&family=Playfair+Display:wght@600;700&family=Cormorant+Garamond:wght@500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=Syne:wght@600;700;800&family=Sora:wght@400;500;600;700&family=Bodoni+Moda:opsz,wght@6..96,500;6..96,600;6..96,700&display=swap');
 :root{--lmv-a:#7656ff;--lmv-bg:#f7f7f5;--lmv-card:#fff;--lmv-ink:#171719;--lmv-muted:#707078;--lmv-line:rgba(20,20,25,.1);--lmv-soft:rgba(118,86,255,.09);--lmv-shadow:0 24px 70px rgba(22,22,28,.11);--lmv-hero:url('https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=1900&q=88');--lmv-over:linear-gradient(90deg,rgba(15,15,18,.82),rgba(15,15,18,.48) 48%,rgba(15,15,18,.08) 82%)}
 html[data-lmv-rubro=nails]{--lmv-a:#c94f87;--lmv-bg:#fbf7f8;--lmv-soft:#f8e8ef;--lmv-hero:url('https://images.unsplash.com/photo-1604654894610-df63bc536371?auto=format&fit=crop&w=1900&q=88')}
 html[data-lmv-rubro=lashes]{--lmv-a:#8d63d8;--lmv-bg:#faf8fc;--lmv-soft:#f0eafa;--lmv-hero:url('https://images.unsplash.com/photo-1515688594390-b649af70d282?auto=format&fit=crop&w=1900&q=88')}
@@ -35,5 +35,83 @@ html[data-lmv-premium='1'] .tag,html[data-lmv-premium='1'] .chip,html[data-lmv-p
 html[data-lmv-premium='1'] .booking{background:linear-gradient(145deg,#17171b,#24242a)!important;border-radius:36px!important;box-shadow:0 30px 80px rgba(0,0,0,.18)!important}
 html[data-lmv-premium='1'] .day.active,html[data-lmv-premium='1'] .slot.active{background:var(--lmv-a)!important;border-color:var(--lmv-a)!important}
 html[data-lmv-premium='1'] input:focus,html[data-lmv-premium='1'] select:focus,html[data-lmv-premium='1'] textarea:focus{border-color:var(--lmv-a)!important;box-shadow:0 0 0 4px color-mix(in srgb,var(--lmv-a) 12%,transparent)!important}
+
+/* ===== Identidad propia de cada rubro ===== */
+/* Uñas — boutique editorial, suave y orgánica */
+html[data-lmv-rubro=nails] body{font-family:'DM Sans',sans-serif!important}
+html[data-lmv-rubro=nails] h1,html[data-lmv-rubro=nails] .hero h1{font-family:'Cormorant Garamond',serif!important;font-weight:600!important;letter-spacing:-.025em!important;line-height:.82!important}
+html[data-lmv-rubro=nails] h2,html[data-lmv-rubro=nails] h3{font-family:'Cormorant Garamond',serif!important;letter-spacing:-.02em!important}
+html[data-lmv-rubro=nails] .card,html[data-lmv-rubro=nails] .serviceBox,html[data-lmv-rubro=nails] .form{border-radius:34px 18px 34px 18px!important}
+html[data-lmv-rubro=nails] .service{border-radius:18px 34px 18px 34px!important}
+html[data-lmv-rubro=nails] .btn,html[data-lmv-rubro=nails] .boton{border-radius:16px 30px 16px 30px!important}
+
+/* Pestañas — minimalismo delicado, alto contraste */
+html[data-lmv-rubro=lashes] body{font-family:'Sora',sans-serif!important}
+html[data-lmv-rubro=lashes] h1,html[data-lmv-rubro=lashes] .hero h1{font-family:'Bodoni Moda',serif!important;font-weight:600!important;letter-spacing:-.055em!important;line-height:.86!important;text-transform:none!important}
+html[data-lmv-rubro=lashes] h2,html[data-lmv-rubro=lashes] h3{font-family:'Bodoni Moda',serif!important;font-weight:600!important}
+html[data-lmv-rubro=lashes] .card,html[data-lmv-rubro=lashes] .serviceBox,html[data-lmv-rubro=lashes] .form{border-radius:8px!important;box-shadow:0 20px 55px rgba(40,25,55,.09)!important}
+html[data-lmv-rubro=lashes] .service{border-radius:4px!important}
+html[data-lmv-rubro=lashes] .btn,html[data-lmv-rubro=lashes] .boton{border-radius:6px!important;letter-spacing:.04em;text-transform:uppercase;font-size:12px!important}
+
+/* Estética — clínica premium, limpia y arquitectónica */
+html[data-lmv-rubro=estetica] body{font-family:'Sora',sans-serif!important}
+html[data-lmv-rubro=estetica] h1,html[data-lmv-rubro=estetica] .hero h1{font-family:'Space Grotesk',sans-serif!important;font-weight:600!important;letter-spacing:-.065em!important;line-height:.9!important}
+html[data-lmv-rubro=estetica] h2,html[data-lmv-rubro=estetica] h3{font-family:'Space Grotesk',sans-serif!important}
+html[data-lmv-rubro=estetica] .card,html[data-lmv-rubro=estetica] .serviceBox,html[data-lmv-rubro=estetica] .form{border-radius:12px!important;box-shadow:0 18px 50px rgba(24,65,58,.08)!important}
+html[data-lmv-rubro=estetica] .service{border-radius:10px!important}
+html[data-lmv-rubro=estetica] .btn,html[data-lmv-rubro=estetica] .boton{border-radius:10px!important}
+
+/* Láser — tecnológico, preciso, modular */
+html[data-lmv-rubro=depilacion-laser] body{font-family:'Space Grotesk',sans-serif!important}
+html[data-lmv-rubro=depilacion-laser] h1,html[data-lmv-rubro=depilacion-laser] .hero h1{font-family:'Space Grotesk',sans-serif!important;font-weight:700!important;letter-spacing:-.07em!important;line-height:.88!important;text-transform:uppercase}
+html[data-lmv-rubro=depilacion-laser] h2,html[data-lmv-rubro=depilacion-laser] h3{font-family:'Space Grotesk',sans-serif!important}
+html[data-lmv-rubro=depilacion-laser] .card,html[data-lmv-rubro=depilacion-laser] .serviceBox,html[data-lmv-rubro=depilacion-laser] .form{border-radius:14px 14px 4px 14px!important}
+html[data-lmv-rubro=depilacion-laser] .service{border-radius:6px!important}
+html[data-lmv-rubro=depilacion-laser] .btn,html[data-lmv-rubro=depilacion-laser] .boton{border-radius:8px!important;text-transform:uppercase;letter-spacing:.045em}
+
+/* Barbería — clásica, masculina y tipo editorial */
+html[data-lmv-rubro=barberia] body{font-family:'Manrope',sans-serif!important}
+html[data-lmv-rubro=barberia] h1,html[data-lmv-rubro=barberia] .hero h1{font-family:'Bodoni Moda',serif!important;font-weight:600!important;letter-spacing:-.045em!important;line-height:.84!important}
+html[data-lmv-rubro=barberia] h2,html[data-lmv-rubro=barberia] h3{font-family:'Manrope',sans-serif!important;text-transform:uppercase;letter-spacing:.045em!important}
+html[data-lmv-rubro=barberia] .card,html[data-lmv-rubro=barberia] .serviceBox,html[data-lmv-rubro=barberia] .form{border-radius:4px!important;box-shadow:0 22px 60px rgba(0,0,0,.28)!important}
+html[data-lmv-rubro=barberia] .service{border-radius:2px!important}
+html[data-lmv-rubro=barberia] .btn,html[data-lmv-rubro=barberia] .boton{border-radius:3px!important;text-transform:uppercase;letter-spacing:.08em;font-size:12px!important}
+
+/* Comida — cálida, editorial y tipo revista gastronómica */
+html[data-lmv-rubro=comida] body{font-family:'DM Sans',sans-serif!important}
+html[data-lmv-rubro=comida] h1,html[data-lmv-rubro=comida] .hero h1{font-family:'Cormorant Garamond',serif!important;font-weight:700!important;letter-spacing:-.035em!important;line-height:.82!important}
+html[data-lmv-rubro=comida] h2,html[data-lmv-rubro=comida] h3{font-family:'Cormorant Garamond',serif!important;font-weight:700!important}
+html[data-lmv-rubro=comida] .card,html[data-lmv-rubro=comida] .serviceBox,html[data-lmv-rubro=comida] .form{border-radius:26px 6px 26px 6px!important;box-shadow:0 24px 65px rgba(100,55,30,.12)!important}
+html[data-lmv-rubro=comida] .service{border-radius:12px 3px 12px 3px!important}
+html[data-lmv-rubro=comida] .btn,html[data-lmv-rubro=comida] .boton{border-radius:4px!important;text-transform:uppercase;letter-spacing:.06em;font-size:12px!important}
+
+/* Ferretería — industrial, fuerte y funcional */
+html[data-lmv-rubro=ferreteria] body{font-family:'Space Grotesk',sans-serif!important}
+html[data-lmv-rubro=ferreteria] h1,html[data-lmv-rubro=ferreteria] .hero h1{font-family:'Syne',sans-serif!important;font-weight:800!important;letter-spacing:-.07em!important;line-height:.86!important;text-transform:uppercase}
+html[data-lmv-rubro=ferreteria] h2,html[data-lmv-rubro=ferreteria] h3{font-family:'Syne',sans-serif!important;font-weight:700!important}
+html[data-lmv-rubro=ferreteria] .card,html[data-lmv-rubro=ferreteria] .serviceBox,html[data-lmv-rubro=ferreteria] .form{border-radius:3px!important;box-shadow:0 18px 45px rgba(30,35,40,.12)!important}
+html[data-lmv-rubro=ferreteria] .service{border-radius:2px!important}
+html[data-lmv-rubro=ferreteria] .btn,html[data-lmv-rubro=ferreteria] .boton{border-radius:3px!important;text-transform:uppercase;font-weight:800;letter-spacing:.045em}
+
+/* Ropa — fashion boutique, limpia y asimétrica */
+html[data-lmv-rubro=ropa] body{font-family:'DM Sans',sans-serif!important}
+html[data-lmv-rubro=ropa] h1,html[data-lmv-rubro=ropa] .hero h1{font-family:'Bodoni Moda',serif!important;font-weight:500!important;letter-spacing:-.065em!important;line-height:.82!important}
+html[data-lmv-rubro=ropa] h2,html[data-lmv-rubro=ropa] h3{font-family:'Bodoni Moda',serif!important;font-weight:600!important;letter-spacing:-.035em!important}
+html[data-lmv-rubro=ropa] .card,html[data-lmv-rubro=ropa] .serviceBox,html[data-lmv-rubro=ropa] .form{border-radius:0!important;box-shadow:0 24px 70px rgba(25,25,25,.08)!important}
+html[data-lmv-rubro=ropa] .service{border-radius:0!important}
+html[data-lmv-rubro=ropa] .btn,html[data-lmv-rubro=ropa] .boton{border-radius:0!important;text-transform:uppercase;letter-spacing:.09em;font-size:11px!important}
+
+/* Agenda y formularios también toman la identidad del rubro */
+html[data-lmv-rubro=nails] .booking{border-radius:42px 18px 42px 18px!important}
+html[data-lmv-rubro=lashes] .booking{border-radius:8px!important}
+html[data-lmv-rubro=estetica] .booking{border-radius:14px!important}
+html[data-lmv-rubro=depilacion-laser] .booking{border-radius:12px 12px 3px 12px!important}
+html[data-lmv-rubro=barberia] .booking{border-radius:4px!important}
+html[data-lmv-rubro=comida] .booking{border-radius:28px 5px 28px 5px!important}
+html[data-lmv-rubro=ferreteria] .booking{border-radius:3px!important}
+html[data-lmv-rubro=ropa] .booking{border-radius:0!important}
+
 @media(max-width:850px){html[data-lmv-premium='1'] .hero{min-height:650px!important;border-radius:0 0 28px 28px!important;background-position:62% center!important}html[data-lmv-premium='1'] .heroInner{padding:72px 0!important;max-width:92%!important}html[data-lmv-premium='1'] .section,html[data-lmv-premium='1'] .contact{padding-top:62px!important;padding-bottom:62px!important}}
 @media(max-width:620px){html[data-lmv-premium='1'] .hero{min-height:590px!important}html[data-lmv-premium='1'] .heroInner h1{font-size:clamp(44px,15vw,70px)!important}html[data-lmv-premium='1'] .card,html[data-lmv-premium='1'] .serviceBox,html[data-lmv-premium='1'] .summary,html[data-lmv-premium='1'] .contactCard,html[data-lmv-premium='1'] .form{border-radius:22px!important}}
+/* En móvil se mantienen diferencias de cada rubro sin romper la legibilidad. */
+@media(max-width:620px){html[data-lmv-rubro=nails] .card,html[data-lmv-rubro=nails] .serviceBox,html[data-lmv-rubro=nails] .form{border-radius:26px 14px 26px 14px!important}html[data-lmv-rubro=lashes] .card,html[data-lmv-rubro=lashes] .serviceBox,html[data-lmv-rubro=lashes] .form{border-radius:7px!important}html[data-lmv-rubro=ropa] .card,html[data-lmv-rubro=ropa] .serviceBox,html[data-lmv-rubro=ropa] .form{border-radius:0!important}}
