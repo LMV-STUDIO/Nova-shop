@@ -1,0 +1,33 @@
+name: Install KORA booking enhancer
+on:
+  push:
+    branches: [main]
+jobs:
+  patch:
+    if: github.event.head_commit.message != 'Install KORA booking enhancer'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Add enhancer script to KORA service pages
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          files=['barberia-kora.html','nails-kora.html','lashes-kora.html','estetica-kora.html','depilacion-laser-kora.html']
+          tag='<script src="./kora-booking-enhancer.js"></script>'
+          for name in files:
+              p=Path(name)
+              text=p.read_text(encoding='utf-8')
+              if tag not in text:
+                  text=text.replace('</body>',tag+'</body>')
+                  p.write_text(text,encoding='utf-8')
+          Path('.github/workflows/install-kora-enhancer.yml').unlink()
+          PY
+      - name: Commit changes
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          git commit -m 'Install KORA booking enhancer'
+          git push
