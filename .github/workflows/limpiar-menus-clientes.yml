@@ -27,7 +27,6 @@ jobs:
                   continue
               s=p.read_text(encoding='utf-8')
 
-              # Quitar boton movil antiguo si existe el drawer LMV.
               s=re.sub(r'<button[^>]*class="(?:menuBtn|menu)"[^>]*>.*?</button>','',s,count=1,flags=re.S)
               marker='<div class="mobileMenu"'
               start=s.find(marker)
@@ -43,21 +42,16 @@ jobs:
                               s=s[:start]+s[start+m.end():]
                               break
 
-              # Eliminar listeners del menu antiguo.
               s=re.sub(r'function openMenu\(\)\{.*?\}\s*function closeMenu\(\)\{.*?\}\$\([\'\"]menuBtn[\'\"]\)\.addEventListener\([\s\S]*?\);', '', s, count=1)
               s=re.sub(r'function abrirMenu\(\)\{.*?\}\s*function cerrarMenu\(\)\{.*?\}\s*menuBtn\.onclick=abrirMenu;mobileClose\.onclick=cerrarMenu;mobileShade\.onclick=cerrarMenu;', '', s, count=1)
               s=re.sub(r'\$\([\'\"]menuBtn[\'\"]\)\.onclick=.*?;\$\([\'\"]mobileClose[\'\"]\)\.onclick=.*?;\$\([\'\"]mobileShade[\'\"]\)\.onclick=.*?;', '', s, count=1)
 
-              # Capa visual premium. Se agrega despues de los estilos propios para que solo sobreescriba apariencia.
-              if premium_css not in s:
-                  if '</head>' in s:
-                      s=s.replace('</head>',premium_css+'</head>',1)
+              if premium_css not in s and '</head>' in s:
+                  s=s.replace('</head>',premium_css+'</head>',1)
 
-              # Identidad visual por rubro sin tocar IDs ni logica.
               rubro=fn[:-5]
               s=re.sub(r'<html([^>]*)>', lambda m: '<html'+re.sub(r'\sdata-lmv-rubro="[^"]*"|\sdata-lmv-premium="[^"]*"','',m.group(1))+' data-lmv-rubro="'+rubro+'" data-lmv-premium="1">', s, count=1, flags=re.I)
 
-              # Insertar modo demo despues de Supabase.
               if demo_tag not in s:
                   marker2='<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>'
                   if marker2 in s:
@@ -67,32 +61,14 @@ jobs:
                       if m:
                           s=s[:m.end()]+demo_tag+s[m.end():]
 
-              # Reintento de carga inicial.
               if 'LMV: reintento de carga inicial' not in s:
                   s=s.replace('</body>',load_fix+'</body>')
-              p.write_text(s,encoding='utf-8')
-
-          # LMV muestra las paginas cliente reales en modo demo.
-          p=Path('lmv-studio.html')
-          if p.exists():
-              s=p.read_text(encoding='utf-8')
-              replacements={
-                'demo-cliente.html?rubro=barberia':'barberia.html?demo=true',
-                'demo-cliente.html?rubro=nails':'nails.html?demo=true',
-                'demo-cliente.html?rubro=lashes':'lashes.html?demo=true',
-                'demo-cliente.html?rubro=cosmetologia':'estetica.html?demo=true',
-                'demo-cliente.html?rubro=depilacion-laser':'depilacion-laser.html?demo=true',
-                'demo-cliente.html?rubro=comida':'comida.html?demo=true',
-                'ferreteria.html">🌐 Ver demo':'ferreteria.html?demo=true">🌐 Ver demo'
-              }
-              for old,new in replacements.items():
-                  s=s.replace(old,new)
               p.write_text(s,encoding='utf-8')
           PY
       - name: Commit cambios
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add nails.html lashes.html estetica.html depilacion-laser.html barberia.html comida.html ferreteria.html ropa.html lmv-studio.html
+          git add nails.html lashes.html estetica.html depilacion-laser.html barberia.html comida.html ferreteria.html ropa.html
           git diff --cached --quiet || git commit -m 'feat: aplicar diseño premium a paginas cliente'
           git push
