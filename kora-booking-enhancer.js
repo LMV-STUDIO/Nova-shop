@@ -1,103 +1,49 @@
-/* KORA booking enhancer — standalone visual services + date/time + overlap protection. */
+/* KORA booking enhancer — visual services + polished date/time + schedule picker + overlap protection. */
 (function(){
-  const SUPA_URL='https://cqelidpshitntewsktwx.supabase.co';
-  const SUPA_KEY='sb_publishable_o1q2pLVF1zIlZCzPHMaheg_KSawjVvD';
-  const TYPE_BY_PAGE={
-    'nails-kora.html':'nails','lashes-kora.html':'lashes','estetica-kora.html':'cosmetologia',
-    'depilacion-laser-kora.html':'depilacion_laser','barberia-kora.html':'barberia'
+  const URL='https://cqelidpshitntewsktwx.supabase.co';
+  const KEY='sb_publishable_o1q2pLVF1zIlZCzPHMaheg_KSawjVvD';
+  const TYPES={
+    'nails':'nails','lashes':'lashes','estetica':'cosmetologia','cosmetologia':'cosmetologia','depilacion-laser':'depilacion_laser','depilacion_laser':'depilacion_laser','barberia':'barberia'
   };
-  const isComp=s=>String(s?.tipo_servicio||'').toLowerCase()==='complementario';
-  const money=n=>'$'+Number(n||0).toLocaleString('es-AR');
   const boot=async()=>{
+    if(!window.supabase)return;
     const form=document.getElementById('form'),modal=document.getElementById('modal'),serviceEl=document.getElementById('service'),msg=document.getElementById('msg');
     if(!form||!serviceEl||!msg)return;
-    if(!window.supabase?.createClient)return;
-    const db=window.supabase.createClient(SUPA_URL,SUPA_KEY);
-    const qs=new URLSearchParams(location.search);
-    const page=(location.pathname.split('/').pop()||'').toLowerCase();
-    let negocioId=qs.get('negocio');
+    const sb=window.supabase.createClient(URL,KEY);
+    const path=location.pathname.toLowerCase();
+    const slug=path.split('/').pop().replace('.html','');
+    const wanted=new URLSearchParams(location.search).get('negocio');
     let negocio=null,services=[],barbers=[];
-    if(negocioId){const r=await db.from('negocios').select('*').eq('id',negocioId).maybeSingle();negocio=r.data}
-    if(!negocio){
-      const tipo=TYPE_BY_PAGE[page];
-      if(!tipo)return;
-      const r=await db.from('negocios').select('*').eq('tipo_negocio',tipo).limit(1).maybeSingle();
-      negocio=r.data; negocioId=negocio?.id;
-    }
-    if(!negocioId)return;
-    const sr=await db.from('servicios').select('*').eq('negocio_id',negocioId).eq('activo',true).order('nombre');
-    if(sr.error){msg.textContent=sr.error.message;return}
+    if(wanted){const r=await sb.from('negocios').select('*').eq('id',wanted).maybeSingle();negocio=r.data}
+    if(!negocio&&TYPES[slug]){const r=await sb.from('negocios').select('*').eq('tipo_negocio',TYPES[slug]).limit(1);negocio=r.data?.[0]}
+    if(!negocio)return;
+    let sr=await sb.from('servicios').select('*').eq('negocio_id',negocio.id).eq('activo',true).order('nombre');
     services=sr.data||[];
-    const isBarber=page==='barberia-kora.html';
-    if(isBarber){const br=await db.from('barberos').select('*').eq('negocio_id',negocioId).eq('activo',true).order('nombre');barbers=br.data||[]}
+    if(slug==='barberia'){const br=await sb.from('barberos').select('*').eq('negocio_id',negocio.id).eq('activo',true).order('nombre');barbers=br.data||[]}
+    const old=serviceEl.cloneNode(true); serviceEl.replaceWith(old); const sel=old;
     const dateEl=document.getElementById('date'),timeEl=document.getElementById('time'),barberEl=document.getElementById('barber');
-    serviceEl.style.display='none';
-    serviceEl.multiple=true;
-    serviceEl.innerHTML='';
+    const style=document.createElement('style');style.textContent=`
+      #service{display:none!important}.kora-booking-shell{margin-top:6px}.kora-label{display:block;font:10px 'DM Mono',monospace;letter-spacing:.14em;text-transform:uppercase;margin:18px 0 8px;opacity:.72}.kora-services{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-bottom:12px}.kora-svc{border:1px solid rgba(20,20,20,.16);background:rgba(255,255,255,.72);border-radius:14px;padding:16px;text-align:left;cursor:pointer;font:inherit;transition:transform .2s,border-color .2s,box-shadow .2s,background .2s}.kora-svc:hover{transform:translateY(-2px);border-color:#111}.kora-svc.on{border-color:#111;background:#111;color:#fff;box-shadow:0 10px 25px rgba(0,0,0,.12)}.kora-svc .tag{display:inline-block;font:8px 'DM Mono';letter-spacing:.13em;text-transform:uppercase;opacity:.62;margin-bottom:9px}.kora-svc b{display:block;font-size:15px;line-height:1.2}.kora-svc small{display:block;margin-top:8px;opacity:.62}.kora-svc.on small,.kora-svc.on .tag{opacity:.75}.kora-total{margin:10px 0 16px;padding:13px 15px;border-radius:12px;background:#111;color:#fff;font:10px 'DM Mono';letter-spacing:.08em;text-transform:uppercase;min-height:18px}.kora-fields{display:grid;grid-template-columns:1fr 1fr;gap:12px}.kora-field{position:relative}.kora-field input,.kora-field select{width:100%;box-sizing:border-box;border:1px solid rgba(20,20,20,.16);border-radius:12px;background:rgba(255,255,255,.8);padding:14px 13px;font:inherit;outline:none}.kora-field input:focus,.kora-field select:focus{border-color:#111}.kora-hours{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 3px}.kora-hour{border:1px solid rgba(20,20,20,.15);border-radius:10px;background:#fff;padding:10px 13px;cursor:pointer;font:11px 'DM Mono';transition:.18s}.kora-hour:hover{transform:translateY(-1px)}.kora-hour.on{background:#111;color:#fff;border-color:#111}.kora-hour.busy{opacity:.32;text-decoration:line-through;cursor:not-allowed}.kora-hours-note{font:9px 'DM Mono';opacity:.55;margin:7px 0 13px;text-transform:uppercase;letter-spacing:.08em}.kora-empty-hours{padding:12px;border:1px dashed rgba(20,20,20,.2);border-radius:10px;font-size:12px;opacity:.65}.kora-date-title{font:10px 'DM Mono';letter-spacing:.14em;text-transform:uppercase;opacity:.72;margin:18px 0 8px}@media(max-width:600px){.kora-services,.kora-fields{grid-template-columns:1fr}.kora-svc{padding:14px}.kora-hour{padding:10px 12px}}
+    `;document.head.appendChild(style);
+    const shell=document.createElement('div');shell.className='kora-booking-shell';sel.parentNode.insertBefore(shell,sel);shell.appendChild(sel);
+    const label=document.createElement('div');label.className='kora-label';label.textContent='Elegí tus servicios';shell.insertBefore(label,sel);
+    const wrap=document.createElement('div');wrap.className='kora-services';shell.insertBefore(wrap,sel);
+    const total=document.createElement('div');total.className='kora-total';shell.insertBefore(total,sel);
+    sel.style.display='none';
+    const dateTitle=document.createElement('div');dateTitle.className='kora-date-title';dateTitle.textContent='Fecha y horario';shell.insertBefore(dateTitle,sel);
+    if(dateEl){dateEl.type='date';dateEl.min=new Date().toISOString().slice(0,10)}
+    if(timeEl){timeEl.style.display='none'}
     let selected=[];
-    const style=document.createElement('style');
-    style.textContent=`#service{display:none!important}.kora-booking-services{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:10px 0 16px}.kora-booking-card{border:1px solid #b9b9b9;background:#fff;padding:15px;text-align:left;cursor:pointer;font:inherit;min-height:88px;transition:transform .18s,border-color .18s,box-shadow .18s}.kora-booking-card:hover{transform:translateY(-2px)}.kora-booking-card.on{border-color:#111;box-shadow:inset 0 0 0 2px #111}.kora-booking-card .tag{display:block;font:9px 'DM Mono',monospace;text-transform:uppercase;letter-spacing:.1em;margin-bottom:7px}.kora-booking-card b{display:block;font-size:14px}.kora-booking-card small{display:block;margin-top:7px;color:#666}.kora-booking-total{padding:5px 0 14px;font:10px 'DM Mono',monospace;text-transform:uppercase;min-height:16px}.kora-booking-datetime{display:grid;grid-template-columns:1fr 1fr;gap:10px}.kora-booking-datetime input{width:100%;box-sizing:border-box}@media(max-width:600px){.kora-booking-services{grid-template-columns:1fr}.kora-booking-datetime{grid-template-columns:1fr}}`;
-    document.head.appendChild(style);
-    let wrap=document.querySelector('.kora-booking-services');
-    if(!wrap){wrap=document.createElement('div');wrap.className='kora-booking-services';serviceEl.parentNode.insertBefore(wrap,serviceEl)}
-    wrap.innerHTML='';
-    let total=document.querySelector('.kora-booking-total');
-    if(!total){total=document.createElement('div');total.className='kora-booking-total';serviceEl.parentNode.insertBefore(total,serviceEl)}
-    if(dateEl&&timeEl){timeEl.type='time';timeEl.step=1800;dateEl.type='date';dateEl.min=new Date().toISOString().slice(0,10);}
-    services.forEach((s,i)=>{
-      const opt=document.createElement('option');opt.value=i;opt.textContent=s.nombre;serviceEl.appendChild(opt);
-      const card=document.createElement('button');card.type='button';card.className='kora-booking-card';card.innerHTML=`<span class="tag">${isComp(s)?'Complementario':'Principal'}</span><b>${s.nombre}</b><small>${money(s.precio)} · ${s.duracion_minutos||60} min</small>`;
-      card.addEventListener('click',()=>{
-        if(isComp(s)){
-          opt.selected=!opt.selected;
-        }else{
-          [...serviceEl.options].forEach(o=>{const x=services[Number(o.value)];if(!isComp(x))o.selected=false});
-          opt.selected=true;
-        }
-        sync();
-      });
-      wrap.appendChild(card);
-    });
-    const sync=()=>{
-      selected=[...serviceEl.options].filter(o=>o.selected).map(o=>Number(o.value));
-      wrap.querySelectorAll('.kora-booking-card').forEach((c,i)=>c.classList.toggle('on',selected.includes(i)));
-      const price=selected.reduce((a,i)=>a+Number(services[i]?.precio||0),0);
-      const mins=selected.reduce((a,i)=>a+Number(services[i]?.duracion_minutos||60),0);
-      total.textContent=selected.length?`✓ ${selected.length} servicio${selected.length>1?'s':''} · ${mins} min · ${money(price)}`:'';
-    };
-    const rebuildOpen=()=>{sync();if(modal)modal.style.display='flex';if(dateEl)dateEl.min=new Date().toISOString().slice(0,10)};
-    window.openBooking=rebuildOpen;
-    window.pick=i=>{rebuildOpen();const o=serviceEl.options[i];if(o){[...serviceEl.options].forEach(x=>{const s=services[Number(x.value)];if(!isComp(s))x.selected=false});o.selected=true;sync()}};
-    form.addEventListener('submit',async e=>{
-      e.preventDefault();e.stopImmediatePropagation();
-      const indices=[...serviceEl.options].filter(o=>o.selected).map(o=>Number(o.value));
-      const principals=indices.filter(i=>!isComp(services[i]));
-      if(principals.length!==1){msg.textContent='Elegí 1 servicio principal y después los complementarios que quieras.';return}
-      if(!dateEl?.value||!timeEl?.value){msg.textContent='Elegí fecha y hora.';return}
-      const totalPrice=indices.reduce((a,i)=>a+Number(services[i]?.precio||0),0);
-      const totalMin=indices.reduce((a,i)=>a+Number(services[i]?.duracion_minutos||60),0);
-      const start=new Date(dateEl.value+'T'+timeEl.value+':00');
-      const end=new Date(start.getTime()+totalMin*60000);
-      if(Number.isNaN(start.getTime())){msg.textContent='Fecha u hora inválida.';return}
-      msg.textContent='Comprobando disponibilidad…';
-      let q=db.from('turnos').select('id').eq('negocios_id',negocioId).lt('fecha_hora_inicio',end.toISOString()).gt('fecha_hora_fin',start.toISOString());
-      let barber=null;
-      if(isBarber&&barberEl&&barbers.length){barber=barbers[Number(barberEl.value)];if(barber?.id)q=q.eq('barbero_id',barber.id)}
-      const busy=await q;
-      if(busy.error){msg.textContent=busy.error.message;return}
-      if(busy.data?.length){msg.textContent='Ese horario se superpone con otro turno. Elegí otra hora.';return}
-      const name=document.getElementById('name')?.value?.trim();
-      if(!name){msg.textContent='Completá tu nombre.';return}
-      msg.textContent='Guardando…';
-      const payload={negocios_id:negocioId,barbero_id:barber?.id||null,fecha_hora_inicio:start.toISOString(),fecha_hora_fin:end.toISOString(),precio_reservado_total:totalPrice,estado:'pendiente',nombre_cliente:name,cliente_nombre:name};
-      const ins=await db.from('turnos').insert(payload).select('id').single();
-      if(ins.error){msg.textContent=ins.error.message;return}
-      const rows=indices.filter(i=>services[i]?.id).map(i=>({turno_id:ins.data.id,servicio_id:services[i].id,precio_reservado:Number(services[i].precio||0),duracion_minutos:Number(services[i].duracion_minutos||60)}));
-      if(rows.length){const ts=await db.from('turno_servicios').insert(rows);if(ts.error){msg.textContent='El turno se creó, pero hubo un error guardando los servicios: '+ts.error.message;return}}
-      msg.textContent=`¡Turno reservado! ${indices.length} servicio${indices.length>1?'s':''} · ${totalMin} min · ${money(totalPrice)}`;
-      setTimeout(()=>{if(window.closeBooking)window.closeBooking();form.reset();serviceEl.selectedIndex=-1;sync()},1200);
-    },true);
-    sync();
+    const comp=s=>String(s.tipo_servicio||'').toLowerCase()==='complementario';
+    const sync=()=>{[...sel.options].forEach(o=>o.selected=selected.includes(Number(o.value)));const price=selected.reduce((a,i)=>a+Number(services[i]?.precio||0),0),mins=selected.reduce((a,i)=>a+Number(services[i]?.duracion_minutos||60),0);total.textContent=selected.length?`✓ ${selected.length} servicio${selected.length>1?'s':''} · ${mins} min · $${price.toLocaleString('es-AR')}`:'Seleccioná al menos un servicio';wrap.querySelectorAll('.kora-svc').forEach((c,i)=>c.classList.toggle('on',selected.includes(i)))};
+    services.forEach((s,i)=>{const o=document.createElement('option');o.value=i;o.textContent=s.nombre;sel.appendChild(o);const c=document.createElement('button');c.type='button';c.className='kora-svc';c.innerHTML=`<span class="tag">${comp(s)?'Complementario':'Principal'}</span><b>${s.nombre}</b><small>$${Number(s.precio||0).toLocaleString('es-AR')} · ${s.duracion_minutos||60} min</small>`;c.onclick=()=>{if(comp(s)){selected=selected.includes(i)?selected.filter(x=>x!==i):[...selected,i]}else{selected=[...selected.filter(x=>comp(services[x])),i]}sync();renderHours()};wrap.appendChild(c)});
+    const hours=document.createElement('div');hours.className='kora-hours';shell.insertBefore(hours,sel);const note=document.createElement('div');note.className='kora-hours-note';shell.insertBefore(note,sel);
+    if(barberEl&&barbers.length){barberEl.innerHTML=barbers.map((b,i)=>`<option value="${i}">${b.nombre}</option>`).join('');barberEl.addEventListener('change',renderHours)}
+    const renderHours=async()=>{hours.innerHTML='';note.textContent='';if(!dateEl?.value||!selected.length){note.textContent='Elegí fecha y servicios para ver horarios';return}const mins=selected.reduce((a,i)=>a+Number(services[i]?.duracion_minutos||60),0);let day=new Date(dateEl.value+'T12:00:00').getDay();let available=[10,10.5,11,11.5,12,12.5,13,13.5,14,14.5,15,15.5,16,16.5,17,17.5,18,18.5,19];if(day===0)available=[];const from=dateEl.value+'T00:00:00',to=dateEl.value+'T23:59:59';let q=sb.from('turnos').select('fecha_hora_inicio,fecha_hora_fin,barbero_id').eq('negocios_id',negocio.id).gte('fecha_hora_inicio',new Date(from).toISOString()).lte('fecha_hora_inicio',new Date(to).toISOString());if(barberEl&&barbers.length){const b=barbers[Number(barberEl.value)];if(b?.id)q=q.eq('barbero_id',b.id)}const r=await q;const busy=r.data||[];available.forEach(h=>{const hh=Math.floor(h),mm=h%1?30:0,txt=String(hh).padStart(2,'0')+':'+String(mm).padStart(2,'0');const start=new Date(dateEl.value+'T'+txt+':00'),end=new Date(start.getTime()+mins*60000);const blocked=busy.some(x=>new Date(x.fecha_hora_inicio)<end&&new Date(x.fecha_hora_fin)>start);const b=document.createElement('button');b.type='button';b.className='kora-hour'+(blocked?' busy':'');b.textContent=txt;b.disabled=blocked;b.onclick=()=>{timeEl.value=txt;hours.querySelectorAll('.kora-hour').forEach(x=>x.classList.remove('on'));b.classList.add('on')};hours.appendChild(b)});if(!hours.children.length)note.textContent='No hay horarios disponibles para esta fecha';else note.textContent='Los horarios ocupados aparecen bloqueados'};
+    dateEl?.addEventListener('change',renderHours);sync();
+    form.addEventListener('submit',async e=>{e.preventDefault();e.stopImmediatePropagation();const indices=selected.slice();if(!indices.length){msg.textContent='Elegí un servicio.';return}const principal=indices.filter(i=>!comp(services[i]));if(principal.length!==1){msg.textContent='Elegí un servicio principal.';return}if(!dateEl?.value||!timeEl?.value){msg.textContent='Elegí fecha y horario.';return}const mins=indices.reduce((a,i)=>a+Number(services[i]?.duracion_minutos||60),0),price=indices.reduce((a,i)=>a+Number(services[i]?.precio||0),0),start=new Date(dateEl.value+'T'+timeEl.value+':00'),end=new Date(start.getTime()+mins*60000);msg.textContent='Comprobando disponibilidad…';let q=sb.from('turnos').select('id').eq('negocios_id',negocio.id).lt('fecha_hora_inicio',end.toISOString()).gt('fecha_hora_fin',start.toISOString());let b=null;if(barberEl&&barbers.length){b=barbers[Number(barberEl.value)]||null;if(b?.id)q=q.eq('barbero_id',b.id)}const chk=await q;if(chk.error){msg.textContent=chk.error.message;return}if(chk.data?.length){msg.textContent='Ese horario se superpone con otro turno. Elegí otro.';renderHours();return}const name=document.getElementById('name')?.value||'';const x=await sb.from('turnos').insert({negocios_id:negocio.id,barbero_id:b?.id||null,fecha_hora_inicio:start.toISOString(),fecha_hora_fin:end.toISOString(),precio_reservado_total:price,estado:'pendiente',nombre_cliente:name,cliente_nombre:name}).select('id').single();if(x.error){msg.textContent=x.error.message;return}const rows=indices.map(i=>({turno_id:x.data.id,servicio_id:services[i].id,precio_reservado:Number(services[i].precio||0),duracion_minutos:Number(services[i].duracion_minutos||60)}));const ts=await sb.from('turno_servicios').insert(rows);if(ts.error){msg.textContent='El turno se creó, pero faltan servicios: '+ts.error.message;return}msg.textContent=`¡Turno reservado! ${mins} min · $${price.toLocaleString('es-AR')}`;setTimeout(()=>{if(window.closeBooking)window.closeBooking();form.reset();selected=[];timeEl.value='';sync();renderHours()},1000)},true);
+    window.openBooking=()=>{if(modal)modal.style.display='flex';sync();renderHours()};
+    window.pick=i=>{window.openBooking();if(services[i]){selected=comp(services[i])?[...selected,i]:[...selected.filter(x=>comp(services[x])),i];sync();renderHours()}};
   };
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(boot,500));else setTimeout(boot,500);
 })();
