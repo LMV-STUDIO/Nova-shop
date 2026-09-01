@@ -44,4 +44,19 @@ $('reservarBtn').onclick=reserve;s.auth.getSession().then(r=>{session=r.data.ses
 </script>
 <div class="lmv-drawer" id="lmvMobileMenu" aria-hidden="true"><div class="lmv-drawer-shade" id="lmvMenuShade"></div><aside class="lmv-drawer-panel"><div class="lmv-drawer-top"><span>🔦 LMV · LÁSER</span><button class="lmv-drawer-close" id="lmvMenuClose" aria-label="Cerrar menú">×</button></div><nav class="lmv-drawer-links"><a href="#servicios-section">✨ Tratamientos</a><a href="#reservar">📅 Reservar turno</a><a href="#contacto">📍 Contacto y ubicación</a></nav></aside></div>
 <script>(function(){const m=document.getElementById('lmvMobileMenu'),b=document.getElementById('lmvMenuBtn'),c=document.getElementById('lmvMenuClose'),sh=document.getElementById('lmvMenuShade');if(!m||!b)return;const close=()=>{m.classList.remove('open');m.setAttribute('aria-hidden','true');document.body.style.overflow=''};b.addEventListener('click',()=>{m.classList.add('open');m.setAttribute('aria-hidden','false');document.body.style.overflow='hidden'});[c,sh].forEach(x=>x&&x.addEventListener('click',close));m.querySelectorAll('a').forEach(a=>a.addEventListener('click',close));document.addEventListener('keydown',e=>{if(e.key==='Escape')close()});})();</script>
-</body></html>
+<script>/* LMV: reintento de carga inicial */
+(function(){
+  function retryLoad(){
+    try{
+      var n=document.getElementById('nombre');
+      if(n && String(n.textContent||'').trim()==='Cargando...' && typeof loadBusiness==='function') loadBusiness();
+      var p=document.getElementById('principales');
+      if(p && String(p.textContent||'').trim()==='Cargando...' && typeof loadServices==='function') loadServices();
+      var d=document.getElementById('days');
+      if(d && !d.children.length && typeof loadHours==='function') loadHours();
+    }catch(e){}
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',function(){setTimeout(retryLoad,700);});
+  else setTimeout(retryLoad,700);
+  setTimeout(retryLoad,1800);
+})();</script></body></html>
