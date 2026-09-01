@@ -1,0 +1,34 @@
+name: Quitar cuadro informacion depilacion laser
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Quitar cuadro INFORMACIÓN de depilacion laser
+        run: |
+          python3 <<'PY'
+          from pathlib import Path
+          import re
+          p=Path('depilacion-laser.html')
+          s=p.read_text(encoding='utf-8')
+          pattern=r'<div class="contactCard"><div class="pill">INFORMACIÓN</div>.*?</div></div></section>'
+          s2,n=re.subn(pattern,'</section>',s,count=1,flags=re.S)
+          if n:
+              p.write_text(s2,encoding='utf-8')
+              print('Cuadro INFORMACIÓN eliminado.')
+          else:
+              print('El cuadro ya no está o no coincide; no se modificó el HTML.')
+          PY
+      - name: Commit cambio
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add depilacion-laser.html
+          git diff --cached --quiet || git commit -m 'fix: eliminar cuadro informacion de depilacion laser'
+          git push
