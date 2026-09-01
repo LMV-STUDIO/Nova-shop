@@ -1,44 +1,75 @@
-/* KORA booking enhancer — multiple services + overlap protection. Loaded after each KORA page's inline script. */
+/* KORA booking enhancer — multiple services + overlap protection. */
 (function(){
-  const boot=()=>{
-    if(!window.supabase || !window.sb || !window.negocio) return;
-    const form=document.getElementById('form'), modal=document.getElementById('modal'), serviceEl=document.getElementById('service'), msg=document.getElementById('msg');
-    if(!form||!serviceEl||!msg) return;
-    let selected=[];
-    const originalServices=window.services||[];
-    const isComplementary=s=>String(s?.tipo_servicio||'').toLowerCase()==='complementario';
-    const renderSelector=()=>{
-      serviceEl.multiple=true; serviceEl.size=Math.min(6,Math.max(3,originalServices.length)); serviceEl.required=true;
-      serviceEl.innerHTML=originalServices.map((s,i)=>`<option value="${i}">${isComplementary(s)?'＋ ':''}${s.nombre} — $${Number(s.precio||0).toLocaleString('es-AR')} · ${s.duracion_minutos||60} min</option>`).join('');
-      serviceEl.title='Elegí 1 servicio principal y los complementarios que quieras';
+  const URL='https://cqelidpshitntewsktwx.supabase.co';
+  const KEY='sb_publishable_o1q2pLVF1zIlZCzPHMaheg_KSawjVvD';
+  const boot=async()=>{
+    if(!window.supabase)return;
+    const form=document.getElementById('form'),modal=document.getElementById('modal'),serviceEl=document.getElementById('service'),msg=document.getElementById('msg');
+    if(!form||!serviceEl||!msg)return;
+    const sb2=supabase.createClient(URL,KEY);
+    const page=location.pathname.split('/').pop().toLowerCase();
+    const types={
+      'barberia-kora.html':'barberia','nails-kora.html':'nails','lashes-kora.html':'lashes',
+      'estetica-kora.html':'cosmetologia','depilacion-laser-kora.html':'depilacion_laser'
     };
-    const sync=()=>{selected=[...serviceEl.selectedOptions].map(o=>Number(o.value)).filter(Number.isFinite); const principal=selected.filter(i=>!isComplementary(originalServices[i])); if(principal.length>1){const keep=principal[principal.length-1];[...serviceEl.options].forEach(o=>{if(selected.includes(Number(o.value))&&!isComplementary(originalServices[Number(o.value)])&&Number(o.value)!==keep)o.selected=false});selected=[...serviceEl.selectedOptions].map(o=>Number(o.value));} msg.textContent=selected.length?`Seleccionados: ${selected.length} · Total: $${selected.reduce((a,i)=>a+Number(originalServices[i]?.precio||0),0).toLocaleString('es-AR')} · ${selected.reduce((a,i)=>a+Number(originalServices[i]?.duracion_minutos||60),0)} min`:''};
+    const id=new URLSearchParams(location.search).get('negocio');
+    let nq=sb2.from('negocios').select('*').limit(1); if(id)nq=nq.eq('id',id); else nq=nq.eq('tipo_negocio',types[page]||'nails');
+    const nr=await nq.maybeSingle(); if(nr.error||!nr.data){msg.textContent='No se pudo cargar el negocio.';return;}
+    const negocio2=nr.data;
+    const sr=await sb2.from('servicios').select('*').eq('negocio_id',negocio2.id).eq('activo',true).order('nombre');
+    const services2=sr.data||[]; if(!services2.length)return;
+    let barbers2=[];
+    if(page==='barberia-kora.html'){
+      const br=await sb2.from('barberos').select('*').eq('negocio_id',negocio2.id).eq('activo',true).order('nombre'); barbers2=br.data||[];
+    }
+    const isComp=s=>String(s?.tipo_servicio||'').toLowerCase()==='complementario';
+    const render=()=>{
+      serviceEl.multiple=true; serviceEl.size=Math.min(7,Math.max(4,services2.length)); serviceEl.required=true;
+      serviceEl.innerHTML=services2.map((s,i)=>`<option value="${i}">${isComp(s)?'＋ COMPLEMENTARIO · ':'PRINCIPAL · '}${s.nombre} — $${Number(s.precio||0).toLocaleString('es-AR')} · ${s.duracion_minutos||60} min</option>`).join('');
+      serviceEl.title='Elegí 1 principal y agregá los complementarios que necesites';
+    };
+    const sync=()=>{
+      const opts=[...serviceEl.options], chosen=opts.filter(o=>o.selected).map(o=>Number(o.value));
+      const principals=chosen.filter(i=>!isComp(services2[i]));
+      if(principals.length>1){const keep=principals[principals.length-1];opts.forEach(o=>{const i=Number(o.value);if(o.selected&&!isComp(services2[i])&&i!==keep)o.selected=false});}
+      const final=opts.filter(o=>o.selected).map(o=>Number(o.value));
+      if(!final.length){msg.textContent='Elegí 1 servicio principal y, si querés, complementarios.';return final;}
+      const p=final.reduce((a,i)=>a+Number(services2[i]?.precio||0),0),m=final.reduce((a,i)=>a+Number(services2[i]?.duracion_minutos||60),0);
+      msg.textContent=`${final.length} servicio${final.length>1?'s':''} · ${m} min · $${p.toLocaleString('es-AR')}`;return final;
+    };
+    render();
     serviceEl.addEventListener('change',sync);
-    renderSelector();
-    window.pick=function(i){ if(modal) modal.style.display='flex'; [...serviceEl.options].forEach(o=>o.selected=false); const o=serviceEl.options[i]; if(o)o.selected=true; sync(); if(window.time&&!window.time.options.length) window.openBooking&&window.openBooking(); };
-    const oldOpen=window.openBooking; window.openBooking=function(){ if(oldOpen) oldOpen(); renderSelector(); sync(); };
-    form.addEventListener('submit',async function(e){
-      e.preventDefault();
-      const indices=[...serviceEl.selectedOptions].map(o=>Number(o.value));
-      if(!indices.length){msg.textContent='Elegí al menos un servicio.';return;}
-      const principal=indices.filter(i=>!isComplementary(originalServices[i]));
+    const oldPick=window.pick; window.pick=async i=>{if(oldPick&&false)oldPick(i);if(modal)modal.style.display='flex';render();[...serviceEl.options].forEach(o=>o.selected=false);if(serviceEl.options[i])serviceEl.options[i].selected=true;sync();};
+    const oldOpen=window.openBooking; window.openBooking=function(){if(oldOpen)oldOpen();render();sync();};
+    if(page==='barberia-kora.html'){
+      const barberEl=document.getElementById('barber');
+      if(barberEl)barberEl.innerHTML=(barbers2.length?barbers2:[{id:null,nombre:'Cualquier barbero'}]).map((b,i)=>`<option value="${i}">${b.nombre}</option>`).join('');
+    }
+    form.addEventListener('submit',async e=>{
+      e.preventDefault(); e.stopImmediatePropagation();
+      const indices=sync(); if(!indices||!indices.length)return;
+      const principal=indices.filter(i=>!isComp(services2[i]));
       if(principal.length!==1){msg.textContent='Elegí un solo servicio principal. Podés sumar complementarios.';return;}
-      const totalPrice=indices.reduce((a,i)=>a+Number(originalServices[i]?.precio||0),0);
-      const totalMin=indices.reduce((a,i)=>a+Number(originalServices[i]?.duracion_minutos||60),0);
-      const start=new Date(document.getElementById('date').value+'T'+document.getElementById('time').value+':00');
-      const end=new Date(start.getTime()+totalMin*60000);
+      const dateEl=document.getElementById('date'),timeEl=document.getElementById('time');
+      if(!dateEl.value||!timeEl.value){msg.textContent='Elegí fecha y horario.';return;}
+      const totalPrice=indices.reduce((a,i)=>a+Number(services2[i]?.precio||0),0);
+      const totalMin=indices.reduce((a,i)=>a+Number(services2[i]?.duracion_minutos||60),0);
+      const start=new Date(dateEl.value+'T'+timeEl.value+':00'),end=new Date(start.getTime()+totalMin*60000);
+      if(Number.isNaN(start.getTime())){msg.textContent='Fecha u horario inválido.';return;}
       msg.textContent='Comprobando disponibilidad…';
-      let busy=sb.from('turnos').select('id').eq('negocios_id',negocio.id).lt('fecha_hora_inicio',end.toISOString()).gt('fecha_hora_fin',start.toISOString());
-      const barberEl=document.getElementById('barber'); if(barberEl&&window.barbers?.length){const b=barbers[barberEl.value];if(b?.id)busy=busy.eq('barbero_id',b.id)}
-      const br=await busy; if(br.error){msg.textContent=br.error.message;return;} if(br.data?.length){msg.textContent='Ese horario no alcanza para todos los servicios seleccionados. Elegí otro horario.';return;}
+      let busy=sb2.from('turnos').select('id').eq('negocios_id',negocio2.id).lt('fecha_hora_inicio',end.toISOString()).gt('fecha_hora_fin',start.toISOString());
+      const barberEl=document.getElementById('barber');let selectedBarber=null;
+      if(barberEl&&barbers2.length){selectedBarber=barbers2[Number(barberEl.value)];if(selectedBarber?.id)busy=busy.eq('barbero_id',selectedBarber.id);}
+      const check=await busy;if(check.error){msg.textContent=check.error.message;return;}
+      if(check.data?.length){msg.textContent='Ese horario se superpone con otro turno. Elegí otro horario.';return;}
       msg.textContent='Guardando…';
-      const barberEl2=document.getElementById('barber'); const b=barberEl2&&window.barbers?.length?barbers[barberEl2.value]:null;
-      const payload={negocios_id:negocio.id,barbero_id:b?.id||null,fecha_hora_inicio:start.toISOString(),fecha_hora_fin:end.toISOString(),precio_reservado_total:totalPrice,estado:'pendiente',nombre_cliente:document.getElementById('name').value,cliente_nombre:document.getElementById('name').value};
-      const x=await sb.from('turnos').insert(payload).select('id').single(); if(x.error){msg.textContent=x.error.message;return;}
-      const rows=indices.filter(i=>originalServices[i]?.id).map(i=>({turno_id:x.data.id,servicio_id:originalServices[i].id,precio_reservado:Number(originalServices[i].precio||0),duracion_minutos:Number(originalServices[i].duracion_minutos||60)}));
-      if(rows.length){const ts=await sb.from('turno_servicios').insert(rows);if(ts.error){msg.textContent='El turno se creó, pero no se pudieron guardar todos los servicios: '+ts.error.message;return;}}
+      const name=document.getElementById('name').value,phone=document.getElementById('phone')?.value||'';
+      const x=await sb2.from('turnos').insert({negocios_id:negocio2.id,barbero_id:selectedBarber?.id||null,fecha_hora_inicio:start.toISOString(),fecha_hora_fin:end.toISOString(),precio_reservado_total:totalPrice,estado:'pendiente',nombre_cliente:name,cliente_nombre:name}).select('id').single();
+      if(x.error){msg.textContent=x.error.message;return;}
+      const rows=indices.map(i=>({turno_id:x.data.id,servicio_id:services2[i].id,precio_reservado:Number(services2[i].precio||0),duracion_minutos:Number(services2[i].duracion_minutos||60)}));
+      const ts=await sb2.from('turno_servicios').insert(rows);if(ts.error){msg.textContent='El turno se creó, pero falló el detalle de servicios: '+ts.error.message;return;}
       msg.textContent=`¡Turno reservado! ${indices.length} servicio${indices.length>1?'s':''} · ${totalMin} min · $${totalPrice.toLocaleString('es-AR')}`;
-      setTimeout(()=>{if(window.closeBooking)closeBooking();form.reset();selected=[];},1200);
+      setTimeout(()=>{if(window.closeBooking)closeBooking();form.reset();render();},1200);
     },true);
   };
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(boot,50));else setTimeout(boot,50);
