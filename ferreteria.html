@@ -20,7 +20,7 @@
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
 .lmv-menu-btn{display:none;position:relative;z-index:110;border:0;border-radius:5px;width:44px;height:44px;font-size:22px;cursor:pointer;background:#343434;color:#fff}.lmv-drawer{position:fixed;inset:0;z-index:1000;display:none}.lmv-drawer.open{display:block}.lmv-drawer-shade{position:absolute;inset:0;background:rgba(0,0,0,.58);backdrop-filter:blur(2px)}.lmv-drawer-panel{position:absolute;left:0;top:0;height:100%;width:min(340px,88vw);background:#202020;color:#fff;padding:24px;box-shadow:20px 0 55px rgba(0,0,0,.35);transform:translateX(-105%);transition:transform .3s ease;display:flex;flex-direction:column}.lmv-drawer.open .lmv-drawer-panel{transform:translateX(0)}.lmv-drawer-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:26px;font-weight:950}.lmv-drawer-close{border:0;background:#343434;color:#fff;border-radius:5px;width:42px;height:42px;font-size:23px;cursor:pointer}.lmv-drawer-links{display:grid;gap:10px}.lmv-drawer-links a{padding:16px;border-radius:5px;background:#2c2c2c;color:#fff;text-decoration:none;font-weight:900;transition:.2s}.lmv-drawer-links a:hover{background:#3a3a3a;transform:translateX(3px)}@media(max-width:850px){.lmv-menu-btn{display:inline-flex;align-items:center;justify-content:center}.lmv-desktop-nav{display:none!important}}
 </style>
-<link rel="stylesheet" href="lmv-premium-clientes.css"></head>
+<link rel="stylesheet" href="lmv-premium-clientes.css"><link rel="stylesheet" href="lmv-experiencia-clientes.css"></head>
 <body>
 <nav class="nav"><div class="navin wrap"><a class="logo" href="#inicio">FERREPRO<small>DISTRIBUIDORA</small></a><div class="links"><a href="#categorias">Categorías</a><a href="#productos">Productos</a><a href="#entrega">Entrega</a><a href="#contacto">Contacto</a><button class="btn cartBtn" type="button" onclick="openCart()">🛒 Pedido <span class="cartCount" id="cartCount">0</span></button></div></div><button class="lmv-menu-btn" id="lmvMenuBtn" aria-label="Abrir menú">☰</button></nav>
 <main id="inicio">
@@ -81,5 +81,5 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeCart();closeCh
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',function(){setTimeout(retryLoad,700);});
   else setTimeout(retryLoad,700);
   setTimeout(retryLoad,1800);
-})();</script></body>
+})();</script><script src="lmv-experiencia-clientes.js"></script></body>
 </html>
