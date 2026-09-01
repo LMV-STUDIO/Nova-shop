@@ -1,0 +1,46 @@
+name: Aplicar layouts V4 clientes
+on:
+  push:
+    paths:
+      - 'lmv-layouts-v4.css'
+      - 'lmv-layouts-v4.js'
+      - 'lmv-layouts-v4-ui.css'
+      - '.github/workflows/aplicar-layouts-v4.yml'
+permissions:
+  contents: write
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Inyectar V4
+        shell: bash
+        run: |
+          set -e
+          files=(nails.html lashes.html estetica.html depilacion-laser.html barberia.html comida.html ferreteria.html ropa.html)
+          changed=0
+          for f in "${files[@]}"; do
+            [ -f "$f" ] || continue
+            python3 - "$f" <<'PY'
+import sys
+p=sys.argv[1]
+s=open(p,encoding='utf-8').read()
+needle='lmv-layouts-v4.css'
+for href in ['lmv-layouts-v4.css','lmv-layouts-v4-ui.css']:
+    if href not in s:
+        s=s.replace('</head>',f'<link rel="stylesheet" href="{href}"></head>',1)
+if 'lmv-layouts-v4.js' not in s:
+    s=s.replace('</body>','<script src="lmv-layouts-v4.js"></script></body>',1)
+open(p,'w',encoding='utf-8').write(s)
+PY
+            git diff --quiet -- "$f" || changed=1
+          done
+          if [ "$changed" = 1 ]; then
+            git config user.name 'github-actions[bot]'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git add nails.html lashes.html estetica.html depilacion-laser.html barberia.html comida.html ferreteria.html ropa.html
+            git commit -m 'feat: layouts V4 radicalmente distintos por rubro'
+            git push
+          else
+            echo 'Sin cambios.'
+          fi
