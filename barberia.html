@@ -1,1 +1,3213 @@
-<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Barbería — LMV Studio</title><link href="https://fonts.googleapis.com/css2?family=DM+Mono&family=Manrope:wght@500;700;800&family=Playfair+Display:ital@0;1&display=swap" rel="stylesheet"><style>:root{--p:#eee9df;--i:#121212;--a:#b58b4b;--m:#666}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--p);color:var(--i);font-family:Manrope}a{text-decoration:none;color:inherit}.nav{position:fixed;z-index:9;top:0;width:100%;padding:20px 5vw;display:flex;justify-content:space-between;background:#eee9dfed;backdrop-filter:blur(10px)}.mono{font:10px 'DM Mono';letter-spacing:.15em;text-transform:uppercase}.links{display:flex;gap:25px;font:10px 'DM Mono';text-transform:uppercase}.hero{min-height:100vh;padding:125px 5vw 70px;display:grid;grid-template-columns:1fr .9fr;gap:6vw;align-items:center}.hero h1{font-size:clamp(65px,11vw,150px);line-height:.8;letter-spacing:-.07em;margin:25px 0}.hero h1 i,h2 i{font-family:'Playfair Display';font-weight:400}.hero p,.copy{max-width:650px;color:var(--m);line-height:1.8;font-size:16px}.heroimg{height:72vh;background:url('https://images.unsplash.com/photo-1599351431202-1e0f0d5f7f1b?auto=format&fit=crop&w=1200&q=90') center/cover}.btn{display:inline-block;margin-top:15px;padding:14px 20px;border:1px solid var(--i);background:none;font:10px 'DM Mono';text-transform:uppercase;cursor:pointer}.section{padding:105px 5vw}.dark{background:var(--i);color:var(--p)}h2{font-size:clamp(45px,7vw,95px);line-height:.88;letter-spacing:-.05em;margin:18px 0 45px}.intro{display:grid;grid-template-columns:1fr 1fr;gap:7vw;align-items:start}.facts{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid #aaa;margin-top:35px}.fact{padding:20px 15px;border-right:1px solid #aaa}.fact:last-child{border:0}.fact b{font:10px 'DM Mono'}.services{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}.service{position:relative;min-height:380px;overflow:hidden;cursor:pointer;background:#333}.service img{width:100%;height:100%;object-fit:cover;transition:.6s;display:block}.service:hover img{transform:scale(1.05)}.service:after{content:'RESERVAR →';position:absolute;right:18px;bottom:18px;background:var(--a);padding:11px;font:9px 'DM Mono'}.serviceInfo{position:absolute;left:18px;right:18px;bottom:18px;color:white;background:#111c;padding:15px}.serviceInfo h3{margin:0 0 5px;font-size:20px}.serviceInfo p{margin:0;font-size:11px;color:#ddd}.price{float:right}.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:0;border-top:1px solid #aaa}.step{padding:25px 18px;border-right:1px solid #aaa}.step:last-child{border:0}.step b{font:10px 'DM Mono'}.step p{font-size:13px;line-height:1.6;color:var(--m)}.gallery{display:grid;grid-template-columns:1.3fr .7fr;gap:18px}.gallery div{height:430px;background:center/cover}.gallery div:last-child{height:330px;align-self:end}.contact{background:var(--a);padding:110px 5vw}.contact h2{font-size:clamp(60px,10vw,135px)}footer{padding:25px 5vw;display:flex;justify-content:space-between;font:10px 'DM Mono'}.modal{position:fixed;inset:0;background:#000b;z-index:30;display:none;align-items:center;justify-content:center;padding:18px}.box{background:var(--p);width:min(520px,100%);padding:30px}.box input,.box select{width:100%;padding:13px;margin:6px 0;border:1px solid #bbb;background:white;font:inherit}.close{float:right;border:0;background:none;font-size:25px;cursor:pointer}.msg{min-height:25px;font-size:12px}@media(max-width:800px){.links{display:none}.hero,.intro{grid-template-columns:1fr}.heroimg{height:55vh}.services{grid-template-columns:1fr}.facts,.steps{grid-template-columns:1fr}.step,.fact{border-right:0;border-bottom:1px solid #aaa}.gallery{grid-template-columns:1fr}.section{padding:80px 6vw}}</style></head><body><header class="nav"><b class="mono" id="brand">NOVA / BARBER</b><nav class="links"><a href="#studio">Studio</a><a href="#servicios">Servicios</a><a href="#experiencia">Experiencia</a><a href="#turno">Turno</a></nav></header><section class="hero"><div><span class="mono">01 — BARBER SHOP / BUENOS AIRES</span><h1>Corte<br><i>con actitud.</i></h1><p id="desc">Cortes, barba y estilo en un espacio pensado para salir con un look definido y una experiencia simple.</p><a class="btn" href="#servicios">Elegir servicio ↓</a></div><div class="heroimg"></div></section><section class="section" id="studio"><span class="mono">02 — EL ESTUDIO</span><div class="intro"><div><h2>Oficio<br><i>bien hecho.</i></h2><p class="copy" id="info">Un espacio donde la técnica, el detalle y la atención están primero.</p></div><div><p class="copy">Cada servicio tiene duración y precio propios. Elegí mirando las imágenes: al tocar una tarjeta se abre directamente la reserva con ese servicio seleccionado.</p><div class="facts"><div class="fact"><b>01</b><br>Turnos simples</div><div class="fact"><b>02</b><br>Barberos disponibles</div><div class="fact"><b>03</b><br>Confirmación online</div></div></div></div></section><section class="section dark" id="servicios"><span class="mono">03 — SERVICIOS</span><h2>Elegí tu<br><i>servicio.</i></h2><div class="services" id="services"></div></section><section class="section" id="experiencia"><span class="mono">04 — LA EXPERIENCIA</span><h2>Antes.<br>Durante.<br>Después.</h2><div class="steps"><div class="step"><b>01 / ELEGÍ</b><p>Mirás el servicio, precio y duración.</p></div><div class="step"><b>02 / RESERVÁ</b><p>La imagen abre el formulario con el servicio elegido.</p></div><div class="step"><b>03 / CONFIRMÁ</b><p>Elegís barbero, fecha y horario.</p></div><div class="step"><b>04 / LISTO</b><p>El turno queda guardado en el sistema.</p></div></div><div class="gallery" style="margin-top:45px"><div style="background-image:url('https://images.unsplash.com/photo-1621605815971-fbc98d665033?auto=format&fit=crop&w=1100&q=85')"></div><div style="background-image:url('https://images.unsplash.com/photo-1622286342621-4bd786c2447c?auto=format&fit=crop&w=900&q=85')"></div></div></section><section class="contact" id="turno"><span class="mono">05 — AGENDA</span><h2>Tu estilo.<br><i>Tu turno.</i></h2><button class="btn" onclick="openBooking()">Reservar ahora →</button></section><footer><span id="foot">NOVA / BARBER</span><span>LMV STUDIO</span></footer><div class="modal" id="modal"><div class="box"><button class="close" onclick="closeBooking()">×</button><h3>Reservá tu turno</h3><form id="form"><input id="name" required placeholder="Tu nombre"><input id="phone" placeholder="WhatsApp / teléfono"><select id="barber" required></select><select id="service" required></select><input id="date" type="date" required><select id="time" required></select><div class="msg" id="msg"></div><button class="btn">Confirmar turno</button></form></div></div><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script>const sb=supabase.createClient('https://cqelidpshitntewsktwx.supabase.co','sb_publishable_o1q2pLVF1zIlZCzPHMaheg_KSawjVvD');let negocio,services=[],barbers=[];const imgs=['https://images.unsplash.com/photo-1599351431202-1e0f0d5f7f1b','https://images.unsplash.com/photo-1621605815971-fbc98d665033','https://images.unsplash.com/photo-1622286342621-4bd786c2447c','https://images.unsplash.com/photo-1503951914875-452162b0f3f1'];const $=id=>document.getElementById(id);async function init(){let id=new URLSearchParams(location.search).get('negocio'),q=sb.from('negocios').select('*').limit(1);if(id)q=q.eq('id',id);else q=q.eq('tipo_negocio','barberia');let r=await q.maybeSingle();if(r.error||!r.data)return;negocio=r.data;brand.textContent=negocio.nombre||'NOVA / BARBER';foot.textContent=negocio.nombre||'NOVA / BARBER';desc.textContent=negocio.descripcion||desc.textContent;info.textContent=[negocio.descripcion,negocio.dirección,negocio.telefono].filter(Boolean).join(' · ')||info.textContent;let s=await sb.from('servicios').select('*').eq('negocio_id',negocio.id).eq('activo',true).order('nombre');services=s.data?.length?s.data:[{nombre:'Corte clásico',precio:9000,duracion_minutos:45},{nombre:'Corte + barba',precio:14000,duracion_minutos:75},{nombre:'Barba',precio:7000,duracion_minutos:30},{nombre:'Fade',precio:10000,duracion_minutos:50}];let b=await sb.from('barberos').select('*').eq('negocio_id',negocio.id).eq('activo',true).order('nombre');barbers=b.data?.length?b.data:[{id:null,nombre:'Cualquier barbero'}];render()}function render(){servicesEl.innerHTML=services.map((s,i)=>`<article class="service" onclick="pick(${i})"><img src="${(imgs[i%imgs.length])}?auto=format&fit=crop&w=1000&q=85"><div class="serviceInfo"><h3>${s.nombre}<span class="price">$${Number(s.precio||0).toLocaleString('es-AR')}</span></h3><p>${s.duracion_minutos||60} min · Tocá la imagen para reservar</p></div></article>`).join('');service.innerHTML=services.map((s,i)=>`<option value="${i}">${s.nombre} — $${Number(s.precio||0).toLocaleString('es-AR')}</option>`).join('');barber.innerHTML=barbers.map((b,i)=>`<option value="${i}">${b.nombre}</option>`).join('')}const servicesEl=$('services');function pick(i){openBooking();service.value=i}function openBooking(){modal.style.display='flex';time.innerHTML=Array.from({length:23},(_,i)=>{let m=540+i*30;return `<option>${String(Math.floor(m/60)).padStart(2,'0')}:${String(m%60).padStart(2,'0')}</option>`}).join('')}function closeBooking(){modal.style.display='none'}form.onsubmit=async e=>{e.preventDefault();let s=services[service.value],b=barbers[barber.value],start=new Date(date.value+'T'+time.value+':00'),end=new Date(start.getTime()+(s.duracion_minutos||60)*60000);msg.textContent='Guardando…';let busy=sb.from('turnos').select('id').eq('negocios_id',negocio.id).lt('fecha_hora_inicio',end.toISOString()).gt('fecha_hora_fin',start.toISOString());if(b?.id)busy=busy.eq('barbero_id',b.id);let br=await busy;if(br.data?.length)return msg.textContent='Ese horario ya está ocupado.';let x=await sb.from('turnos').insert({negocios_id:negocio.id,barbero_id:b?.id||null,fecha_hora_inicio:start.toISOString(),fecha_hora_fin:end.toISOString(),precio_reservado_total:s.precio||0,estado:'pendiente',nombre_cliente:name.value,cliente_nombre:name.value}).select('id').single();if(x.error)return msg.textContent=x.error.message;if(s.id)await sb.from('turno_servicios').insert({turno_id:x.data.id,servicio_id:s.id,precio_reservado:s.precio||0,duracion_minutos:s.duracion_minutos||60});msg.textContent='¡Turno reservado correctamente!';setTimeout(closeBooking,900);e.target.reset()};init();</script><script src="./kora-booking-enhancer.js"></script></body></html>
+```html
+<!DOCTYPE html>
+<html lang="es" data-lmv-rubro="barberia" data-lmv-premium="1">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Barbería</title>
+
+<style>
+:root{
+    --principal:#d4af37;
+    --principal-oscuro:#a88418;
+    --fondo:#090909;
+    --fondo2:#111;
+    --card:#171717;
+    --blanco:#fff;
+    --gris:#a5a5a5;
+    --borde:#292929;
+}
+
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0
+}
+
+html{
+    scroll-behavior:smooth
+}
+
+body{
+    font-family:Arial,Helvetica,sans-serif;
+    background:var(--fondo);
+    color:var(--blanco);
+    line-height:1.5
+}
+
+a{
+    color:inherit
+}
+
+header{
+    position:sticky;
+    top:0;
+    z-index:1000;
+    background:rgba(9,9,9,.95);
+    border-bottom:1px solid var(--borde);
+    backdrop-filter:blur(12px)
+}
+
+.header-inner{
+    max-width:1200px;
+    margin:auto;
+    padding:15px 25px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:20px
+}
+
+.logo{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    color:var(--principal);
+    font-size:21px;
+    font-weight:800;
+    text-decoration:none
+}
+
+.logo img{
+    width:45px;
+    height:45px;
+    object-fit:cover;
+    border-radius:50%;
+    border:2px solid var(--principal)
+}
+
+nav{
+    display:flex;
+    align-items:center;
+    gap:20px
+}
+
+nav a{
+    text-decoration:none;
+    font-size:14px;
+    font-weight:700
+}
+
+nav a:hover{
+    color:var(--principal)
+}
+
+.nav-turno{
+    background:var(--principal);
+    color:#111;
+    padding:10px 15px;
+    border-radius:8px
+}
+
+.boton{
+    display:inline-block;
+    padding:14px 24px;
+    border-radius:9px;
+    background:var(--principal);
+    color:#111;
+    text-decoration:none;
+    font-weight:800;
+    border:none;
+    cursor:pointer;
+    transition:.25s
+}
+
+.boton:hover{
+    transform:translateY(-3px);
+    background:var(--principal-oscuro);
+    color:#fff
+}
+
+.boton-secundario{
+    background:transparent;
+    border:1px solid var(--principal);
+    color:var(--principal)
+}
+
+.boton:disabled{
+    opacity:.5;
+    cursor:not-allowed;
+    transform:none
+}
+
+.hero{
+    min-height:680px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    padding:80px 20px;
+    background:
+        linear-gradient(rgba(0,0,0,.5),rgba(0,0,0,.85)),
+        url("https://images.unsplash.com/photo-1599351431202-1e0f0d5f7f1b?auto=format&fit=crop&w=2000&q=90");
+    background-size:cover;
+    background-position:center
+}
+
+.hero-content{
+    max-width:850px
+}
+
+.etiqueta{
+    display:inline-block;
+    color:var(--principal);
+    border:1px solid rgba(212,175,55,.5);
+    padding:8px 15px;
+    border-radius:50px;
+    margin-bottom:20px;
+    font-size:13px;
+    font-weight:800;
+    text-transform:uppercase;
+    letter-spacing:1px
+}
+
+.hero h1{
+    font-size:clamp(48px,8vw,90px);
+    line-height:.95;
+    text-transform:uppercase;
+    letter-spacing:3px;
+    margin-bottom:25px
+}
+
+.hero p{
+    max-width:680px;
+    margin:0 auto 30px;
+    color:#ddd;
+    font-size:19px
+}
+
+.hero-buttons{
+    display:flex;
+    justify-content:center;
+    flex-wrap:wrap;
+    gap:12px
+}
+
+.seccion{
+    padding:90px 25px
+}
+
+.seccion-inner{
+    max-width:1200px;
+    margin:auto
+}
+
+.oscura{
+    background:var(--fondo2)
+}
+
+.centrado{
+    text-align:center
+}
+
+.titulo{
+    font-size:clamp(32px,5vw,45px);
+    margin-bottom:12px
+}
+
+.subtitulo{
+    color:var(--gris);
+    max-width:700px;
+    margin:0 auto 45px
+}
+
+.sobre-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:50px;
+    align-items:center
+}
+
+.sobre-img{
+    width:100%;
+    height:430px;
+    object-fit:cover;
+    border-radius:15px
+}
+
+.sobre-texto h2{
+    font-size:40px;
+    margin-bottom:20px
+}
+
+.sobre-texto p{
+    color:var(--gris);
+    margin-bottom:20px
+}
+
+.puntos{
+    display:grid;
+    gap:10px;
+    margin-top:20px
+}
+
+.punto{
+    color:#ddd
+}
+
+.punto span{
+    color:var(--principal)
+}
+
+.servicios-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
+    gap:25px
+}
+
+.servicio{
+    background:var(--card);
+    border:1px solid var(--borde);
+    border-radius:15px;
+    overflow:hidden;
+    transition:.25s
+}
+
+.servicio:hover{
+    transform:translateY(-7px);
+    border-color:var(--principal)
+}
+
+.servicio img{
+    width:100%;
+    height:190px;
+    object-fit:cover
+}
+
+.servicio-info{
+    padding:23px
+}
+
+.servicio h3{
+    margin-bottom:8px
+}
+
+.servicio p{
+    color:var(--gris);
+    font-size:14px;
+    margin-bottom:15px
+}
+
+.precio{
+    color:var(--principal);
+    font-size:23px;
+    font-weight:800
+}
+
+.reserva{
+    background:
+        linear-gradient(rgba(0,0,0,.65),rgba(0,0,0,.85)),
+        url("https://images.unsplash.com/photo-1621605815971-fbc98d665033?auto=format&fit=crop&w=2000&q=90");
+    background-size:cover;
+    background-position:center
+}
+
+.reserva-box{
+    max-width:800px;
+    margin:auto;
+    text-align:center
+}
+
+.reserva-form{
+    max-width:550px;
+    margin:30px auto 0;
+    background:rgba(20,20,20,.9);
+    border:1px solid var(--borde);
+    padding:25px;
+    border-radius:15px
+}
+
+.reserva-form label{
+    display:block;
+    text-align:left;
+    margin-bottom:8px;
+    font-weight:700
+}
+
+.reserva-form select,
+.reserva-form input{
+    width:100%;
+    padding:14px;
+    margin-bottom:18px;
+    border-radius:8px;
+    border:1px solid #333;
+    background:#0d0d0d;
+    color:#fff;
+    outline:none
+}
+
+.reserva-form select:focus,
+.reserva-form input:focus{
+    border-color:var(--principal)
+}
+
+.reserva-form .boton{
+    width:100%
+}
+
+.info-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:20px
+}
+
+.info-card{
+    background:var(--card);
+    border:1px solid var(--borde);
+    border-radius:14px;
+    padding:30px 20px;
+    text-align:center
+}
+
+.icono{
+    font-size:35px;
+    margin-bottom:12px
+}
+
+.info-card h3{
+    color:var(--principal);
+    margin-bottom:8px
+}
+
+.info-card p{
+    color:var(--gris)
+}
+
+footer{
+    background:#050505;
+    border-top:1px solid var(--borde);
+    padding:35px 20px;
+    text-align:center;
+    color:var(--gris)
+}
+
+footer strong{
+    color:var(--principal)
+}
+
+.estado{
+    text-align:center;
+    color:var(--gris);
+    padding:30px
+}
+
+.error{
+    color:#ff7777;
+    text-align:center;
+    padding:20px
+}
+
+.exito{
+    color:#72d572;
+    text-align:center;
+    padding:20px
+}
+
+.usuario-info{
+    margin-bottom:20px;
+    padding:14px;
+    border:1px solid var(--borde);
+    border-radius:8px;
+    color:var(--gris);
+    text-align:left;
+    font-size:14px
+}
+
+.config-error{
+    max-width:700px;
+    margin:40px auto;
+    padding:20px;
+    border:1px solid #633;
+    border-radius:12px;
+    text-align:center;
+    color:#ffb0b0;
+    background:#160d0d
+}
+
+.barbero-info{
+    color:var(--gris);
+    font-size:13px;
+    margin-top:-10px;
+    margin-bottom:18px;
+    text-align:left
+}
+
+
+/* =========================================================
+   HORARIOS
+   ========================================================= */
+
+.horarios-titulo{
+    display:none;
+    text-align:left;
+    margin-bottom:10px;
+    font-weight:700
+}
+
+.horarios-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:10px;
+    margin:10px 0 5px
+}
+
+.horario-btn{
+    padding:13px 8px;
+    border-radius:8px;
+    border:1px solid var(--borde);
+    background:#0d0d0d;
+    color:#fff;
+    cursor:pointer;
+    font-weight:700;
+    transition:.2s
+}
+
+.horario-btn:hover{
+    border-color:var(--principal);
+    color:var(--principal);
+    transform:translateY(-2px)
+}
+
+.horario-btn.seleccionado{
+    background:var(--principal);
+    border-color:var(--principal);
+    color:#111
+}
+
+.horario-btn.ocupado{
+    opacity:.35;
+    cursor:not-allowed;
+    text-decoration:line-through
+}
+
+.horarios-vacio{
+    grid-column:1/-1;
+    padding:20px;
+    border:1px solid var(--borde);
+    border-radius:10px;
+    color:var(--gris);
+    text-align:center
+}
+
+@media(max-width:850px){
+
+    .sobre-grid{
+        grid-template-columns:1fr
+    }
+}
+
+@media(max-width:650px){
+
+    .header-inner{
+        flex-direction:column
+    }
+
+    nav{
+        flex-wrap:wrap;
+        justify-content:center
+    }
+
+    .hero{
+        min-height:590px
+    }
+
+    .hero h1{
+        font-size:50px
+    }
+}
+
+@media(max-width:500px){
+
+    .horarios-grid{
+        grid-template-columns:repeat(2,1fr)
+    }
+}
+</style>
+<link rel="stylesheet" href="lmv-premium-clientes.css"><link rel="stylesheet" href="lmv-experiencia-clientes.css"><link rel="stylesheet" href="lmv-layouts-v3.css"><link rel="stylesheet" href="lmv-layouts-v4.css"><link rel="stylesheet" href="lmv-layouts-v4-ui.css"></head>
+
+<body>
+
+<header>
+
+<div class="header-inner">
+
+<a href="#" class="logo">
+
+<img
+id="logo"
+src="https://images.unsplash.com/photo-1622286342621-4bd786c2447c?auto=format&fit=crop&w=100&q=80"
+alt="Logo">
+
+<span id="nombreHeader">
+BARBERÍA
+</span>
+
+</a>
+
+<nav>
+
+<a href="#">
+Inicio
+</a>
+
+<a href="#sobre">
+Nosotros
+</a>
+
+<a href="#servicios">
+Servicios
+</a>
+
+<a href="#turnos" class="nav-turno">
+Reservar turno
+</a>
+
+</nav>
+
+</div>
+
+</header>
+
+
+<!-- =====================================================
+     HERO
+     ===================================================== -->
+
+<section class="hero">
+
+<div class="hero-content">
+
+<div class="etiqueta">
+Barbería profesional
+</div>
+
+<h1 id="nombreHero">
+BARBERÍA
+</h1>
+
+<p id="descripcionHero">
+Cortes modernos, barba y estilo personalizado.
+</p>
+
+<div class="hero-buttons">
+
+<a href="#turnos" class="boton">
+📅 Reservar turno
+</a>
+
+<a href="#servicios" class="boton boton-secundario">
+Ver servicios
+</a>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- =====================================================
+     SOBRE
+     ===================================================== -->
+
+<section class="seccion" id="sobre">
+
+<div class="seccion-inner">
+
+<div class="sobre-grid">
+
+<img
+id="sobreImagen"
+class="sobre-img"
+src="https://images.unsplash.com/photo-1622286342621-4bd786c2447c?auto=format&fit=crop&w=1200&q=90"
+alt="Barbería">
+
+<div class="sobre-texto">
+
+<h2>
+Más que un corte.
+</h2>
+
+<p id="sobreTexto">
+Creamos una experiencia pensada para que cada cliente encuentre su propio estilo.
+</p>
+
+<div class="puntos">
+
+<div class="punto">
+<span>✓</span>
+Atención personalizada
+</div>
+
+<div class="punto">
+<span>✓</span>
+Profesionales con experiencia
+</div>
+
+<div class="punto">
+<span>✓</span>
+Productos de calidad
+</div>
+
+<div class="punto">
+<span>✓</span>
+Ambiente cómodo
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- =====================================================
+     SERVICIOS
+     ===================================================== -->
+
+<section class="seccion oscura" id="servicios">
+
+<div class="seccion-inner">
+
+<div class="centrado">
+
+<h2 class="titulo">
+Nuestros servicios
+</h2>
+
+<p class="subtitulo">
+Elegí el servicio que necesitás y reservá tu turno.
+</p>
+
+</div>
+
+<div
+class="servicios-grid"
+id="serviciosContainer">
+
+<div class="estado">
+Cargando servicios...
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- =====================================================
+     RESERVA
+     ===================================================== -->
+
+<section class="seccion reserva" id="turnos">
+
+<div class="reserva-box">
+
+<h2 class="titulo">
+Reservá tu turno
+</h2>
+
+<p class="subtitulo">
+Elegí el barbero, servicio, fecha y horario.
+</p>
+
+<div class="reserva-form">
+
+
+<!-- USUARIO -->
+
+<div
+id="usuarioInfo"
+class="usuario-info">
+
+Comprobando usuario...
+
+</div>
+
+
+<button
+type="button"
+class="boton"
+id="loginGoogle"
+onclick="iniciarSesionGoogle()">
+
+🔐 Iniciar sesión con Google
+
+</button>
+
+
+<p
+id="estadoSesion"
+style="margin:15px 0;color:#a5a5a5;">
+
+Iniciá sesión para reservar tu turno.
+
+</p>
+
+
+<!-- BARBERO -->
+
+<label for="barberoSelect">
+Barbero
+</label>
+
+<select id="barberoSelect">
+
+<option value="">
+Cargando barberos...
+</option>
+
+</select>
+
+<div class="barbero-info">
+Seleccioná el barbero con el que querés reservar.
+</div>
+
+
+<!-- SERVICIO -->
+
+<label for="servicioSelect">
+Servicio
+</label>
+
+<select id="servicioSelect">
+
+<option value="">
+Cargando servicios...
+</option>
+
+</select>
+
+
+<!-- NOMBRE -->
+
+<label for="nombreCliente">
+Tu nombre
+</label>
+
+<input
+type="text"
+id="nombreCliente"
+placeholder="Ej: Matías"
+maxlength="100">
+
+
+<!-- FECHA -->
+
+<label for="fechaTurno">
+Fecha
+</label>
+
+<input
+type="date"
+id="fechaTurno">
+
+
+<!-- HORARIOS -->
+
+<div
+id="horariosTitulo"
+class="horarios-titulo">
+
+Horarios disponibles
+
+</div>
+
+<div
+id="horariosContainer"
+class="horarios-grid">
+
+<div class="horarios-vacio">
+Seleccioná un barbero y una fecha para ver los horarios.
+</div>
+
+</div>
+
+
+<input
+type="hidden"
+id="horaTurno">
+
+
+<!-- BOTÓN -->
+
+<button
+type="button"
+id="botonReservar"
+class="boton"
+onclick="reservarTurno()"
+style="margin-top:20px;">
+
+📅 Confirmar turno
+
+</button>
+
+
+<div id="mensajeReserva">
+</div>
+
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- =====================================================
+     INFORMACIÓN
+     ===================================================== -->
+
+<section class="seccion">
+
+<div class="seccion-inner">
+
+<div class="centrado">
+
+<h2 class="titulo">
+Información
+</h2>
+
+<p class="subtitulo">
+Todo lo que necesitás saber antes de visitarnos.
+</p>
+
+</div>
+
+<div class="info-grid">
+
+
+<div class="info-card">
+
+<div class="icono">
+📍
+</div>
+
+<h3>
+Ubicación
+</h3>
+
+<p id="direccion">
+Dirección del local
+</p>
+
+</div>
+
+
+<div class="info-card">
+
+<div class="icono">
+📱
+</div>
+
+<h3>
+WhatsApp
+</h3>
+
+<p>
+Reservas y consultas.
+</p>
+
+<br>
+
+<a
+id="whatsappInfo"
+href="#"
+target="_blank"
+class="boton">
+
+Escribir
+
+</a>
+
+</div>
+
+
+<div class="info-card">
+
+<div class="icono">
+📸
+</div>
+
+<h3>
+Instagram
+</h3>
+
+<p>
+Mirá nuestros últimos trabajos.
+</p>
+
+<br>
+
+<a
+id="instagram"
+href="#"
+target="_blank"
+class="boton">
+
+Instagram
+
+</a>
+
+</div>
+
+
+</div>
+
+</div>
+
+</section>
+
+
+<footer>
+
+© 2026
+
+<strong id="nombreFooter">
+BARBERÍA
+</strong>
+
+— Todos los derechos reservados.
+
+</footer>
+
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="demo-client-mode.js"></script>
+
+<script>
+
+
+/* =========================================================
+   SUPABASE
+   ========================================================= */
+
+const SUPABASE_URL =
+"https://cqelidpshitntewsktwx.supabase.co";
+
+const SUPABASE_KEY =
+"sb_publishable_o1q2pLVF1zIlZCzPHMaheg_KSawjVvD";
+
+const supabaseClient =
+window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+);
+
+
+const parametros =
+new URLSearchParams(
+    window.location.search
+);
+
+
+const NEGOCIO_ID =
+parametros.get("negocio");
+
+
+let BARBEROS = [];
+
+let servicios = [];
+
+let usuarioActual = null;
+
+let telefonoNegocio = "";
+
+
+/* =========================================================
+   UTILIDADES
+   ========================================================= */
+
+function escapeHtml(valor){
+
+    return String(valor ?? "")
+        .replace(/&/g,"&amp;")
+        .replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;")
+        .replace(/"/g,"&quot;")
+        .replace(/'/g,"&#039;");
+}
+
+
+function horaAMinutos(horaTexto){
+
+    if(!horaTexto)
+        return null;
+
+    const partes =
+        String(horaTexto)
+        .split(":")
+        .map(Number);
+
+    if(
+        Number.isNaN(partes[0]) ||
+        Number.isNaN(partes[1])
+    ){
+
+        return null;
+    }
+
+    return partes[0] * 60 + partes[1];
+}
+
+
+function mostrarMensaje(
+    texto,
+    tipo="error"
+){
+
+    const elemento =
+        document.getElementById(
+            "mensajeReserva"
+        );
+
+    if(!elemento)
+        return;
+
+    elemento.innerHTML = `
+        <div class="${tipo}">
+            ${texto}
+        </div>
+    `;
+}
+
+
+function mostrarErrorConfiguracion(){
+
+    document.body.innerHTML = `
+
+        <div class="config-error">
+
+            <h2>
+                Configuración incompleta
+            </h2>
+
+            <p>
+                Esta plantilla necesita un negocio configurado.
+            </p>
+
+            <p>
+                La URL debe incluir:
+            </p>
+
+            <p>
+                <strong>
+                    ?negocio=ID_DEL_NEGOCIO
+                </strong>
+            </p>
+
+        </div>
+    `;
+}
+
+
+/* =========================================================
+   NEGOCIO
+   ========================================================= */
+
+async function cargarNegocio(){
+
+    const {
+        data,
+        error
+    } =
+        await supabaseClient
+        .from("negocios")
+        .select(`
+            id,
+            nombre,
+            "dirección",
+            telefono,
+            instagram,
+            logo,
+            descripcion
+        `)
+        .eq(
+            "id",
+            NEGOCIO_ID
+        )
+        .single();
+
+
+    if(error){
+
+        console.error(
+            "Error cargando negocio:",
+            error
+        );
+
+        return;
+    }
+
+
+    document.title =
+        data.nombre +
+        " | Barbería";
+
+
+    document.getElementById(
+        "nombreHeader"
+    ).textContent =
+        data.nombre;
+
+
+    document.getElementById(
+        "nombreHero"
+    ).textContent =
+        data.nombre;
+
+
+    document.getElementById(
+        "nombreFooter"
+    ).textContent =
+        data.nombre;
+
+
+    if(data.descripcion){
+
+        document.getElementById(
+            "descripcionHero"
+        ).textContent =
+            data.descripcion;
+
+        document.getElementById(
+            "sobreTexto"
+        ).textContent =
+            data.descripcion;
+    }
+
+
+    if(data["dirección"]){
+
+        document.getElementById(
+            "direccion"
+        ).textContent =
+            data["dirección"];
+    }
+
+
+    if(data.logo){
+
+        document.getElementById(
+            "logo"
+        ).src =
+            data.logo;
+
+        document.getElementById(
+            "sobreImagen"
+        ).src =
+            data.logo;
+    }
+
+
+    if(data.instagram){
+
+        document.getElementById(
+            "instagram"
+        ).href =
+            data.instagram;
+    }
+
+
+    if(data.telefono){
+
+        telefonoNegocio =
+            data.telefono.replace(
+                /\D/g,
+                ""
+            );
+
+        document.getElementById(
+            "whatsappInfo"
+        ).href =
+            "https://wa.me/" +
+            telefonoNegocio;
+    }
+}
+
+
+/* =========================================================
+   BARBEROS
+   ========================================================= */
+
+async function cargarBarberos(){
+
+    const select =
+        document.getElementById(
+            "barberoSelect"
+        );
+
+
+    const {
+        data,
+        error
+    } =
+        await supabaseClient
+        .from("barberos")
+        .select(`
+            id,
+            nombre,
+            activo
+        `)
+        .eq(
+            "negocio_id",
+            NEGOCIO_ID
+        )
+        .eq(
+            "activo",
+            true
+        )
+        .order("nombre");
+
+
+    if(error){
+
+        console.error(
+            "Error cargando barberos:",
+            error
+        );
+
+        select.innerHTML =
+            `<option value="">
+                Error cargando barberos
+            </option>`;
+
+        return false;
+    }
+
+
+    BARBEROS =
+        data || [];
+
+
+    console.log(
+        "Barberos encontrados:",
+        BARBEROS
+    );
+
+
+    if(!BARBEROS.length){
+
+        select.innerHTML =
+            `<option value="">
+                No hay barberos disponibles
+            </option>`;
+
+        return false;
+    }
+
+
+    select.innerHTML =
+        `<option value="">
+            Seleccioná un barbero
+        </option>`;
+
+
+    BARBEROS.forEach(
+        barbero => {
+
+            const option =
+                document.createElement(
+                    "option"
+                );
+
+            option.value =
+                barbero.id;
+
+            option.textContent =
+                barbero.nombre;
+
+            select.appendChild(
+                option
+            );
+        }
+    );
+
+
+    return true;
+}
+
+
+/* =========================================================
+   SERVICIOS
+   ========================================================= */
+
+async function cargarServicios(){
+
+    const container =
+        document.getElementById(
+            "serviciosContainer"
+        );
+
+    const select =
+        document.getElementById(
+            "servicioSelect"
+        );
+
+
+    const {
+        data,
+        error
+    } =
+        await supabaseClient
+        .from("servicios")
+        .select(`
+            id,
+            negocio_id,
+            nombre,
+            descripcion,
+            precio,
+            duracion_minutos,
+            activo
+        `)
+        .eq(
+            "negocio_id",
+            NEGOCIO_ID
+        )
+        .eq(
+            "activo",
+            true
+        )
+        .order("nombre");
+
+
+    if(error){
+
+        console.error(
+            "Error cargando servicios:",
+            error
+        );
+
+        container.innerHTML =
+            `<div class="error">
+                No se pudieron cargar los servicios.
+            </div>`;
+
+        select.innerHTML =
+            `<option value="">
+                Error cargando servicios
+            </option>`;
+
+        return;
+    }
+
+
+    servicios =
+        data || [];
+
+
+    if(!servicios.length){
+
+        container.innerHTML =
+            `<div class="estado">
+                No hay servicios disponibles.
+            </div>`;
+
+        select.innerHTML =
+            `<option value="">
+                No hay servicios disponibles
+            </option>`;
+
+        return;
+    }
+
+
+    container.innerHTML =
+        "";
+
+
+    select.innerHTML =
+        `<option value="">
+            Seleccioná un servicio
+        </option>`;
+
+
+    servicios.forEach(
+        (servicio,index) => {
+
+            const precio =
+                Number(
+                    servicio.precio || 0
+                );
+
+
+            const duracion =
+                servicio.duracion_minutos
+                ? servicio.duracion_minutos +
+                  " min"
+                : "";
+
+
+            const article =
+                document.createElement(
+                    "article"
+                );
+
+
+            article.className =
+                "servicio";
+
+
+            article.innerHTML = `
+
+                <img
+                    src="https://images.unsplash.com/photo-1621605815971-fbc98d665033?auto=format&fit=crop&w=900&q=90"
+                    alt="${escapeHtml(servicio.nombre)}"
+                    loading="lazy"
+                >
+
+                <div class="servicio-info">
+
+                    <h3>
+                        ${escapeHtml(
+                            servicio.nombre
+                        )}
+                    </h3>
+
+                    <p>
+                        ${escapeHtml(
+                            servicio.descripcion || ""
+                        )}
+                    </p>
+
+                    <p>
+                        ${escapeHtml(
+                            duracion
+                        )}
+                    </p>
+
+                    <div class="precio">
+                        $${precio.toLocaleString("es-AR")}
+                    </div>
+
+                </div>
+            `;
+
+
+            container.appendChild(
+                article
+            );
+
+
+            const option =
+                document.createElement(
+                    "option"
+                );
+
+
+            option.value =
+                index;
+
+
+            option.textContent =
+                servicio.nombre +
+                " — $" +
+                precio.toLocaleString(
+                    "es-AR"
+                );
+
+
+            select.appendChild(
+                option
+            );
+        }
+    );
+}
+
+
+/* =========================================================
+   LOGIN GOOGLE
+   ========================================================= */
+
+async function iniciarSesionGoogle(){
+
+    const {
+        error
+    } =
+        await supabaseClient.auth
+        .signInWithOAuth({
+
+            provider:"google",
+
+            options:{
+                redirectTo:
+                    window.location.origin +
+                    window.location.pathname +
+                    window.location.search
+            }
+        });
+
+
+    if(error){
+
+        console.error(
+            "Error iniciando sesión:",
+            error
+        );
+
+        mostrarMensaje(
+            "No se pudo iniciar sesión con Google: " +
+            error.message
+        );
+    }
+}
+
+
+/* =========================================================
+   USUARIO
+   ========================================================= */
+
+async function cargarUsuario(){
+
+    const elemento =
+        document.getElementById(
+            "usuarioInfo"
+        );
+
+    const estado =
+        document.getElementById(
+            "estadoSesion"
+        );
+
+    const botonLogin =
+        document.getElementById(
+            "loginGoogle"
+        );
+
+
+    const {
+        data,
+        error
+    } =
+        await supabaseClient.auth.getUser();
+
+
+    if(error){
+
+        console.error(
+            "Error obteniendo usuario:",
+            error
+        );
+
+        usuarioActual =
+            null;
+
+        elemento.textContent =
+            "⚠️ No se pudo comprobar el usuario.";
+
+        estado.textContent =
+            "Iniciá sesión para reservar tu turno.";
+
+        botonLogin.style.display =
+            "block";
+
+        return;
+    }
+
+
+    usuarioActual =
+        data.user || null;
+
+
+    if(!usuarioActual){
+
+        elemento.textContent =
+            "⚠️ Tenés que iniciar sesión para reservar un turno.";
+
+        estado.textContent =
+            "Iniciá sesión para reservar tu turno.";
+
+        botonLogin.style.display =
+            "block";
+
+        return;
+    }
+
+
+    const metadata =
+        usuarioActual.user_metadata || {};
+
+
+    const nombreGoogle =
+        metadata.full_name ||
+        metadata.name ||
+        metadata.display_name ||
+        usuarioActual.email?.split("@")[0] ||
+        "Cliente";
+
+
+    elemento.innerHTML =
+        "👋 Hola, <strong>" +
+        escapeHtml(
+            nombreGoogle
+        ) +
+        "</strong>";
+
+
+    estado.textContent =
+        "Sesión iniciada. Ya podés reservar tu turno.";
+
+
+    botonLogin.style.display =
+        "none";
+
+
+    console.log(
+        "Usuario cliente:",
+        usuarioActual.id
+    );
+
+
+    console.log(
+        "Nombre cliente:",
+        nombreGoogle
+    );
+}
+
+
+/* =========================================================
+   CAMBIO DE SESIÓN
+   ========================================================= */
+
+supabaseClient.auth.onAuthStateChange(
+    (
+        event,
+        session
+    ) => {
+
+        console.log(
+            "Cambio de sesión:",
+            event
+        );
+
+
+        usuarioActual =
+            session &&
+            session.user
+            ? session.user
+            : null;
+
+
+        setTimeout(
+            cargarUsuario,
+            0
+        );
+    }
+);
+
+
+/* =========================================================
+   FECHA MÍNIMA
+   ========================================================= */
+
+function configurarFechaMinima(){
+
+    const fecha =
+        document.getElementById(
+            "fechaTurno"
+        );
+
+
+    const hoy =
+        new Date();
+
+
+    const year =
+        hoy.getFullYear();
+
+
+    const month =
+        String(
+            hoy.getMonth()+1
+        ).padStart(
+            2,
+            "0"
+        );
+
+
+    const day =
+        String(
+            hoy.getDate()
+        ).padStart(
+            2,
+            "0"
+        );
+
+
+    fecha.min =
+        `${year}-${month}-${day}`;
+}
+
+
+/* =========================================================
+   OBTENER HORARIO DEL BARBERO
+   ========================================================= */
+
+async function obtenerHorarioBarbero(
+    barberoId,
+    diaSemana
+){
+
+    console.log(
+        "Buscando horario:",
+        {
+            barberoId,
+            diaSemana
+        }
+    );
+
+
+    const {
+        data,
+        error
+    } =
+        await supabaseClient
+        .from("barbero_horarios")
+        .select(`
+            id,
+            barbero_id,
+            dia_semana,
+            hora_inicio,
+            hora_fin,
+            activo
+        `)
+        .eq(
+            "barbero_id",
+            barberoId
+        )
+        .eq(
+            "dia_semana",
+            diaSemana
+        )
+        .eq(
+            "activo",
+            true
+        )
+        .maybeSingle();
+
+
+    if(error){
+
+        console.error(
+            "ERROR LEYENDO HORARIO:",
+            error
+        );
+
+        throw new Error(
+            "No se pudo comprobar el horario del barbero. " +
+            "Verificá que la política SELECT de barbero_horarios permita a los clientes consultar horarios activos."
+        );
+    }
+
+
+    return data;
+}
+
+
+/* =========================================================
+   CARGAR HORARIOS DISPONIBLES
+   ========================================================= */
+
+async function cargarHorariosDisponibles(){
+
+    const barberoId =
+        document.getElementById(
+            "barberoSelect"
+        ).value;
+
+
+    const fecha =
+        document.getElementById(
+            "fechaTurno"
+        ).value;
+
+
+    const container =
+        document.getElementById(
+            "horariosContainer"
+        );
+
+
+    const titulo =
+        document.getElementById(
+            "horariosTitulo"
+        );
+
+
+    const horaInput =
+        document.getElementById(
+            "horaTurno"
+        );
+
+
+    horaInput.value =
+        "";
+
+
+    if(!barberoId || !fecha){
+
+        titulo.style.display =
+            "none";
+
+
+        container.innerHTML = `
+            <div class="horarios-vacio">
+                Seleccioná un barbero y una fecha para ver los horarios.
+            </div>
+        `;
+
+        return;
+    }
+
+
+    titulo.style.display =
+        "block";
+
+
+    container.innerHTML = `
+        <div class="horarios-vacio">
+            Cargando horarios...
+        </div>
+    `;
+
+
+    try{
+
+        const fechaLocal =
+            new Date(
+                fecha +
+                "T00:00:00"
+            );
+
+
+        const diaSemana =
+            fechaLocal.getDay();
+
+
+        const horario =
+            await obtenerHorarioBarbero(
+                barberoId,
+                diaSemana
+            );
+
+
+        if(!horario){
+
+            container.innerHTML = `
+                <div class="horarios-vacio">
+                    El barbero no atiende ese día.
+                </div>
+            `;
+
+            return;
+        }
+
+
+        const {
+            data:turnosExistentes,
+            error
+        } =
+            await supabaseClient
+            .from("turnos")
+            .select(`
+                fecha_hora_inicio,
+                fecha_hora_fin,
+                estado
+            `)
+            .eq(
+                "negocios_id",
+                NEGOCIO_ID
+            )
+            .eq(
+                "barbero_id",
+                barberoId
+            )
+            .neq(
+                "estado",
+                "cancelado"
+            )
+            .gte(
+                "fecha_hora_inicio",
+                fecha +
+                "T00:00:00"
+            )
+            .lt(
+                "fecha_hora_inicio",
+                fecha +
+                "T23:59:59"
+            );
+
+
+        if(error){
+
+            console.error(
+                "Error buscando turnos:",
+                error
+            );
+
+            container.innerHTML = `
+                <div class="error">
+                    No se pudieron consultar los horarios.
+                </div>
+            `;
+
+            return;
+        }
+
+
+        const seleccion =
+            document.getElementById(
+                "servicioSelect"
+            ).value;
+
+
+        const servicio =
+            seleccion !== ""
+            ? servicios[
+                Number(seleccion)
+            ]
+            : null;
+
+
+        const duracion =
+            servicio
+            ? Number(
+                servicio.duracion_minutos || 30
+            )
+            : 30;
+
+
+        const inicio =
+            horaAMinutos(
+                horario.hora_inicio
+            );
+
+
+        const fin =
+            horaAMinutos(
+                horario.hora_fin
+            );
+
+
+        if(
+            inicio === null ||
+            fin === null
+        ){
+
+            container.innerHTML = `
+                <div class="error">
+                    El horario configurado no es válido.
+                </div>
+            `;
+
+            return;
+        }
+
+
+        const ahora =
+            new Date();
+
+
+        const horarios = [];
+
+
+        for(
+            let minutos = inicio;
+            minutos + duracion <= fin;
+            minutos += 30
+        ){
+
+            const horas =
+                Math.floor(
+                    minutos / 60
+                );
+
+
+            const minutosRestantes =
+                minutos % 60;
+
+
+            const horaTexto =
+                String(horas)
+                .padStart(
+                    2,
+                    "0"
+                ) +
+                ":" +
+                String(
+                    minutosRestantes
+                ).padStart(
+                    2,
+                    "0"
+                );
+
+
+            const inicioTurno =
+                new Date(
+                    `${fecha}T${horaTexto}:00`
+                );
+
+
+            const finTurno =
+                new Date(
+                    inicioTurno.getTime() +
+                    duracion * 60000
+                );
+
+
+            if(
+                inicioTurno <= ahora
+            ){
+
+                continue;
+            }
+
+
+            const ocupado =
+                (turnosExistentes || [])
+                .some(
+                    turno => {
+
+                        const existenteInicio =
+                            new Date(
+                                turno.fecha_hora_inicio
+                            );
+
+
+                        const existenteFin =
+                            new Date(
+                                turno.fecha_hora_fin
+                            );
+
+
+                        return (
+                            existenteInicio <
+                            finTurno &&
+                            existenteFin >
+                            inicioTurno
+                        );
+                    }
+                );
+
+
+            horarios.push({
+                hora:horaTexto,
+                ocupado
+            });
+        }
+
+
+        if(!horarios.length){
+
+            container.innerHTML = `
+                <div class="horarios-vacio">
+                    No hay horarios disponibles para esta fecha.
+                </div>
+            `;
+
+            return;
+        }
+
+
+        container.innerHTML =
+            "";
+
+
+        horarios.forEach(
+            horario => {
+
+                const boton =
+                    document.createElement(
+                        "button"
+                    );
+
+
+                boton.type =
+                    "button";
+
+
+                boton.className =
+                    "horario-btn" +
+                    (
+                        horario.ocupado
+                        ? " ocupado"
+                        : ""
+                    );
+
+
+                boton.textContent =
+                    horario.hora;
+
+
+                if(horario.ocupado){
+
+                    boton.disabled =
+                        true;
+
+                }else{
+
+                    boton.onclick =
+                        () => {
+
+                            document
+                            .querySelectorAll(
+                                ".horario-btn"
+                            )
+                            .forEach(
+                                b =>
+                                    b.classList.remove(
+                                        "seleccionado"
+                                    )
+                            );
+
+
+                            boton.classList.add(
+                                "seleccionado"
+                            );
+
+
+                            horaInput.value =
+                                horario.hora;
+                        };
+                }
+
+
+                container.appendChild(
+                    boton
+                );
+            }
+        );
+
+
+    }catch(error){
+
+        console.error(
+            "Error cargando horarios:",
+            error
+        );
+
+
+        container.innerHTML = `
+            <div class="error">
+                ${escapeHtml(
+                    error.message
+                )}
+            </div>
+        `;
+    }
+}
+
+
+/* =========================================================
+   RESERVAR TURNO
+   ========================================================= */
+
+async function reservarTurno(){
+
+    console.log(
+        "================================="
+    );
+
+    console.log(
+        "reservarTurno() EJECUTADA"
+    );
+
+    console.log(
+        "NEGOCIO_ID:",
+        NEGOCIO_ID
+    );
+
+    console.log(
+        "================================="
+    );
+
+
+    const mensajeElemento =
+        document.getElementById(
+            "mensajeReserva"
+        );
+
+
+    mensajeElemento.innerHTML =
+        "";
+
+
+    const boton =
+        document.getElementById(
+            "botonReservar"
+        );
+
+
+    /* NEGOCIO */
+
+    if(!NEGOCIO_ID){
+
+        mostrarMensaje(
+            "La plantilla no tiene un negocio configurado."
+        );
+
+        return;
+    }
+
+
+    /* SESIÓN */
+
+    let usuario;
+
+
+    try{
+
+        const {
+            data,
+            error
+        } =
+            await supabaseClient.auth.getUser();
+
+
+        if(
+            error ||
+            !data ||
+            !data.user
+        ){
+
+            usuarioActual =
+                null;
+
+
+            mostrarMensaje(
+                "⚠️ Tenés que iniciar sesión con Google antes de reservar."
+            );
+
+            return;
+        }
+
+
+        usuario =
+            data.user;
+
+
+        usuarioActual =
+            usuario;
+
+
+    }catch(error){
+
+        console.error(
+            "Error comprobando sesión:",
+            error
+        );
+
+
+        mostrarMensaje(
+            "No se pudo comprobar la sesión. Recargá la página e iniciá sesión nuevamente."
+        );
+
+
+        return;
+    }
+
+
+    /* BARBERO */
+
+    const barberoId =
+        document.getElementById(
+            "barberoSelect"
+        ).value;
+
+
+    if(!barberoId){
+
+        mostrarMensaje(
+            "Seleccioná un barbero."
+        );
+
+        return;
+    }
+
+
+    const barbero =
+        BARBEROS.find(
+            b =>
+                String(b.id) ===
+                String(barberoId)
+        );
+
+
+    if(!barbero){
+
+        mostrarMensaje(
+            "No se encontró el barbero seleccionado."
+        );
+
+        return;
+    }
+
+
+    /* FORMULARIO */
+
+    const seleccion =
+        document.getElementById(
+            "servicioSelect"
+        ).value;
+
+
+    const nombre =
+        document
+        .getElementById(
+            "nombreCliente"
+        )
+        .value
+        .trim();
+
+
+    const fecha =
+        document.getElementById(
+            "fechaTurno"
+        ).value;
+
+
+    const hora =
+        document.getElementById(
+            "horaTurno"
+        ).value;
+
+
+    if(nombre === ""){
+
+        mostrarMensaje(
+            "Escribí tu nombre antes de reservar."
+        );
+
+
+        document.getElementById(
+            "nombreCliente"
+        ).focus();
+
+
+        return;
+    }
+
+
+    if(nombre.length < 2){
+
+        mostrarMensaje(
+            "El nombre debe tener al menos 2 caracteres."
+        );
+
+
+        document.getElementById(
+            "nombreCliente"
+        ).focus();
+
+
+        return;
+    }
+
+
+    if(seleccion === ""){
+
+        mostrarMensaje(
+            "Seleccioná un servicio."
+        );
+
+        return;
+    }
+
+
+    if(fecha === ""){
+
+        mostrarMensaje(
+            "Seleccioná una fecha."
+        );
+
+        return;
+    }
+
+
+    if(hora === ""){
+
+        mostrarMensaje(
+            "Elegí uno de los horarios disponibles."
+        );
+
+        return;
+    }
+
+
+    const servicio =
+        servicios[
+            Number(seleccion)
+        ];
+
+
+    if(!servicio){
+
+        mostrarMensaje(
+            "No se encontró el servicio."
+        );
+
+        return;
+    }
+
+
+    /* FECHA Y HORA */
+
+    const inicioLocal =
+        new Date(
+            `${fecha}T${hora}:00`
+        );
+
+
+    if(
+        Number.isNaN(
+            inicioLocal.getTime()
+        )
+    ){
+
+        mostrarMensaje(
+            "La fecha u hora no es válida."
+        );
+
+        return;
+    }
+
+
+    if(
+        inicioLocal.getTime() <=
+        Date.now()
+    ){
+
+        mostrarMensaje(
+            "No podés reservar un horario que ya pasó."
+        );
+
+        return;
+    }
+
+
+    /* DURACIÓN */
+
+    const duracion =
+        Number(
+            servicio.duracion_minutos ||
+            30
+        );
+
+
+    if(
+        !Number.isFinite(duracion) ||
+        duracion <= 0
+    ){
+
+        mostrarMensaje(
+            "El servicio tiene una duración inválida."
+        );
+
+        return;
+    }
+
+
+    const finLocal =
+        new Date(
+            inicioLocal.getTime() +
+            duracion * 60 * 1000
+        );
+
+
+    /* DÍA */
+
+    const diaSemana =
+        inicioLocal.getDay();
+
+
+    /* HORARIO */
+
+    let horarioBarbero;
+
+
+    try{
+
+        horarioBarbero =
+            await obtenerHorarioBarbero(
+                barberoId,
+                diaSemana
+            );
+
+
+    }catch(error){
+
+        console.error(
+            "Error obteniendo horario:",
+            error
+        );
+
+
+        mostrarMensaje(
+            error.message
+        );
+
+
+        return;
+    }
+
+
+    if(!horarioBarbero){
+
+        mostrarMensaje(
+            "El barbero no atiende ese día."
+        );
+
+        return;
+    }
+
+
+    const horaInicioMinutos =
+        inicioLocal.getHours() *
+        60 +
+        inicioLocal.getMinutes();
+
+
+    const horaFinMinutos =
+        finLocal.getHours() *
+        60 +
+        finLocal.getMinutes();
+
+
+    const horarioInicioMinutos =
+        horaAMinutos(
+            horarioBarbero.hora_inicio
+        );
+
+
+    const horarioFinMinutos =
+        horaAMinutos(
+            horarioBarbero.hora_fin
+        );
+
+
+    if(
+        horarioInicioMinutos === null ||
+        horarioFinMinutos === null
+    ){
+
+        mostrarMensaje(
+            "El horario configurado para el barbero no es válido."
+        );
+
+        return;
+    }
+
+
+    if(
+        horaInicioMinutos <
+        horarioInicioMinutos
+    ){
+
+        mostrarMensaje(
+            "El barbero comienza a atender a las " +
+            escapeHtml(
+                horarioBarbero.hora_inicio.slice(
+                    0,
+                    5
+                )
+            ) +
+            ". Elegí un horario posterior."
+        );
+
+        return;
+    }
+
+
+    if(
+        horaFinMinutos >
+        horarioFinMinutos
+    ){
+
+        mostrarMensaje(
+            "El turno termina a las " +
+            escapeHtml(
+                horarioBarbero.hora_fin.slice(
+                    0,
+                    5
+                )
+            ) +
+            ". El servicio no entra completo en ese horario."
+        );
+
+        return;
+    }
+
+
+    const fechaHoraInicio =
+        inicioLocal.toISOString();
+
+
+    const fechaHoraFin =
+        finLocal.toISOString();
+
+
+    boton.disabled =
+        true;
+
+
+    boton.textContent =
+        "Guardando turno...";
+
+
+    try{
+
+        /* DISPONIBILIDAD */
+
+        const {
+            data:turnosExistentes,
+            error:errorTurnos
+        } =
+            await supabaseClient
+            .from("turnos")
+            .select(`
+                id,
+                fecha_hora_inicio,
+                fecha_hora_fin,
+                estado
+            `)
+            .eq(
+                "negocios_id",
+                NEGOCIO_ID
+            )
+            .eq(
+                "barbero_id",
+                barberoId
+            )
+            .neq(
+                "estado",
+                "cancelado"
+            )
+            .lt(
+                "fecha_hora_inicio",
+                fechaHoraFin
+            )
+            .gt(
+                "fecha_hora_fin",
+                fechaHoraInicio
+            );
+
+
+        if(errorTurnos){
+
+            console.error(
+                "Error comprobando disponibilidad:",
+                errorTurnos
+            );
+
+
+            throw new Error(
+                errorTurnos.message
+            );
+        }
+
+
+        if(
+            turnosExistentes &&
+            turnosExistentes.length > 0
+        ){
+
+            throw new Error(
+                "Ese horario ya está ocupado para ese barbero. Elegí otro."
+            );
+        }
+
+
+        /* CREAR TURNO */
+
+        const datosTurno = {
+
+            negocios_id:
+                NEGOCIO_ID,
+
+            cliente_id:
+                usuario.id,
+
+            nombre_cliente:
+                nombre,
+
+            barbero_id:
+                barberoId,
+
+            fecha_hora_inicio:
+                fechaHoraInicio,
+
+            fecha_hora_fin:
+                fechaHoraFin,
+
+            precio_reservado_total:
+                Number(
+                    servicio.precio || 0
+                ),
+
+            estado:
+                "pendiente"
+        };
+
+
+        console.log(
+            "Datos que se enviarán a turnos:",
+            datosTurno
+        );
+
+
+        const {
+            error:errorTurno
+        } =
+            await supabaseClient
+            .from("turnos")
+            .insert(
+                datosTurno
+            );
+
+
+        if(errorTurno){
+
+            console.error(
+                "Error creando turno:",
+                errorTurno
+            );
+
+
+            throw new Error(
+                errorTurno.message
+            );
+        }
+
+
+        /* BUSCAR TURNO */
+
+        const {
+            data:turnoCreado,
+            error:errorBuscarTurno
+        } =
+            await supabaseClient
+            .from("turnos")
+            .select("id")
+            .eq(
+                "cliente_id",
+                usuario.id
+            )
+            .eq(
+                "barbero_id",
+                barberoId
+            )
+            .eq(
+                "negocios_id",
+                NEGOCIO_ID
+            )
+            .eq(
+                "fecha_hora_inicio",
+                fechaHoraInicio
+            )
+            .eq(
+                "fecha_hora_fin",
+                fechaHoraFin
+            )
+            .order(
+                "created_at",
+                {
+                    ascending:false
+                }
+            )
+            .limit(1)
+            .maybeSingle();
+
+
+        if(errorBuscarTurno){
+
+            console.error(
+                "No se pudo obtener el ID del turno:",
+                errorBuscarTurno
+            );
+
+
+            throw new Error(
+                "El turno fue creado, pero no se pudo obtener su ID para guardar el servicio."
+            );
+        }
+
+
+        if(!turnoCreado){
+
+            throw new Error(
+                "El turno fue creado, pero no se pudo obtener su ID."
+            );
+        }
+
+
+        /* TURNO_SERVICIOS */
+
+        const datosTurnoServicio = {
+
+            turno_id:
+                turnoCreado.id,
+
+            servicio_id:
+                servicio.id,
+
+            precio_reservado:
+                Number(
+                    servicio.precio || 0
+                ),
+
+            duracion_minutos:
+                Number(
+                    servicio.duracion_minutos ||
+                    30
+                )
+        };
+
+
+        const {
+            error:errorServicioTurno
+        } =
+            await supabaseClient
+            .from("turno_servicios")
+            .insert(
+                datosTurnoServicio
+            );
+
+
+        if(errorServicioTurno){
+
+            console.error(
+                "Error creando turno_servicios:",
+                errorServicioTurno
+            );
+
+
+            throw new Error(
+                "El turno se creó, pero no se pudo guardar el servicio del turno: " +
+                errorServicioTurno.message
+            );
+        }
+
+
+        /* CONFIRMACIÓN */
+
+        const fechaTexto =
+            inicioLocal.toLocaleDateString(
+                "es-AR",
+                {
+                    day:"2-digit",
+                    month:"2-digit",
+                    year:"numeric"
+                }
+            );
+
+
+        const horaTexto =
+            inicioLocal.toLocaleTimeString(
+                "es-AR",
+                {
+                    hour:"2-digit",
+                    minute:"2-digit"
+                }
+            );
+
+
+        mensajeElemento.innerHTML = `
+
+            <div class="exito">
+
+                ✅ Turno reservado correctamente.
+
+                <br><br>
+
+                <strong>
+                    ${escapeHtml(
+                        nombre
+                    )}
+                </strong>
+
+                <br>
+
+                <strong>
+                    ${escapeHtml(
+                        servicio.nombre
+                    )}
+                </strong>
+
+                <br>
+
+                Barbero:
+                <strong>
+                    ${escapeHtml(
+                        barbero.nombre
+                    )}
+                </strong>
+
+                <br>
+
+                ${fechaTexto}
+                —
+                ${horaTexto}
+
+            </div>
+        `;
+
+
+        /* WHATSAPP */
+
+        if(telefonoNegocio){
+
+            const mensajeWhatsApp =
+                `Hola! Acabo de reservar un turno.` +
+                `\n\nNombre: ${nombre}` +
+                `\nServicio: ${servicio.nombre}` +
+                `\nBarbero: ${barbero.nombre}` +
+                `\nFecha: ${fechaTexto}` +
+                `\nHora: ${horaTexto}`;
+
+
+            const whatsappURL =
+                "https://wa.me/" +
+                telefonoNegocio +
+                "?text=" +
+                encodeURIComponent(
+                    mensajeWhatsApp
+                );
+
+
+            setTimeout(
+                () => {
+
+                    window.open(
+                        whatsappURL,
+                        "_blank"
+                    );
+
+                },
+                500
+            );
+        }
+
+
+        /* LIMPIAR */
+
+        document.getElementById(
+            "barberoSelect"
+        ).value = "";
+
+
+        document.getElementById(
+            "servicioSelect"
+        ).value = "";
+
+
+        document.getElementById(
+            "nombreCliente"
+        ).value = "";
+
+
+        document.getElementById(
+            "fechaTurno"
+        ).value = "";
+
+
+        document.getElementById(
+            "horaTurno"
+        ).value = "";
+
+
+        document.getElementById(
+            "horariosTitulo"
+        ).style.display =
+            "none";
+
+
+        document.getElementById(
+            "horariosContainer"
+        ).innerHTML = `
+            <div class="horarios-vacio">
+                Seleccioná un barbero y una fecha para ver los horarios.
+            </div>
+        `;
+
+
+    }catch(error){
+
+        console.error(
+            "Error reservando turno:",
+            error
+        );
+
+
+        mensajeElemento.innerHTML = `
+
+            <div class="error">
+
+                ❌
+                ${
+                    escapeHtml(
+                        error.message ||
+                        "Ocurrió un error al reservar el turno."
+                    )
+                }
+
+            </div>
+        `;
+
+    }finally{
+
+        boton.disabled =
+            false;
+
+        boton.textContent =
+            "📅 Confirmar turno";
+    }
+}
+
+
+/* =========================================================
+   EVENTOS DE HORARIOS
+   ========================================================= */
+
+document
+.getElementById(
+    "barberoSelect"
+)
+.addEventListener(
+    "change",
+    cargarHorariosDisponibles
+);
+
+
+document
+.getElementById(
+    "servicioSelect"
+)
+.addEventListener(
+    "change",
+    cargarHorariosDisponibles
+);
+
+
+document
+.getElementById(
+    "fechaTurno"
+)
+.addEventListener(
+    "change",
+    cargarHorariosDisponibles
+);
+
+
+/* =========================================================
+   INICIO
+   ========================================================= */
+
+async function iniciarCatalogo(){
+
+    console.log(
+        "================================="
+    );
+
+
+    console.log(
+        "Iniciando barbería reutilizable..."
+    );
+
+
+    console.log(
+        "NEGOCIO_ID:",
+        NEGOCIO_ID
+    );
+
+
+    console.log(
+        "================================="
+    );
+
+
+    if(!NEGOCIO_ID){
+
+        mostrarErrorConfiguracion();
+
+        return;
+    }
+
+
+    configurarFechaMinima();
+
+
+    await cargarNegocio();
+
+
+    const barberosCargados =
+        await cargarBarberos();
+
+
+    if(!barberosCargados){
+
+        document.getElementById(
+            "barberoSelect"
+        ).innerHTML =
+            `<option value="">
+                No hay barberos disponibles
+            </option>`;
+    }
+
+
+    await cargarServicios();
+
+
+    await cargarUsuario();
+
+
+    console.log(
+        "Plantilla cargada correctamente."
+    );
+
+
+    console.log(
+        "Negocio:",
+        NEGOCIO_ID
+    );
+
+
+    console.log(
+        "Barberos:",
+        BARBEROS
+    );
+
+
+    console.log(
+        "Usuario actual:",
+        usuarioActual
+    );
+}
+
+
+iniciarCatalogo();
+
+</script>
+
+<script src="./public-fijos.js"></script>
+<script>/* LMV: reintento de carga inicial */
+(function(){
+  function retryLoad(){
+    try{
+      var n=document.getElementById('nombre');
+      if(n && String(n.textContent||'').trim()==='Cargando...' && typeof loadBusiness==='function') loadBusiness();
+      var p=document.getElementById('principales');
+      if(p && String(p.textContent||'').trim()==='Cargando...' && typeof loadServices==='function') loadServices();
+      var d=document.getElementById('days');
+      if(d && !d.children.length && typeof loadHours==='function') loadHours();
+    }catch(e){}
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',function(){setTimeout(retryLoad,700);});
+  else setTimeout(retryLoad,700);
+  setTimeout(retryLoad,1800);
+})();</script><script src="lmv-experiencia-clientes.js"></script><script src="lmv-layouts-v4.js"></script></body>
+</html>
+```
