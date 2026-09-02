@@ -1,6 +1,8 @@
 name: Aplicar diseño editorial al resto
 on:
-  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/aplicar-diseno-editorial-resto.yml'
 permissions:
   contents: write
 jobs:
