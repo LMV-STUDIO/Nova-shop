@@ -3,6 +3,7 @@ on:
   push:
     paths:
       - '.github/workflows/aplicar-diseno-editorial-resto.yml'
+      - 'trigger-editorial.txt'
 permissions:
   contents: write
 jobs:
@@ -17,7 +18,6 @@ jobs:
           cp barberia-kora.html barberia.html
           cp comida-kora.html comida.html
           cp ferreteria-kora.html ferreteria.html
-          cp ropa-kora.html ropa.html
       - name: Publicar cambios
         run: |
           git config user.name "LMV Studio Bot"
