@@ -1,4 +1,4 @@
-name: Host laser images locally
+name: Fix laser service images
 on:
   push:
     branches: [main]
@@ -11,35 +11,36 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Download laser images from Pexels
-        run: |
-          set -e
-          mkdir -p assets/laser
-          curl -L --fail --retry 3 -o assets/laser/19239109.jpg 'https://images.pexels.com/photos/19239109/pexels-photo-19239109.jpeg?auto=compress&cs=tinysrgb&w=1200'
-          curl -L --fail --retry 3 -o assets/laser/29021129.jpg 'https://images.pexels.com/photos/29021129/pexels-photo-29021129.jpeg?auto=compress&cs=tinysrgb&w=1200'
-          curl -L --fail --retry 3 -o assets/laser/29021128.jpg 'https://images.pexels.com/photos/29021128/pexels-photo-29021128.jpeg?auto=compress&cs=tinysrgb&w=1200'
-          curl -L --fail --retry 3 -o assets/laser/29021130.jpg 'https://images.pexels.com/photos/29021130/pexels-photo-29021130.jpeg?auto=compress&cs=tinysrgb&w=1200'
-          curl -L --fail --retry 3 -o assets/laser/16032366.jpg 'https://images.pexels.com/photos/16032366/pexels-photo-16032366.jpeg?cs=srgb&dl=pexels-kerimeveyik-16032366.jpg&fm=jpg'
-      - name: Point service images to local files
+      - name: Fix service card renderer
         run: |
           python - <<'PY'
           from pathlib import Path
-          import re
-          p = Path('depilacion-laser.html')
-          s = p.read_text(encoding='utf-8')
-          ids = ['19239109','29021129','29021128','29021130','16032366']
-          for image_id in ids:
-              s = re.sub(
-                  rf'https://images\\.pexels\\.com/photos/{image_id}/pexels-photo-{image_id}\\.jpeg(?:\\?[^\'"\\s<]+)?',
-                  f'assets/laser/{image_id}.jpg',
-                  s
-              )
-          p.write_text(s, encoding='utf-8')
+          import re, json
+          p=Path('depilacion-laser.html')
+          s=p.read_text(encoding='utf-8')
+          images={
+            'ecdd222d-716f-428e-9997-00079f2848b7':'https://images.pexels.com/photos/29021129/pexels-photo-29021129.jpeg?auto=compress&cs=tinysrgb&w=900',
+            '896b3c5e-32e5-4dea-86ec-74e047038cb4':'https://images.pexels.com/photos/29021128/pexels-photo-29021128.jpeg?auto=compress&cs=tinysrgb&w=900',
+            '801dcdc5-ea7b-4eaf-b610-9921be9b9433':'https://images.pexels.com/photos/29021130/pexels-photo-29021130.jpeg?auto=compress&cs=tinysrgb&w=900',
+            '4395b0a6-3573-427c-9f91-fba19bce2c1f':'https://images.pexels.com/photos/16032366/pexels-photo-16032366.jpeg?auto=compress&cs=tinysrgb&w=900',
+            'a1f487d4-5a9c-428d-91de-013ca7c2f3be':'https://images.pexels.com/photos/29021130/pexels-photo-29021130.jpeg?auto=compress&cs=tinysrgb&w=900',
+            '6335b18c-4a0d-4dc6-bcf6-479d4793af96':'https://images.pexels.com/photos/19239109/pexels-photo-19239109.jpeg?auto=compress&cs=tinysrgb&w=900',
+            '04db6b97-07c7-43dc-ad1a-f5588140f6aa':'https://images.pexels.com/photos/29021128/pexels-photo-29021128.jpeg?auto=compress&cs=tinysrgb&w=900',
+            '6cbfebd8-0413-4b60-a354-4ddf283d947c':'https://images.pexels.com/photos/19239109/pexels-photo-19239109.jpeg?auto=compress&cs=tinysrgb&w=900'
+          }
+          mapjs='const SERVICE_IMAGE_BY_ID='+json.dumps(images,ensure_ascii=False)+';'
+          if 'const SERVICE_IMAGE_BY_ID=' in s:
+              s=re.sub(r'const SERVICE_IMAGE_BY_ID=.*?;',mapjs,s,count=1,flags=re.S)
+          else:
+              s=s.replace('function renderService(',mapjs+'\nfunction renderService(',1)
+          renderer="""function renderService(x,i){const active=seleccionados.some(s=>s.id===x.id);const image=SERVICE_IMAGE_BY_ID[x.id]||'https://images.pexels.com/photos/29021130/pexels-photo-29021130.jpeg?auto=compress&cs=tinysrgb&w=900';return `<article class=\"service\"><div class=\"serviceImage\"><img src=\"${image}\" alt=\"Depilación láser - ${esc(x.nombre)}\" referrerpolicy=\"no-referrer\"></div><div class=\"serviceBody\"><span class=\"serviceIndex\">${String(i+1).padStart(2,'0')} / SERVICE</span><div class=\"serviceTop\"><h3>${esc(x.nombre)}</h3><span class=\"price\">$${Number(x.precio||0).toLocaleString('es-AR')}</span></div><p class=\"serviceDesc\">${esc(x.descripcion||'Tratamiento personalizado.')}</p><span class=\"duration\">DURACIÓN · ${Number(x.duracion_minutos||30)} MIN</span><button class=\"btn ${active?'light':''}\" onclick=\"toggleService('${x.id}')\">${active?'✓ Seleccionado':'Seleccionar'}</button></div></article>`}"""
+          s=re.sub(r'function renderService\(x,i\)\{.*?\}\s*function renderServices',renderer+'\nfunction renderServices',s,count=1,flags=re.S)
+          p.write_text(s,encoding='utf-8')
           PY
-      - name: Commit local images and HTML
+      - name: Commit HTML fix
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add depilacion-laser.html assets/laser
-          git diff --cached --quiet || git commit -m 'host laser service images locally'
+          git add depilacion-laser.html
+          git diff --cached --quiet || git commit -m 'restore laser service images in cards'
           git push
