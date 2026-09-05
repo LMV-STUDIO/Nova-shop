@@ -1,4 +1,4 @@
-name: Fix laser image URLs
+name: Host laser images locally
 on:
   push:
     branches: [main]
@@ -11,20 +11,35 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Replace proxy URLs with direct Pexels URLs
+      - name: Download laser images from Pexels
+        run: |
+          set -e
+          mkdir -p assets/laser
+          curl -L --fail --retry 3 -o assets/laser/19239109.jpg 'https://images.pexels.com/photos/19239109/pexels-photo-19239109.jpeg?auto=compress&cs=tinysrgb&w=1200'
+          curl -L --fail --retry 3 -o assets/laser/29021129.jpg 'https://images.pexels.com/photos/29021129/pexels-photo-29021129.jpeg?auto=compress&cs=tinysrgb&w=1200'
+          curl -L --fail --retry 3 -o assets/laser/29021128.jpg 'https://images.pexels.com/photos/29021128/pexels-photo-29021128.jpeg?auto=compress&cs=tinysrgb&w=1200'
+          curl -L --fail --retry 3 -o assets/laser/29021130.jpg 'https://images.pexels.com/photos/29021130/pexels-photo-29021130.jpeg?auto=compress&cs=tinysrgb&w=1200'
+          curl -L --fail --retry 3 -o assets/laser/16032366.jpg 'https://images.pexels.com/photos/16032366/pexels-photo-16032366.jpeg?cs=srgb&dl=pexels-kerimeveyik-16032366.jpg&fm=jpg'
+      - name: Point service images to local files
         run: |
           python - <<'PY'
           from pathlib import Path
           import re
           p = Path('depilacion-laser.html')
           s = p.read_text(encoding='utf-8')
-          s = re.sub(r'https://images\.weserv\.nl/\?url=images\.pexels\.com/photos/(\d+)/pexels-photo-\1\.jpeg', r'https://images.pexels.com/photos/\1/pexels-photo-\1.jpeg?auto=compress&cs=tinysrgb&w=900', s)
+          ids = ['19239109','29021129','29021128','29021130','16032366']
+          for image_id in ids:
+              s = re.sub(
+                  rf'https://images\\.pexels\\.com/photos/{image_id}/pexels-photo-{image_id}\\.jpeg(?:\\?[^\'"\\s<]+)?',
+                  f'assets/laser/{image_id}.jpg',
+                  s
+              )
           p.write_text(s, encoding='utf-8')
           PY
-      - name: Commit fix
+      - name: Commit local images and HTML
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add depilacion-laser.html
-          git diff --cached --quiet || git commit -m 'use direct Pexels URLs for laser service images'
+          git add depilacion-laser.html assets/laser
+          git diff --cached --quiet || git commit -m 'host laser service images locally'
           git push
