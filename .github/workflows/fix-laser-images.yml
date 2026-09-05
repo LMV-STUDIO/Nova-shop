@@ -1,0 +1,31 @@
+name: Fix laser image URLs
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'depilacion-laser.html'
+      - '.github/workflows/fix-laser-images.yml'
+permissions:
+  contents: write
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Replace image proxy URLs
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('depilacion-laser.html')
+          s=p.read_text(encoding='utf-8')
+          import re
+          s=re.sub(r'https://images\.weserv\.nl/\?url=images\.pexels\.com/photos/(\d+)/pexels-photo-\1\.jpeg', r'https://images.pexels.com/photos/\1/pexels-photo-\1.jpeg?auto=compress&cs=tinysrgb&w=900', s)
+          p.write_text(s,encoding='utf-8')
+          PY
+      - name: Commit if changed
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add depilacion-laser.html
+          git diff --cached --quiet || git commit -m 'use direct Pexels URLs for laser images'
+          git push
