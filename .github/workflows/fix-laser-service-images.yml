@@ -59,14 +59,12 @@ jobs:
           if n != 1:
               raise SystemExit('SERVICE image maps not found')
 
-          new_fn = """function serviceImage(x){if(x?.id&&SERVICE_IMAGE_BY_ID[x.id])return SERVICE_IMAGE_BY_ID[x.id];const text=normalize([x?.nombre,x?.categoria,x?.tipo_servicio].filter(Boolean).join(' '));for(const key of Object.keys(SERVICE_IMAGES))if(text.includes(normalize(key)))return SERVICE_IMAGES[key];return DEFAULT_SERVICE_IMAGE}"""
+          new_fn = "function serviceImage(x){if(x?.id&&SERVICE_IMAGE_BY_ID[x.id])return SERVICE_IMAGE_BY_ID[x.id];const text=normalize([x?.nombre,x?.categoria,x?.tipo_servicio].filter(Boolean).join(' '));for(const key of Object.keys(SERVICE_IMAGES))if(text.includes(normalize(key)))return SERVICE_IMAGES[key];return DEFAULT_SERVICE_IMAGE}"
           s, n = re.subn(r"function serviceImage\(x\)\{.*?\}", new_fn, s, count=1)
           if n != 1:
               raise SystemExit('serviceImage function not found')
 
           s = s.replace('loading="lazy"', 'loading="eager"')
-          s = s.replace('decoding="async"', 'decoding="async"')
-
           p.write_text(s, encoding='utf-8')
           PY
 
