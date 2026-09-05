@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Fix service card renderer
+      - name: Fix service card renderer and use local image assets
         run: |
           python - <<'PY'
           from pathlib import Path
@@ -19,28 +19,42 @@ jobs:
           p=Path('depilacion-laser.html')
           s=p.read_text(encoding='utf-8')
           images={
-            'ecdd222d-716f-428e-9997-00079f2848b7':'https://images.pexels.com/photos/29021129/pexels-photo-29021129.jpeg?auto=compress&cs=tinysrgb&w=900',
-            '896b3c5e-32e5-4dea-86ec-74e047038cb4':'https://images.pexels.com/photos/29021128/pexels-photo-29021128.jpeg?auto=compress&cs=tinysrgb&w=900',
-            '801dcdc5-ea7b-4eaf-b610-9921be9b9433':'https://images.pexels.com/photos/29021130/pexels-photo-29021130.jpeg?auto=compress&cs=tinysrgb&w=900',
-            '4395b0a6-3573-427c-9f91-fba19bce2c1f':'https://images.pexels.com/photos/16032366/pexels-photo-16032366.jpeg?auto=compress&cs=tinysrgb&w=900',
-            'a1f487d4-5a9c-428d-91de-013ca7c2f3be':'https://images.pexels.com/photos/29021130/pexels-photo-29021130.jpeg?auto=compress&cs=tinysrgb&w=900',
-            '6335b18c-4a0d-4dc6-bcf6-479d4793af96':'https://images.pexels.com/photos/19239109/pexels-photo-19239109.jpeg?auto=compress&cs=tinysrgb&w=900',
-            '04db6b97-07c7-43dc-ad1a-f5588140f6aa':'https://images.pexels.com/photos/29021128/pexels-photo-29021128.jpeg?auto=compress&cs=tinysrgb&w=900',
-            '6cbfebd8-0413-4b60-a354-4ddf283d947c':'https://images.pexels.com/photos/19239109/pexels-photo-19239109.jpeg?auto=compress&cs=tinysrgb&w=900'
+            'ecdd222d-716f-428e-9997-00079f2848b7':'assets/laser/29021129.jpg',
+            '896b3c5e-32e5-4dea-86ec-74e047038cb4':'assets/laser/29021128.jpg',
+            '801dcdc5-ea7b-4eaf-b610-9921be9b9433':'assets/laser/29021130.jpg',
+            '4395b0a6-3573-427c-9f91-fba19bce2c1f':'assets/laser/16032366.jpg',
+            'a1f487d4-5a9c-428d-91de-013ca7c2f3be':'assets/laser/29021130.jpg',
+            '6335b18c-4a0d-4dc6-bcf6-479d4793af96':'assets/laser/19239109.jpg',
+            '04db6b97-07c7-43dc-ad1a-f5588140f6aa':'assets/laser/29021128.jpg',
+            '6cbfebd8-0413-4b60-a354-4ddf283d947c':'assets/laser/19239109.jpg'
           }
-          mapjs='const SERVICE_IMAGE_BY_ID='+json.dumps(images,ensure_ascii=False)+';'
-          if 'const SERVICE_IMAGE_BY_ID=' in s:
-              s=re.sub(r'const SERVICE_IMAGE_BY_ID=.*?;',mapjs,s,count=1,flags=re.S)
+          mapjs='const SERVICE_IMAGE_BY_ID='+json.dumps(images,ensure_ascii=False,separators=(',',':'))+';'
+          marker='const SERVICE_IMAGE_BY_ID='
+          if marker in s:
+              a=s.index(marker)
+              b=s.index(';',a)+1
+              s=s[:a]+mapjs+s[b:]
           else:
-              s=s.replace('function renderService(',mapjs+'\nfunction renderService(',1)
-          renderer="""function renderService(x,i){const active=seleccionados.some(s=>s.id===x.id);const image=SERVICE_IMAGE_BY_ID[x.id]||'https://images.pexels.com/photos/29021130/pexels-photo-29021130.jpeg?auto=compress&cs=tinysrgb&w=900';return `<article class=\"service\"><div class=\"serviceImage\"><img src=\"${image}\" alt=\"Depilación láser - ${esc(x.nombre)}\" referrerpolicy=\"no-referrer\"></div><div class=\"serviceBody\"><span class=\"serviceIndex\">${String(i+1).padStart(2,'0')} / SERVICE</span><div class=\"serviceTop\"><h3>${esc(x.nombre)}</h3><span class=\"price\">$${Number(x.precio||0).toLocaleString('es-AR')}</span></div><p class=\"serviceDesc\">${esc(x.descripcion||'Tratamiento personalizado.')}</p><span class=\"duration\">DURACIÓN · ${Number(x.duracion_minutos||30)} MIN</span><button class=\"btn ${active?'light':''}\" onclick=\"toggleService('${x.id}')\">${active?'✓ Seleccionado':'Seleccionar'}</button></div></article>`}"""
-          s=re.sub(r'function renderService\(x,i\)\{.*?\}\s*function renderServices',renderer+'\nfunction renderServices',s,count=1,flags=re.S)
+              pos=s.index('function renderService(')
+              s=s[:pos]+mapjs+'\n'+s[pos:]
+          a=s.index('function renderService(')
+          b=s.index('function renderServices',a)
+          renderer='''function renderService(x,i){\n  const active=seleccionados.some(s=>s.id===x.id);\n  const image=SERVICE_IMAGE_BY_ID[x.id]||'assets/laser/29021130.jpg';\n  return `<article class="service"><div class="serviceImage"><img src="${image}" alt="Depilación láser - ${esc(x.nombre)}" loading="lazy"></div><div class="serviceBody"><span class="serviceIndex">${String(i+1).padStart(2,'0')} / SERVICE</span><div class="serviceTop"><h3>${esc(x.nombre)}</h3><span class="price">$${Number(x.precio||0).toLocaleString('es-AR')}</span></div><p class="serviceDesc">${esc(x.descripcion||'Tratamiento personalizado.')}</p><span class="duration">DURACIÓN · ${Number(x.duracion_minutos||30)} MIN</span><button class="btn ${active?'light':''}" onclick="toggleService('${x.id}')">${active?'✓ Seleccionado':'Seleccionar'}</button></div></article>`;\n}\n'''
+          s=s[:a]+renderer+s[b:]
           p.write_text(s,encoding='utf-8')
           PY
-      - name: Commit HTML fix
+      - name: Download local laser photos
+        run: |
+          mkdir -p assets/laser
+          curl -L --fail --retry 3 -o assets/laser/19239109.jpg 'https://images.pexels.com/photos/19239109/pexels-photo-19239109.jpeg?auto=compress&cs=tinysrgb&w=900'
+          curl -L --fail --retry 3 -o assets/laser/29021129.jpg 'https://images.pexels.com/photos/29021129/pexels-photo-29021129.jpeg?auto=compress&cs=tinysrgb&w=900'
+          curl -L --fail --retry 3 -o assets/laser/29021128.jpg 'https://images.pexels.com/photos/29021128/pexels-photo-29021128.jpeg?auto=compress&cs=tinysrgb&w=900'
+          curl -L --fail --retry 3 -o assets/laser/29021130.jpg 'https://images.pexels.com/photos/29021130/pexels-photo-29021130.jpeg?auto=compress&cs=tinysrgb&w=900'
+          curl -L --fail --retry 3 -o assets/laser/16032366.jpg 'https://images.pexels.com/photos/16032366/pexels-photo-16032366.jpeg?auto=compress&cs=tinysrgb&w=900'
+      - name: Commit HTML and local photos
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add depilacion-laser.html
-          git diff --cached --quiet || git commit -m 'restore laser service images in cards'
+          git add depilacion-laser.html assets/laser
+          git diff --cached --quiet || git commit -m 'fix laser service images with local assets'
           git push
