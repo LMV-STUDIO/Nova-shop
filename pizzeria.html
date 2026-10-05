@@ -55,16 +55,16 @@
 const params=new URLSearchParams(location.search);
 const negocioId=params.get('negocio');
 const DEMO=[
-{id:1,c:'Pizzas',n:'Muzzarella',d:'Salsa de tomate, muzzarella y orégano.',p:9500,img:'https://images.unsplash.com/photo-1574071318508-1cdbab80d002?auto=format&fit=crop&w=700&q=82'},
-{id:2,c:'Pizzas',n:'Napolitana',d:'Muzzarella, tomate fresco, ajo y orégano.',p:10800,img:'https://images.unsplash.com/photo-1579751626657-72bc17010498?auto=format&fit=crop&w=700&q=82'},
-{id:3,c:'Pizzas',n:'Especial',d:'Jamón, morrón, aceitunas y huevo.',p:11900,img:'https://images.unsplash.com/photo-1574071318508-1cdbab80d002?auto=format&fit=crop&w=700&q=82'},
-{id:4,c:'Pizzas',n:'Fugazzeta',d:'Mucha muzzarella, cebolla y orégano.',p:11500,img:'https://images.unsplash.com/photo-1593560708920-61dd98c8a0a4?auto=format&fit=crop&w=700&q=82'},
-{id:5,c:'Empanadas',n:'Empanadas x6',d:'Elegí sabores. Carne, jamón y queso o pollo.',p:8200,img:'https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&w=700&q=82'},
-{id:6,c:'Empanadas',n:'Empanadas x12',d:'Una docena para compartir.',p:14800,img:'https://images.unsplash.com/photo-1601050690117-94f5f6fa8bd7?auto=format&fit=crop&w=700&q=82'},
-{id:7,c:'Combos',n:'Combo Pareja',d:'Pizza grande + 2 bebidas.',p:13900,img:'https://images.unsplash.com/photo-1548365328-8b849e6f90c4?auto=format&fit=crop&w=700&q=82'},
-{id:8,c:'Combos',n:'Combo Familiar',d:'Pizza grande + 6 empanadas + gaseosa.',p:18900,img:'https://images.unsplash.com/photo-1594007654729-407eedc4be65?auto=format&fit=crop&w=700&q=82'},
-{id:9,c:'Bebidas',n:'Gaseosa 1.5 L',d:'Elegí el sabor disponible.',p:3300,img:'https://images.unsplash.com/photo-1629203851122-3726ecdf080e?auto=format&fit=crop&w=700&q=82'},
-{id:10,c:'Bebidas',n:'Agua 1.5 L',d:'Agua mineral sin gas.',p:2200,img:'https://images.unsplash.com/photo-1548839140-29a749e1cf4d?auto=format&fit=crop&w=700&q=82'}
+{id:1,c:'Pizzas',n:'Muzzarella',d:'Salsa de tomate, muzzarella y orégano.',p:9500,img:'https://images.unsplash.com/photo-1574071318508-1cdbab80d002?auto=format&fit=crop&w=900&q=88'},
+{id:2,c:'Pizzas',n:'Napolitana',d:'Muzzarella, tomate fresco, ajo y orégano.',p:10800,img:'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=900&q=88'},
+{id:3,c:'Pizzas',n:'Especial',d:'Jamón, morrón, aceitunas y huevo.',p:11900,img:'https://images.unsplash.com/photo-1593560708920-61dd98c8a0a4?auto=format&fit=crop&w=900&q=88'},
+{id:4,c:'Pizzas',n:'Fugazzeta',d:'Mucha muzzarella, cebolla y orégano.',p:11500,img:'https://images.unsplash.com/photo-1579751626657-72bc17010498?auto=format&fit=crop&w=900&q=88'},
+{id:5,c:'Empanadas',n:'Empanadas x6',d:'Elegí sabores. Carne, jamón y queso o pollo.',p:8200,img:'https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&w=900&q=88'},
+{id:6,c:'Empanadas',n:'Empanadas x12',d:'Una docena para compartir.',p:14800,img:'https://images.unsplash.com/photo-1601050690117-94f5f6fa8bd7?auto=format&fit=crop&w=900&q=88'},
+{id:7,c:'Combos',n:'Combo Pareja',d:'Pizza grande + 2 bebidas.',p:13900,img:'https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=900&q=88'},
+{id:8,c:'Combos',n:'Combo Familiar',d:'Pizza grande + 6 empanadas + gaseosa.',p:18900,img:'https://images.unsplash.com/photo-1548365328-8b849e6f90c4?auto=format&fit=crop&w=900&q=88'},
+{id:9,c:'Bebidas',n:'Gaseosa 1.5 L',d:'Elegí el sabor disponible.',p:3300,img:'https://images.unsplash.com/photo-1629203851122-3726ecdf080e?auto=format&fit=crop&w=900&q=88'},
+{id:10,c:'Bebidas',n:'Agua 1.5 L',d:'Agua mineral sin gas.',p:2200,img:'https://images.unsplash.com/photo-1548839140-29a749e1cf4d?auto=format&fit=crop&w=900&q=88'}
 ];
 let products=[...DEMO],cart=[],business={nombre:'La Pizzería',telefono:'',direccion:'',instagram:''};
 
