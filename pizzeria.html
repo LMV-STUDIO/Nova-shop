@@ -55,17 +55,18 @@
 <script>
 const params=new URLSearchParams(location.search);
 const negocioId=params.get('negocio');
+function imgData(emoji,title,bg,accent){return 'data:image/svg+xml;charset=UTF-8,'+encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="900" height="600" viewBox="0 0 900 600"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="${bg}"/><stop offset="1" stop-color="${accent}"/></linearGradient></defs><rect width="900" height="600" fill="url(#g)"/><circle cx="720" cy="120" r="150" fill="#ffffff18"/><circle cx="130" cy="500" r="190" fill="#00000012"/><text x="450" y="300" text-anchor="middle" dominant-baseline="middle" font-size="150">${emoji}</text><text x="450" y="505" text-anchor="middle" fill="#fff" font-family="Arial,sans-serif" font-size="42" font-weight="700">${title}</text></svg>`)}
 const DEMO=[
-{id:1,c:'Pizzas',n:'Muzzarella',d:'Salsa de tomate, muzzarella y orégano.',p:9500,img:'https://images.unsplash.com/photo-1574071318508-1cdbab80d002?auto=format&fit=crop&w=900&q=88'},
-{id:2,c:'Pizzas',n:'Napolitana',d:'Muzzarella, tomate fresco, ajo y orégano.',p:10800,img:'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=900&q=88'},
-{id:3,c:'Pizzas',n:'Especial',d:'Jamón, morrón, aceitunas y huevo.',p:11900,img:'https://images.unsplash.com/photo-1593560708920-61dd98c8a0a4?auto=format&fit=crop&w=900&q=88'},
-{id:4,c:'Pizzas',n:'Fugazzeta',d:'Mucha muzzarella, cebolla y orégano.',p:11500,img:'https://images.unsplash.com/photo-1579751626657-72bc17010498?auto=format&fit=crop&w=900&q=88'},
-{id:5,c:'Empanadas',n:'Empanadas x6',d:'Elegí sabores. Carne, jamón y queso o pollo.',p:8200,img:'https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&w=900&q=88'},
-{id:6,c:'Empanadas',n:'Empanadas x12',d:'Una docena para compartir.',p:14800,img:'https://images.unsplash.com/photo-1601050690117-94f5f6fa8bd7?auto=format&fit=crop&w=900&q=88'},
-{id:7,c:'Combos',n:'Combo Pareja',d:'Pizza grande + 2 bebidas.',p:13900,img:'https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=900&q=88'},
-{id:8,c:'Combos',n:'Combo Familiar',d:'Pizza grande + 6 empanadas + gaseosa.',p:18900,img:'https://images.unsplash.com/photo-1548365328-8b849e6f90c4?auto=format&fit=crop&w=900&q=88'},
-{id:9,c:'Bebidas',n:'Gaseosa 1.5 L',d:'Elegí el sabor disponible.',p:3300,img:'https://images.unsplash.com/photo-1629203851122-3726ecdf080e?auto=format&fit=crop&w=900&q=88'},
-{id:10,c:'Bebidas',n:'Agua 1.5 L',d:'Agua mineral sin gas.',p:2200,img:'https://images.unsplash.com/photo-1548839140-29a749e1cf4d?auto=format&fit=crop&w=900&q=88'}
+{id:1,c:'Pizzas',n:'Muzzarella',d:'Salsa de tomate, muzzarella y orégano.',p:9500,img:imgData("🍕","Muzzarella","#d94122","#ff9a3d")},
+{id:2,c:'Pizzas',n:'Napolitana',d:'Muzzarella, tomate fresco, ajo y orégano.',p:10800,img:imgData("🍅","Napolitana","#b52a22","#f06b3d")},
+{id:3,c:'Pizzas',n:'Especial',d:'Jamón, morrón, aceitunas y huevo.',p:11900,img:imgData("🍕","Especial","#6f2418","#d9a441")},
+{id:4,c:'Pizzas',n:'Fugazzeta',d:'Mucha muzzarella, cebolla y orégano.',p:11500,img:imgData("🧅","Fugazzeta","#7b3327","#f0b35a")},
+{id:5,c:'Empanadas',n:'Empanadas x6',d:'Elegí sabores. Carne, jamón y queso o pollo.',p:8200,img:imgData("🥟","Empanadas x6","#8b4b25","#d99045")},
+{id:6,c:'Empanadas',n:'Empanadas x12',d:'Una docena para compartir.',p:14800,img:imgData("🥟","Empanadas x12","#6e3b27","#e3a45c")},
+{id:7,c:'Combos',n:'Combo Pareja',d:'Pizza grande + 2 bebidas.',p:13900,img:imgData("🍕","Combo Pareja","#8c1f1f","#e34b32")},
+{id:8,c:'Combos',n:'Combo Familiar',d:'Pizza grande + 6 empanadas + gaseosa.',p:18900,img:imgData("🍕","Combo Familiar","#5b271d","#d28a3c")},
+{id:9,c:'Bebidas',n:'Gaseosa 1.5 L',d:'Elegí el sabor disponible.',p:3300,img:imgData("🥤","Gaseosa 1.5 L","#244f5c","#4da9a8")},
+{id:10,c:'Bebidas',n:'Agua 1.5 L',d:'Agua mineral sin gas.',p:2200,img:imgData("💧","Agua 1.5 L","#27618a","#72c9e8")}
 ];
 let products=[...DEMO],cart=[],business={nombre:'La Pizzería',telefono:'',direccion:'',instagram:''};
 
