@@ -52,21 +52,22 @@
 <div class="customBox" id="customBox"><div class="shade" onclick="closeCustomize()"></div><div class="customPanel"><div class="customHead"><h3 id="customTitle">Personalizá tu pizza</h3><button class="close" onclick="closeCustomize()">×</button></div><div class="customBody"><div class="optionTitle">TAMAÑO</div><div class="options"><button class="opt active" onclick="pickOpt(this)">Grande</button><button class="opt" onclick="pickOpt(this)">Mediana</button></div><div class="optionTitle">MASA</div><div class="options"><button class="opt active" onclick="pickOpt(this)">Tradicional</button><button class="opt" onclick="pickOpt(this)">A la piedra</button></div><div class="optionTitle">EXTRA</div><div class="options"><button class="opt active" onclick="pickOpt(this)">Sin extra</button><button class="opt" onclick="pickOpt(this)">+ Muzzarella</button><button class="opt" onclick="pickOpt(this)">+ Jamón</button></div><button class="customAdd" onclick="confirmCustomize()">Agregar al pedido</button></div></div></div><div class="toast" id="toast"></div>
 <footer class="footer">Demo de pizzería · LMV-STUDIO · Diseño pensado para celular</footer>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 const params=new URLSearchParams(location.search);
 const negocioId=params.get('negocio');
 const DEMO=[
-{id:1,c:'Pizzas',n:'Muzzarella',d:'Salsa de tomate, muzzarella y orégano.',p:9500,img:'https://loremflickr.com/900/600/pizza,cheese?lock=1'},
-{id:2,c:'Pizzas',n:'Napolitana',d:'Muzzarella, tomate fresco, ajo y orégano.',p:10800,img:'https://loremflickr.com/900/600/pizza,tomato?lock=2'},
-{id:3,c:'Pizzas',n:'Especial',d:'Jamón, morrón, aceitunas y huevo.',p:11900,img:'https://loremflickr.com/900/600/pizza,ham?lock=3'},
-{id:4,c:'Pizzas',n:'Fugazzeta',d:'Mucha muzzarella, cebolla y orégano.',p:11500,img:'https://loremflickr.com/900/600/pizza,onion?lock=4'},
-{id:5,c:'Empanadas',n:'Empanadas x6',d:'Elegí sabores. Carne, jamón y queso o pollo.',p:8200,img:'https://loremflickr.com/900/600/empanadas?lock=5'},
-{id:6,c:'Empanadas',n:'Empanadas x12',d:'Una docena para compartir.',p:14800,img:'https://loremflickr.com/900/600/empanadas,food?lock=6'},
-{id:7,c:'Combos',n:'Combo Pareja',d:'Pizza grande + 2 bebidas.',p:13900,img:'https://loremflickr.com/900/600/pizza,drinks?lock=7'},
-{id:8,c:'Combos',n:'Combo Familiar',d:'Pizza grande + 6 empanadas + gaseosa.',p:18900,img:'https://loremflickr.com/900/600/pizza,empanadas?lock=8'},
-{id:9,c:'Bebidas',n:'Gaseosa 1.5 L',d:'Elegí el sabor disponible.',p:3300,img:'https://loremflickr.com/900/600/softdrink,bottle?lock=9'},
-{id:10,c:'Bebidas',n:'Agua 1.5 L',d:'Agua mineral sin gas.',p:2200,img:'https://loremflickr.com/900/600/water,bottle?lock=10'}
-];
+{id:1,c:'Pizzas',n:'Muzzarella',d:'Salsa de tomate, muzzarella y orégano.',p:9500,img:'https://commons.wikimedia.org/wiki/Special:FilePath/Pizza.jpg'},
+{id:2,c:'Pizzas',n:'Napolitana',d:'Muzzarella, tomate fresco, ajo y orégano.',p:10800,img:'https://commons.wikimedia.org/wiki/Special:FilePath/Pizza%20(1).jpg'},
+{id:3,c:'Pizzas',n:'Especial',d:'Jamón, morrón, aceitunas y huevo.',p:11900,img:'https://commons.wikimedia.org/wiki/Special:FilePath/Pizza.jpg'},
+{id:4,c:'Pizzas',n:'Fugazzeta',d:'Mucha muzzarella, cebolla y orégano.',p:11500,img:'https://commons.wikimedia.org/wiki/Special:FilePath/Pizza%20(1).jpg'},
+{id:5,c:'Empanadas',n:'Empanadas x6',d:'Elegí sabores. Carne, jamón y queso o pollo.',p:8200,img:'https://commons.wikimedia.org/wiki/Special:FilePath/Empanada%20-%20Stu%20Spivack.jpg'},
+{id:6,c:'Empanadas',n:'Empanadas x12',d:'Una docena para compartir.',p:14800,img:'https://commons.wikimedia.org/wiki/Special:FilePath/Colombian%20empanadas%20with%20aj%C3%AD.jpg'},
+{id:7,c:'Combos',n:'Combo Pareja',d:'Pizza grande + 2 bebidas.',p:13900,img:'https://commons.wikimedia.org/wiki/Special:FilePath/Pizza.jpg'},
+{id:8,c:'Combos',n:'Combo Familiar',d:'Pizza grande + 6 empanadas + gaseosa.',p:18900,img:'https://commons.wikimedia.org/wiki/Special:FilePath/Empanada%20-%20Stu%20Spivack.jpg'},
+{id:9,c:'Bebidas',n:'Gaseosa 1.5 L',d:'Elegí el sabor disponible.',p:3300,img:'https://commons.wikimedia.org/wiki/Special:FilePath/Pizza%20(1).jpg'},
+{id:10,c:'Bebidas',n:'Agua 1.5 L',d:'Agua mineral sin gas.',p:2200,img:'https://commons.wikimedia.org/wiki/Special:FilePath/Pizza.jpg'}
+]
 let products=[...DEMO],cart=[],business={nombre:'La Pizzería',telefono:'',direccion:'',instagram:''};
 
 function money(n){return '$'+Number(n||0).toLocaleString('es-AR')}
