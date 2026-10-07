@@ -108,7 +108,7 @@ body{background:#f7f4f1;color:#211b18}
 <div class="info"><strong>🏪 Retiro en local</strong><small>Pasá a buscarlo</small></div>
 <div class="info"><strong>💬 Pedido por WhatsApp</strong><small>Confirmación rápida</small></div>
 </div>
-<div class="searchWrap"><input class="search" id="search" placeholder="🔎 Buscar helado, empanadas, bebidas..." oninput="searchProducts(this.value)"><button class="topCart" onclick="openCart()">🛒</button></div><div class="promo"><div class="promoCard"><b>🍕 Combo para compartir</b><span>Helado + empanadas + bebida</span><button onclick="selectCategory('Combos')">Ver combos</button></div><div class="promoCard"><b>🔥 Los más pedidos</b><span>Probá los favoritos de la casa</span><button onclick="selectCategory('Helados')">Ver helados</button></div></div><div class="cats" id="cats"></div>
+<div class="searchWrap"><input class="search" id="search" placeholder="🔎 Buscar helado, empanadas, bebidas..." oninput="searchProducts(this.value)"><button class="topCart" onclick="openCart()">🛒</button></div><div class="promo"><div class="promoCard"><b>🍨 Combo para compartir</b><span>Helado + toppings + bebida</span><button onclick="selectCategory('Combos')">Ver combos</button></div><div class="promoCard"><b>🍦 Los más pedidos</b><span>Probá los sabores favoritos de la casa</span><button onclick="selectCategory('Helados')">Ver sabores</button></div></div><div class="cats" id="cats"></div>
 <section id="menu"><div class="sectionHead"><div><h2>Elegí tu pedido</h2><p>Los favoritos de la casa</p></div></div><div class="products" id="products"></div></section>
 </div>
 </main>
@@ -122,16 +122,21 @@ body{background:#f7f4f1;color:#211b18}
 const params=new URLSearchParams(location.search);
 const negocioId=params.get('negocio');
 const DEMO=[
-{id:1,c:'Helados',n:'1/4 kg',d:'Elegí tus sabores favoritos.',p:6500,img:'https://images.unsplash.com/photo-1563805042-7684c019e11a?auto=format&fit=crop&w=900&q=85'},
-{id:2,c:'Helados',n:'1/2 kg',d:'Hasta varios sabores para compartir.',p:11000,img:'https://images.unsplash.com/photo-1497034825429-c343d7c6a68f?auto=format&fit=crop&w=900&q=85'},
-{id:3,c:'Helados',n:'1 kg',d:'Ideal para compartir en familia.',p:19500,img:'https://images.unsplash.com/photo-1570197788417-0e82375c9371?auto=format&fit=crop&w=900&q=85'},
-{id:4,c:'Postres',n:'Copa Helada',d:'Helado, salsa y toppings.',p:7200,img:'https://images.unsplash.com/photo-1560008581-09826d1de69b?auto=format&fit=crop&w=900&q=85'},
-{id:5,c:'Postres',n:'Brownie con Helado',d:'Brownie tibio con una bocha de helado.',p:8500,img:'https://images.unsplash.com/photo-1564355808539-22fda35bed7e?auto=format&fit=crop&w=900&q=85'},
-{id:6,c:'Postres',n:'Banana Split',d:'Banana, helado y toppings.',p:9000,img:'https://images.unsplash.com/photo-1515037893149-de7f840978e2?auto=format&fit=crop&w=900&q=85'},
-{id:7,c:'Combos',n:'Combo Pareja',d:'1/2 kg + 2 bebidas.',p:14500,img:'https://images.unsplash.com/photo-1501443762994-82bd5dace89a?auto=format&fit=crop&w=900&q=85'},
-{id:8,c:'Combos',n:'Combo Familiar',d:'1 kg + toppings para compartir.',p:22000,img:'https://images.unsplash.com/photo-1541592106381-b31e9677c0e5?auto=format&fit=crop&w=900&q=85'},
-{id:9,c:'Bebidas',n:'Gaseosa 1.5 L',d:'Gaseosa fría para acompañar.',p:3300,img:'https://images.unsplash.com/photo-1499636136210-6f4ee915583e?auto=format&fit=crop&w=900&q=85'},
-{id:10,c:'Bebidas',n:'Agua 1.5 L',d:'Agua mineral bien fría.',p:2200,img:'https://images.unsplash.com/photo-1551024601-bec78aea704b?auto=format&fit=crop&w=900&q=85'}
+{id:1,c:'Sabores',n:'Chocolate',d:'Chocolate intenso y cremoso.',p:6500,img:'https://images.unsplash.com/photo-1570197788417-0e82375c9371?auto=format&fit=crop&w=900&q=85'},
+{id:2,c:'Sabores',n:'Dulce de Leche',d:'Clásico, cremoso y bien dulce.',p:6500,img:'https://images.unsplash.com/photo-1563805042-7684c019e11a?auto=format&fit=crop&w=900&q=85'},
+{id:3,c:'Sabores',n:'Frutilla',d:'Frutilla cremosa y refrescante.',p:6500,img:'https://images.unsplash.com/photo-1497034825429-c343d7c6a68f?auto=format&fit=crop&w=900&q=85'},
+{id:4,c:'Sabores',n:'Vainilla',d:'Suave, clásico y cremoso.',p:6500,img:'https://images.unsplash.com/photo-1560008581-09826d1de69b?auto=format&fit=crop&w=900&q=85'},
+{id:5,c:'Sabores',n:'Cookies & Cream',d:'Crema con galletitas crocantes.',p:6800,img:'https://images.unsplash.com/photo-1564355808539-22fda35bed7e?auto=format&fit=crop&w=900&q=85'},
+{id:6,c:'Sabores',n:'Menta Granizada',d:'Crema de menta con chocolate.',p:6800,img:'https://images.unsplash.com/photo-1515037893149-de7f840978e2?auto=format&fit=crop&w=900&q=85'},
+{id:7,c:'Sabores',n:'Limón',d:'Fresco, cítrico y liviano.',p:6200,img:'https://images.unsplash.com/photo-1501443762994-82bd5dace89a?auto=format&fit=crop&w=900&q=85'},
+{id:8,c:'Sabores',n:'Banana Split',d:'Banana, dulce de leche y chocolate.',p:6800,img:'https://images.unsplash.com/photo-1541592106381-b31e9677c0e5?auto=format&fit=crop&w=900&q=85'},
+{id:9,c:'Tamaños',n:'1/4 kg',d:'Elegí tus sabores favoritos.',p:6500,img:'https://images.unsplash.com/photo-1551024601-bec78aea704b?auto=format&fit=crop&w=900&q=85'},
+{id:10,c:'Tamaños',n:'1/2 kg',d:'Ideal para compartir.',p:11000,img:'https://images.unsplash.com/photo-1563805042-7684c019e11a?auto=format&fit=crop&w=900&q=85'},
+{id:11,c:'Tamaños',n:'1 kg',d:'Para compartir en familia.',p:19500,img:'https://images.unsplash.com/photo-1570197788417-0e82375c9371?auto=format&fit=crop&w=900&q=85'},
+{id:12,c:'Postres',n:'Copa Helada',d:'Helado con salsa y toppings.',p:7200,img:'https://images.unsplash.com/photo-1560008581-09826d1de69b?auto=format&fit=crop&w=900&q=85'},
+{id:13,c:'Postres',n:'Brownie con Helado',d:'Brownie con una bocha de helado.',p:8500,img:'https://images.unsplash.com/photo-1564355808539-22fda35bed7e?auto=format&fit=crop&w=900&q=85'},
+{id:14,c:'Combos',n:'Combo Pareja',d:'1/2 kg + 2 bebidas.',p:14500,img:'https://images.unsplash.com/photo-1499636136210-6f4ee915583e?auto=format&fit=crop&w=900&q=85'},
+{id:15,c:'Combos',n:'Combo Familiar',d:'1 kg + toppings para compartir.',p:22000,img:'https://images.unsplash.com/photo-1551024601-bec78aea704b?auto=format&fit=crop&w=900&q=85'}
 ]
 let products=[...DEMO],cart=[],business={nombre:'La Heladería',telefono:'',direccion:'',instagram:''};
 
