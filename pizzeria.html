@@ -63,16 +63,16 @@ body{background:#f7f4f1;color:#211b18}
 .bottomCart .mini{width:46px;height:46px;border-radius:10px}
 .bottomCart .bcInfo b{font-size:13px}.bottomCart .bcInfo small{font-size:10px}
 .bottomCart button{padding:12px 16px;background:#fff;font-size:12px}
-.panel{background:#f4f1ee}
-.panelTop{padding:18px}.panelTop h2{font-size:21px}
+.panel{background:linear-gradient(180deg,#fff8f2 0%,#f3ece6 100%)}
+.panelTop{padding:18px;background:linear-gradient(135deg,#fff,#fff3eb)}.panelTop h2{font-size:21px;color:#211b18}
 .cartLines{padding:15px}
 .cartLine{padding:13px;margin-bottom:10px;box-shadow:0 2px 9px rgba(40,25,15,.05)}
 .cartPic{display:none}
 .cartMain{min-width:0}.cartMain b{font-size:14px}.cartMain small{font-size:10px}
 .qty button{width:30px;height:30px}
-.cartFoot{padding:16px}.sum{font-size:21px}
+.cartFoot{padding:16px;background:linear-gradient(180deg,#fffaf7,#f7eee8);border-top:1px solid #e2d6ce}.sum{font-size:21px;color:#211b18}
 .field input,.field textarea,.field select{padding:12px;border-radius:9px}
-.checkout{padding:14px;font-size:13px;box-shadow:0 5px 15px rgba(230,57,31,.2)}.checkoutTitle{font-size:12px;font-weight:950;margin:2px 0 9px;color:#302722}
+.checkout{padding:14px;font-size:13px;box-shadow:0 5px 15px rgba(230,57,31,.2)}.checkoutTitle{font-size:12px;font-weight:950;margin:2px 0 9px;color:#302722}.thankYou{margin:0 15px 12px;padding:13px 14px;border-radius:12px;background:linear-gradient(135deg,#e6391f,#ff684e);color:#fff;box-shadow:0 6px 18px rgba(230,57,31,.18)}.thankYou strong{display:block;font-size:13px}.thankYou span{display:block;font-size:10px;margin-top:3px;opacity:.92}
 </style>
 </head>
 <body>
@@ -95,7 +95,7 @@ body{background:#f7f4f1;color:#211b18}
 
 <div class="bottomCart" id="bottomCart"><div class="mini">🍕</div><div class="bcInfo"><b><span id="bottomCount">0</span> productos</b><small>Ver carrito y finalizar pedido</small></div><button onclick="openCart()">Ver pedido · <span id="bottomTotal">$0</span></button></div>
 
-<div class="drawer" id="drawer"><div class="shade" onclick="closeCart()"></div><aside class="panel"><div class="panelTop"><h2>🛒 Tu pedido</h2><button class="close" onclick="closeCart()">×</button></div><div class="cartLines" id="cartLines"></div><div class="cartFoot"><div class="sum"><span>Total del pedido</span><span id="cartTotal">$0</span></div><div class="checkoutTitle">Datos para confirmar</div><div class="field"><label>NOMBRE</label><input id="customerName" placeholder="Ej. Mateo"></div><div class="field"><label>TELÉFONO</label><input id="customerPhone" placeholder="Ej. 11 5555-5555"></div><div class="field"><label>ENTREGA</label><select id="delivery"><option>Retiro en el local</option><option>Delivery</option></select></div><div class="field"><label>DIRECCIÓN / ACLARACIÓN</label><textarea id="customerAddress" rows="2" placeholder="Dirección o indicaciones"></textarea></div><button class="checkout" onclick="sendWhatsApp()">Confirmar pedido por WhatsApp</button><div class="notice">La demo usa WhatsApp para enviar el pedido. Después podemos conectarla al panel y Supabase para guardar los pedidos automáticamente.</div></div></aside></div>
+<div class="drawer" id="drawer"><div class="shade" onclick="closeCart()"></div><aside class="panel"><div class="panelTop"><h2>🛒 Tu pedido</h2><button class="close" onclick="closeCart()">×</button></div><div class="cartLines" id="cartLines"></div><div class="cartFoot"><div class="sum"><span>Total del pedido</span><span id="cartTotal">$0</span></div><div class="thankYou"><strong>❤️ Gracias por elegirnos</strong><span>Completá tus datos y enviá el pedido. Te confirmamos por WhatsApp.</span></div><div class="checkoutTitle">Datos para confirmar</div><div class="field"><label>NOMBRE</label><input id="customerName" placeholder="Ej. Mateo"></div><div class="field"><label>TELÉFONO</label><input id="customerPhone" placeholder="Ej. 11 5555-5555"></div><div class="field"><label>ENTREGA</label><select id="delivery"><option>Retiro en el local</option><option>Delivery</option></select></div><div class="field"><label>DIRECCIÓN / ACLARACIÓN</label><textarea id="customerAddress" rows="2" placeholder="Dirección o indicaciones"></textarea></div><button class="checkout" onclick="sendWhatsApp()">Confirmar pedido por WhatsApp</button><div class="notice">La demo usa WhatsApp para enviar el pedido. Después podemos conectarla al panel y Supabase para guardar los pedidos automáticamente.</div></div></aside></div>
 <div class="customBox" id="customBox"><div class="shade" onclick="closeCustomize()"></div><div class="customPanel"><div class="customHead"><h3 id="customTitle">Personalizá tu pizza</h3><button class="close" onclick="closeCustomize()">×</button></div><div class="customBody"><div class="optionTitle">TAMAÑO</div><div class="options"><button class="opt active" onclick="pickOpt(this)">Grande</button><button class="opt" onclick="pickOpt(this)">Mediana</button></div><div class="optionTitle">MASA</div><div class="options"><button class="opt active" onclick="pickOpt(this)">Tradicional</button><button class="opt" onclick="pickOpt(this)">A la piedra</button></div><div class="optionTitle">EXTRA</div><div class="options"><button class="opt active" onclick="pickOpt(this)">Sin extra</button><button class="opt" onclick="pickOpt(this)">+ Muzzarella</button><button class="opt" onclick="pickOpt(this)">+ Jamón</button></div><button class="customAdd" onclick="confirmCustomize()">Agregar al pedido</button></div></div></div><div class="toast" id="toast"></div>
 <footer class="footer">Demo de pizzería · LMV-STUDIO · Diseño pensado para celular</footer>
 
