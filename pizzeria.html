@@ -116,6 +116,9 @@ body{background:#f7f4f1;color:#211b18}
 <footer class="footer">Demo de pizzería · LMV-STUDIO · Diseño pensado para celular</footer>
 
 <script>
+const SUPA_URL='https://cqelidpshitntewsktwx.supabase.co';
+const SUPA_KEY='sb_publishable_o1q2pLVF1zIlZCzPHMaheg_KSawjVvD';
+const supa=window.supabase.createClient(SUPA_URL,SUPA_KEY);
 const params=new URLSearchParams(location.search);
 const negocioId=params.get('negocio');
 const DEMO=[
@@ -131,6 +134,7 @@ const DEMO=[
 {id:10,c:'Bebidas',n:'Agua 1.5 L',d:'Agua mineral sin gas, bien fría.',p:2200,img:'https://images.unsplash.com/photo-1548839140-29a749e1cf4d?auto=format&fit=crop&w=900&q=85'}
 ]
 let products=[...DEMO],cart=[],business={nombre:'La Pizzería',telefono:'',direccion:'',instagram:''};
+let dbProductsLoaded=false;
 
 function money(n){return '$'+Number(n||0).toLocaleString('es-AR')}
 function esc(v){return String(v??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]))}
@@ -147,8 +151,24 @@ function openCart(){document.getElementById('drawer').classList.add('open');docu
 function closeCart(){document.getElementById('drawer').classList.remove('open');document.body.style.overflow='';showCheckoutStep(1)}function closeSuccess(){document.getElementById('successModal').classList.remove('open')}
 function toast(t){let x=document.getElementById('toast');x.textContent=t;x.classList.add('show');clearTimeout(window._toast);window._toast=setTimeout(()=>x.classList.remove('show'),1700)}
 let customizingId=null;function searchProducts(q){q=q.toLowerCase().trim();let a=products.filter(p=>(p.n+' '+p.d+' '+p.c).toLowerCase().includes(q));document.querySelectorAll('.cat').forEach(b=>b.classList.remove('active'));document.getElementById('products').innerHTML=a.length?a.map(p=>'<article class="product"><div class="photo"><img src="'+esc(p.img)+'" alt="'+esc(p.n)+'"><span class="tag">'+esc(p.c)+'</span></div><div class="productBody"><h3>'+esc(p.n)+'</h3><p class="desc">'+esc(p.d)+'</p><div class="bottom"><span class="price">'+money(p.p)+'</span><button class="add" onclick="add('+p.id+')">Agregar +</button></div></div></article>').join(''):'<div class="empty" style="grid-column:1/-1">No encontramos ese producto 🍕</div>'}function selectCategory(c){document.getElementById('search').value='';render(c);document.getElementById('menu').scrollIntoView({behavior:'smooth'})}function customize(id){customizingId=id;let p=products.find(x=>x.id===id);document.getElementById('customTitle').textContent='Personalizá '+p.n;document.getElementById('customBox').classList.add('open')}function closeCustomize(){document.getElementById('customBox').classList.remove('open');customizingId=null}function pickOpt(btn){btn.parentElement.querySelectorAll('.opt').forEach(x=>x.classList.remove('active'));btn.classList.add('active')}function confirmCustomize(){if(customizingId){add(customizingId);toast('Pizza personalizada agregada 🍕')}closeCustomize()}function useMyLocation(){let status=document.getElementById('locationStatus'),address=document.getElementById('customerAddress');if(!navigator.geolocation){status.textContent='Tu navegador no permite obtener la ubicación.';return}status.textContent='Obteniendo ubicación...';navigator.geolocation.getCurrentPosition(async pos=>{let lat=pos.coords.latitude.toFixed(6),lon=pos.coords.longitude.toFixed(6);address.value='Ubicación: '+lat+', '+lon;status.textContent='📍 Ubicación agregada al pedido';try{let r=await fetch('https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat='+lat+'&lon='+lon+'&zoom=18&addressdetails=1');if(r.ok){let d=await r.json();let a=d.address||{};let text=[a.road,a.house_number,a.neighbourhood||a.suburb,a.city||a.town||a.village].filter(Boolean).join(', ');if(text){address.value=text+' (Ubicación: '+lat+', '+lon+')';status.textContent='📍 Ubicación encontrada'}}}catch(e){}},()=>{status.textContent='No se pudo obtener la ubicación. Revisá el permiso del navegador.'},{enableHighAccuracy:true,timeout:10000,maximumAge:60000})}
-function sendWhatsApp(){if(!cart.length)return toast('Agregá productos primero');let name=document.getElementById('customerName').value.trim(),phone=document.getElementById('customerPhone').value.trim(),delivery=document.getElementById('delivery').value,address=document.getElementById('customerAddress').value.trim();if(!name||!phone)return toast('Completá nombre y teléfono');let lines=cart.map(x=>{let p=products.find(y=>y.id===x.id);return '• '+x.q+'x '+p.n+' — '+money(p.p*x.q)}).join('\n');let total=cart.reduce((a,x)=>a+products.find(y=>y.id===x.id).p*x.q,0);let msg='Hola '+business.nombre+'! Quiero hacer este pedido:\n\n'+lines+'\n\nTotal: '+money(total)+'\n\nNombre: '+name+'\nTeléfono: '+phone+'\nEntrega: '+delivery+(address?'\nDirección/Aclaración: '+address:'');let number=(business.telefono||'').replace(/\D/g,'');if(!number)return toast('Configurá el WhatsApp del negocio en el panel');window.open('https://wa.me/'+(number.startsWith('54')?number:'54'+number)+'?text='+encodeURIComponent(msg),'_blank');cart=[];updateCart();closeCart();document.getElementById('successModal').classList.add('open')}
-function loadSupabase(){ return Promise.resolve(); }
+async function sendWhatsApp(){if(!cart.length)return toast('Agregá productos primero');let name=document.getElementById('customerName').value.trim(),phone=document.getElementById('customerPhone').value.trim(),delivery=document.getElementById('delivery').value,address=document.getElementById('customerAddress').value.trim();if(!name||!phone)return toast('Completá nombre y teléfono');let lines=cart.map(x=>{let p=products.find(y=>y.id===x.id);return '• '+x.q+'x '+p.n+' — '+money(p.p*x.q)}).join('\n');let total=cart.reduce((a,x)=>a+products.find(y=>y.id===x.id).p*x.q,0);let msg='Hola '+business.nombre+'! Quiero hacer este pedido:\n\n'+lines+'\n\nTotal: '+money(total)+'\n\nNombre: '+name+'\nTeléfono: '+phone+'\nEntrega: '+delivery+(address?'\nDirección/Aclaración: '+address:'');let number=(business.telefono||'').replace(/\D/g,'');if(!number)return toast('Configurá el WhatsApp del negocio en el panel');
+let orderPayload={cliente:name,telefono:phone,estado:'recibido',total,negocio_id:negocioId};
+let orderResult=await supa.from('pedidos').insert(orderPayload).select('id').single();
+if(orderResult.error){toast('No se pudo registrar el pedido: '+orderResult.error.message);return}
+let pedidoId=orderResult.data.id;
+let itemRows=cart.map(x=>{let p=products.find(y=>y.id===x.id);return {pedido_id:pedidoId,producto_id:p.dbId||p.id,cantidad:x.q,precio_unitario:p.p}});
+let itemsResult=await supa.from('pedido_items').insert(itemRows);
+if(itemsResult.error){toast('Pedido creado, pero no se pudieron guardar los productos.');return}
+window.open('https://wa.me/'+(number.startsWith('54')?number:'54'+number)+'?text='+encodeURIComponent(msg),'_blank');cart=[];updateCart();closeCart();document.getElementById('successModal').classList.add('open')}
+async function loadSupabase(){
+ if(!negocioId)return;
+ const [b,ps]=await Promise.all([
+  supa.from('negocios').select('id,nombre,telefono,whatsapp,dirección,instagram,descripcion').eq('id',negocioId).maybeSingle(),
+  supa.from('productos').select('id,nombre,categoria,precio,descripcion,imagen,activo').eq('negocio_id',negocioId).eq('activo',true).order('id',{ascending:true})
+ ]);
+ if(!b.error&&b.data){business={nombre:b.data.nombre||business.nombre,telefono:b.data.whatsapp||b.data.telefono||'',direccion:b.data.dirección||'',instagram:b.data.instagram||''};document.getElementById('brandName').textContent=business.nombre||'LA PIZZERÍA';document.title=(business.nombre||'La Pizzería')+' · Pedidos online';}
+ if(!ps.error&&ps.data&&ps.data.length){products=ps.data.map(p=>({id:Number(p.id),dbId:Number(p.id),c:p.categoria||'Otros',n:p.nombre,d:p.descripcion||'',p:Number(p.precio||0),img:p.imagen||''}));dbProductsLoaded=true;categories();render();updateCart();}
+}
 
 categories();render();updateCart();loadSupabase();
 </script>
