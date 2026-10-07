@@ -156,3 +156,25 @@ body{padding-bottom:78px}
 .successCard{padding:22px 18px}.successCard h3{font-size:20px}.successCard p{font-size:10px}.successCard button{padding:10px 14px}
 .footer{margin-top:25px;padding:15px 8px;font-size:8px;border-color:#2b2623}
 @media(max-width:410px){.products{grid-template-columns:1fr 1fr}.photo{height:88px}.hero{min-height:190px}.hero h1{font-size:29px}.promoCard{min-width:165px}}
+
+/* --- MOBILE FULLSCREEN FIX --- */
+html,body{width:100%;min-width:0;margin:0;padding:0;background:#0f0e0d}
+body{overflow-x:hidden}
+.app,.wrap,.topin,.footer{width:100%;max-width:none;margin-left:0;margin-right:0}
+.topin{padding-left:8px;padding-right:8px}
+.hero{width:calc(100% - 12px);margin:7px 6px 8px;min-height:190px}
+.wrap{padding-left:6px;padding-right:6px}
+.infoStrip{width:100%}
+.searchWrap{width:100%}
+.promo{width:100%}
+.cats{width:100%;position:sticky}
+.products{width:100%}
+.footer{padding-left:6px;padding-right:6px}
+@media(max-width:600px){
+  .hero{width:calc(100% - 12px);margin:7px 6px 8px}
+  .wrap{padding:0 6px}
+  .products{grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+  .product{min-width:0}
+  .photo{height:94px}
+  .productBody{padding:7px}
+}
