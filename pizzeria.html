@@ -52,16 +52,42 @@ body{background:#f7f4f1;color:#211b18}
 .footer{margin-top:60px}
 @media(max-width:600px){.hero{min-height:300px;border-radius:12px;margin:12px 10px 16px}.products{gap:11px}.photo{height:145px}.product{border-radius:11px}.promoCard{min-width:255px}.productBody{padding:12px}}
 
-.product{transition:transform .22s ease,box-shadow .22s ease;border-radius:22px}.product:hover{transform:translateY(-5px);box-shadow:0 18px 42px rgba(40,20,12,.16)}.photo img{transition:transform .5s cubic-bezier(.2,.8,.2,1)}.product:hover .photo img{transform:scale(1.06)}.add{transition:transform .16s ease,background .16s ease}.add:active{transform:scale(.92)}.cat,.heroBtn,.topCart,.promoCard,.info{transition:transform .18s ease,box-shadow .18s ease}.cat:active,.heroBtn:active,.topCart:active{transform:scale(.95)}.promoCard{animation:floatIn .5s ease both}.promoCard:nth-child(2){animation-delay:.08s}.product{animation:cardIn .45s ease both}.product:nth-child(2n){animation-delay:.04s}.product:nth-child(3n){animation-delay:.08s}@keyframes cardIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}@keyframes floatIn{from{opacity:0;transform:translateX(15px)}to{opacity:1;transform:translateX(0)}}@keyframes pop{0%{transform:scale(1)}45%{transform:scale(1.12)}100%{transform:scale(1)}}.cartPop{animation:pop .35s ease}.panel{animation:panelIn .28s ease}.drawer.open .shade{animation:fadeIn .22s ease}@keyframes panelIn{from{transform:translateX(30px);opacity:.7}to{transform:translateX(0);opacity:1}}@keyframes fadeIn{from{opacity:0}to{opacity:1}}@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}\n</style>
+.product{transition:transform .22s ease,box-shadow .22s ease;border-radius:22px}.product:hover{transform:translateY(-5px);box-shadow:0 18px 42px rgba(40,20,12,.16)}.photo img{transition:transform .5s cubic-bezier(.2,.8,.2,1)}.product:hover .photo img{transform:scale(1.06)}.add{transition:transform .16s ease,background .16s ease}.add:active{transform:scale(.92)}.cat,.heroBtn,.topCart,.promoCard,.info{transition:transform .18s ease,box-shadow .18s ease}.cat:active,.heroBtn:active,.topCart:active{transform:scale(.95)}.promoCard{animation:floatIn .5s ease both}.promoCard:nth-child(2){animation-delay:.08s}.product{animation:cardIn .45s ease both}.product:nth-child(2n){animation-delay:.04s}.product:nth-child(3n){animation-delay:.08s}@keyframes cardIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}@keyframes floatIn{from{opacity:0;transform:translateX(15px)}to{opacity:1;transform:translateX(0)}}@keyframes pop{0%{transform:scale(1)}45%{transform:scale(1.12)}100%{transform:scale(1)}}.cartPop{animation:pop .35s ease}.panel{animation:panelIn .28s ease}.drawer.open .shade{animation:fadeIn .22s ease}@keyframes panelIn{from{transform:translateX(30px);opacity:.7}to{transform:translateX(0);opacity:1}}@keyframes fadeIn{from{opacity:0}to{opacity:1}}@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}\n
+/* --- Detalles visuales finales --- */
+.logo{font-size:15px;font-weight:950;letter-spacing:-.5px}
+.infoStrip{gap:10px;padding:6px 0 18px}
+.info{min-width:150px;border-radius:12px;padding:11px 13px;background:#fff;display:flex;flex-direction:column;gap:3px;box-shadow:0 3px 12px rgba(40,25,15,.06)}
+.info strong{font-size:12px;color:#302722}
+.info small{font-size:9px;color:#8a7c74}
+.bottomCart{padding:10px 11px;box-shadow:0 12px 35px rgba(25,15,10,.28)}
+.bottomCart .mini{width:46px;height:46px;border-radius:10px}
+.bottomCart .bcInfo b{font-size:13px}.bottomCart .bcInfo small{font-size:10px}
+.bottomCart button{padding:12px 16px;background:#fff;font-size:12px}
+.panel{background:#f4f1ee}
+.panelTop{padding:18px}.panelTop h2{font-size:21px}
+.cartLines{padding:15px}
+.cartLine{padding:13px;margin-bottom:10px;box-shadow:0 2px 9px rgba(40,25,15,.05)}
+.cartPic{width:64px;height:64px;border-radius:10px}
+.cartMain b{font-size:14px}.cartMain small{font-size:10px}
+.qty button{width:30px;height:30px}
+.cartFoot{padding:16px}.sum{font-size:21px}
+.field input,.field textarea,.field select{padding:12px;border-radius:9px}
+.checkout{padding:14px;font-size:13px;box-shadow:0 5px 15px rgba(230,57,31,.2)}
+</style>
 </head>
 <body>
-<header class="top"><div class="topin"><div class="brand"><div class="logo">🍕</div><div><b id="brandName">LA PIZZERÍA</b><small id="brandSub">Pedidos online</small></div></div><button class="topCart" onclick="openCart()">🛒 <span id="topCount">0</span></button></div></header>
+<header class="top"><div class="topin"><div class="brand"><div class="logo">LP</div><div><b id="brandName">LA PIZZERÍA</b><small id="brandSub">Pedidos online</small></div></div><button class="topCart" onclick="openCart()">🛒 <span id="topCount">0</span></button></div></header>
 
 <main class="app">
 <section class="hero" id="inicio"><div class="heroContent"><span class="eyebrow">PEDIDOS ONLINE · LMV-STUDIO</span><h1>Pizza rica.<br><span style="color:#ff7158">Sin vueltas.</span></h1><p>Elegí tu pizza, agregá tus favoritos al carrito y hacé tu pedido desde el celular.</p><div class="heroActions"><button class="heroBtn" onclick="document.getElementById('menu').scrollIntoView({behavior:'smooth'})">🍕 Ver menú</button><button class="heroBtn alt" onclick="openCart()">🛒 Mi pedido</button></div></div></section>
 
 <div class="wrap">
-<div class="infoStrip"><div class="info">🔥 Hecho al momento</div><div class="info">🛵 Delivery</div><div class="info">🏪 Retiro en local</div><div class="info">💬 Pedido por WhatsApp</div></div>
+<div class="infoStrip">
+<div class="info"><strong>🔥 Hecho al momento</strong><small>Preparado en el día</small></div>
+<div class="info"><strong>🛵 Delivery</strong><small>Recibí tu pedido</small></div>
+<div class="info"><strong>🏪 Retiro en local</strong><small>Pasá a buscarlo</small></div>
+<div class="info"><strong>💬 Pedido por WhatsApp</strong><small>Confirmación rápida</small></div>
+</div>
 <div class="searchWrap"><input class="search" id="search" placeholder="🔎 Buscar pizza, empanadas, bebidas..." oninput="searchProducts(this.value)"><button class="topCart" onclick="openCart()">🛒</button></div><div class="promo"><div class="promoCard"><b>🍕 Combo para compartir</b><span>Pizza + empanadas + bebida</span><button onclick="selectCategory('Combos')">Ver combos</button></div><div class="promoCard"><b>🔥 Los más pedidos</b><span>Probá los favoritos de la casa</span><button onclick="selectCategory('Pizzas')">Ver pizzas</button></div></div><div class="cats" id="cats"></div>
 <section id="menu"><div class="sectionHead"><div><h2>Elegí tu pedido</h2><p>Los favoritos de la casa</p></div></div><div class="products" id="products"></div></section>
 </div>
